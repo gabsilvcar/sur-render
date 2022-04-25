@@ -1,4 +1,4 @@
 class Constants:
-    APPLICATION_NAME = "Trabalho I"
+    APPLICATION_NAME = "FakeGL"
     WINDOW_HEIGHT = 800
     WINDOW_WIDTH = 600

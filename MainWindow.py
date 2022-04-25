@@ -1,12 +1,15 @@
 import sys
+from Menus.AddObject import AddObject
+from Menus.AddObject import AddObject
+from Menus.ObjectList import ObjectList
+from Menus.Zoom import Zoom
 import qrc_resources
 
 from Constants import Constants
-from GUIPanel import GUIPanel
+from ViewportWidget import ViewportWidget
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QMenu
-from PyQt5.QtWidgets import QToolBar, QAction
+from PyQt5.QtWidgets import *
 
 class MainWindow(QMainWindow):
     """Main Window."""
@@ -24,7 +27,7 @@ class MainWindow(QMainWindow):
         self.resize(Constants.WINDOW_HEIGHT, Constants.WINDOW_WIDTH)
         self.setWindowTitle(Constants.APPLICATION_NAME)
         self.setWindowIcon(QtGui.QIcon(":logo"))
-        self.centralWidget = GUIPanel()
+        self.centralWidget = ViewportWidget()
         self.setCentralWidget(self.centralWidget)
 
     def __createMenuBar(self):
@@ -48,13 +51,23 @@ class MainWindow(QMainWindow):
 
         
     def __createToolBars(self):
-        pass
+        # Object List
+        objectListToolBar = QToolBar("Object List", self)
+        objectListToolBar.addWidget(ObjectList())
+        self.addToolBar(Qt.LeftToolBarArea, objectListToolBar)
+
+        # Zoom
+        zoomToolBar = QToolBar("Zoom", self)
+        zoomToolBar.addWidget(Zoom(self))
+        self.addToolBar(Qt.LeftToolBarArea, zoomToolBar)
+        
+        # AddObject
+        addObjToolBar = QToolBar("Add Object", self)
+        addObjToolBar.addWidget(AddObject(self.centralWidget))
+        self.addToolBar(Qt.LeftToolBarArea, addObjToolBar)
 
     def __createActions(self):
-        # Creating action using the first constructor
-        self.newAction = QAction(self)
-        self.newAction.setText("&New")
-        # Creating actions using the second constructor
+        self.newAction = QAction(QtGui.QIcon(":logo"), "&New", self)
         self.openAction = QAction("&Open...", self)
         self.saveAction = QAction("&Save", self)
         self.exitAction = QAction("&Exit", self)
@@ -63,6 +76,8 @@ class MainWindow(QMainWindow):
         self.cutAction = QAction("C&ut", self)
         self.helpContentAction = QAction("&Help Content", self)
         self.aboutAction = QAction("&About", self)
+        
+        
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
