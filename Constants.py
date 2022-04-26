@@ -1,4 +1,4 @@
 class Constants:
-    APPLICATION_NAME = "FakeGL"
+    APPLICATION_NAME = "SurRender"
     WINDOW_HEIGHT = 800
     WINDOW_WIDTH = 600
