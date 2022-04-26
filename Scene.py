@@ -8,7 +8,8 @@ class Scene():
     def __init__(self):
         self.shapes = []
         for _ in range(20):
-            pos = QtCore.QPoint(*random.choices(range(500), k=2))
+            pos1 = QtCore.QPoint(*random.choices(range(500), k=2))
+            pos2 = QtCore.QPoint(*random.choices(range(500), k=2))
             length = random.randrange(100)
             color = QtGui.QColor(*random.choices(range(256), k=3))
-            self.shapes.append(Circle("teste", length, pos, color))
+            self.shapes.append(Rectangle("teste", pos1, pos2, color))

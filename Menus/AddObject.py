@@ -11,11 +11,11 @@ from PyQt5.QtWidgets import *
 class AddObject(QWidget):
   
     # constructor
-    def __init__(self, viewport_widget):
+    def __init__(self, viewport_widget, objectview):
         super(AddObject, self).__init__()
         self.viewportWidget = viewport_widget
         # setting window title
-        self.setWindowTitle("Python")
+        self.objectview = objectview
   
         # setting geometry to the window
         self.setGeometry(100, 100, 300, 400)
@@ -85,7 +85,22 @@ class AddObject(QWidget):
         print("Y1C : {0}".format(self.Cy1LineEdit.text()))
         print("R : {0}".format(self.CRLineEdit.text()))
 
+        if (self.tabs.tabText(self.tabs.currentIndex()) == "Line"):
+            pos1 = QtCore.QPoint(int(self.Lx1LineEdit.text()), int(self.Ly1LineEdit.text()))
+            pos2 = QtCore.QPoint(int(self.Lx2LineEdit.text()), int(self.Ly2LineEdit.text()))
+            length = random.randrange(100)
+            color = QtGui.QColor(*random.choices(range(256), k=3))
+            shape = Line(self.nameLineEdit.text(), pos1, pos2, color)
+            self.viewportWidget.scene.shapes.append(shape)
             
+        if (self.tabs.tabText(self.tabs.currentIndex()) == "Rectangle"):
+            pos1 = QtCore.QPoint(int(self.Lx1LineEdit.text()), int(self.Ly1LineEdit.text()))
+            pos2 = QtCore.QPoint(int(self.Lx2LineEdit.text()), int(self.Ly2LineEdit.text()))
+            length = random.randrange(100)
+            color = QtGui.QColor(*random.choices(range(256), k=3))
+            shape = Rectangle(self.nameLineEdit.text(), pos1, pos2, color)
+            self.viewportWidget.scene.shapes.append(shape)
+    
         if (self.tabs.tabText(self.tabs.currentIndex()) == "Circle"):
             pos = QtCore.QPoint(int(self.Cx1LineEdit.text()), int(self.Cy1LineEdit.text()))
             length = int(self.CRLineEdit.text())
@@ -93,7 +108,8 @@ class AddObject(QWidget):
             print(length, pos, color)          
             shape = Circle(self.nameLineEdit.text(), length, pos, color)
             self.viewportWidget.scene.shapes.append(shape)
-    
+
+        self.objectview.update()
         
   
     # creat form method

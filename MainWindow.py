@@ -1,6 +1,7 @@
 import sys
 from Menus.AddObject import AddObject
 from Menus.AddObject import AddObject
+from Menus.Movement import Movement
 from Menus.ObjectList import ObjectList
 from Menus.Zoom import Zoom
 import qrc_resources
@@ -52,18 +53,22 @@ class MainWindow(QMainWindow):
         
     def __createToolBars(self):
         # Object List
+        self.objectview = ObjectList(self.centralWidget.viewport.scene)
         objectListToolBar = QToolBar("Object List", self)
-        objectListToolBar.addWidget(ObjectList(self.centralWidget.viewport.scene))
+        objectListToolBar.addWidget(self.objectview)
         self.addToolBar(Qt.LeftToolBarArea, objectListToolBar)
 
         # Zoom
         zoomToolBar = QToolBar("Zoom", self)
-        zoomToolBar.addWidget(Zoom(self))
+        zoomToolBar.addWidget(Zoom(self, self.centralWidget))
         self.addToolBar(Qt.LeftToolBarArea, zoomToolBar)
-        
+        # Movement
+        movementToolBar = QToolBar("Movement", self)
+        movementToolBar.addWidget(Movement(self, self.centralWidget))
+        self.addToolBar(Qt.LeftToolBarArea, movementToolBar)
         # AddObject
         addObjToolBar = QToolBar("Add Object", self)
-        addObjToolBar.addWidget(AddObject(self.centralWidget))
+        addObjToolBar.addWidget(AddObject(self.centralWidget, self.objectview))
         self.addToolBar(Qt.LeftToolBarArea, addObjToolBar)
 
     def __createActions(self):
