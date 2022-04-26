@@ -3,7 +3,7 @@ import sys
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QGraphicsView
 import random
-
+from Shapes import *
 from PyQt5.QtWidgets import * 
   
 # creating a class
@@ -26,12 +26,6 @@ class AddObject(QWidget):
         # creating spin box to select age
         self.ageSpinBar = QSpinBox()
   
-        # creating combo box to select degree
-        self.degreeComboBox = QComboBox()
-  
-        # adding items to the combo box
-        self.degreeComboBox.addItems(["BTech", "MTech", "PhD"])
-  
         # creating a line edit
         self.nameLineEdit = QLineEdit()
   
@@ -44,7 +38,10 @@ class AddObject(QWidget):
         self.Ry1LineEdit = QLineEdit();
         self.Ly2LineEdit = QLineEdit();
         self.Ry2LineEdit = QLineEdit();
-        
+        self.Cx1LineEdit = QLineEdit();
+        self.Cy1LineEdit = QLineEdit();
+        self.CRLineEdit = QLineEdit();
+
         # calling the method that create the form
         self.createForm()
   
@@ -75,7 +72,6 @@ class AddObject(QWidget):
         # printing the form information
         print("Current : {0}".format(self.tabs.tabText(self.tabs.currentIndex())))
         print("Person Name : {0}".format(self.nameLineEdit.text()))
-        print("Degree : {0}".format(self.degreeComboBox.currentText()))
         print("Age : {0}".format(self.ageSpinBar.text()))
         print("X1L : {0}".format(self.Lx1LineEdit.text()))
         print("Y1L : {0}".format(self.Ly1LineEdit.text()))
@@ -85,16 +81,20 @@ class AddObject(QWidget):
         print("Y1R : {0}".format(self.Ry1LineEdit.text()))
         print("X2R : {0}".format(self.Rx2LineEdit.text()))
         print("Y2R : {0}".format(self.Ry2LineEdit.text()))
-        
-        if (self.tabs.tabText(self.tabs.currentIndex()) == "Retangulo"):
-            
-            pixmap = QtGui.QPixmap(100, 100)
-            pixmap.fill(QtCore.Qt.red)
+        print("X1C : {0}".format(self.Cx1LineEdit.text()))
+        print("Y1C : {0}".format(self.Cy1LineEdit.text()))
+        print("R : {0}".format(self.CRLineEdit.text()))
 
-            pixmap_item = self.viewportWidget.scene.addPixmap(pixmap)
-            # random position
-            pixmap_item.setPos(*random.sample(range(-100, 100), 2))
-            self.viewportWidget.show()
+            
+        if (self.tabs.tabText(self.tabs.currentIndex()) == "Circle"):
+            pos = QtCore.QPoint(int(self.Cx1LineEdit.text()), int(self.Cy1LineEdit.text()))
+            length = int(self.CRLineEdit.text())
+            color = QtGui.QColor(*random.choices(range(256), k=3))  
+            print(length, pos, color)          
+            shape = Circle(self.nameLineEdit.text(), length, pos, color)
+            self.viewportWidget.scene.shapes.append(shape)
+    
+        
   
     # creat form method
     def createForm(self):
@@ -107,8 +107,9 @@ class AddObject(QWidget):
         layout.addRow(QLabel("Name"), self.nameLineEdit)
         
         self.tabs = QTabWidget()
-        self.tabs.addTab(Line(self),"Linha")
-        self.tabs.addTab(Rectangle(self),"Retangulo")
+        self.tabs.addTab(Line(self),"Line")
+        self.tabs.addTab(Rectangle(self),"Rectangle")
+        self.tabs.addTab(Circle(self),"Circle")
 
         
         layout.addWidget(self.tabs)
@@ -137,6 +138,15 @@ class Rectangle(QWidget):
         layout.addRow(QLabel("Y1"), parent.Ry1LineEdit)
         layout.addRow(QLabel("X2"), parent.Rx2LineEdit)
         layout.addRow(QLabel("Y2"), parent.Ry2LineEdit)
+        self.setLayout(layout)
+
+class Circle(QWidget):
+    def __init__(self, parent): 
+        super().__init__()
+        layout = QFormLayout()
+        layout.addRow(QLabel("X1"), parent.Cx1LineEdit)
+        layout.addRow(QLabel("Y1"), parent.Cy1LineEdit)
+        layout.addRow(QLabel("R"), parent.CRLineEdit)
         self.setLayout(layout)
 
   

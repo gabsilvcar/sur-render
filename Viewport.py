@@ -1,18 +1,19 @@
-from PyQt5.QtWidgets import QGraphicsView
-from PyQt5 import QtGui, QtCore
-import random
-class Viewport(QGraphicsView):
+import sys, random
+from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import *
+
+
+class Viewport(QWidget):
     def __init__(self, scene):
-        super().__init__(scene)
-        # pixmap = QtGui.QPixmap(100, 100)
-        # pixmap.fill(QtCore.Qt.red)
+        super().__init__()
+        self.scene = scene
 
-        # self.pixmap_item = self.scene().addPixmap(pixmap)
-        # # random position
-        # self.pixmap_item.setPos(*random.sample(range(-100, 100), 2))
-        # self.show()
-
-
-    def mousePressEvent(self, event):
-        # print(self.mapToScene(event.pos()))
-        super(Viewport, self).mousePressEvent(event)
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        for shape in self.scene.shapes:
+            shape.paint(painter)
+            

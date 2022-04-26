@@ -53,7 +53,7 @@ class MainWindow(QMainWindow):
     def __createToolBars(self):
         # Object List
         objectListToolBar = QToolBar("Object List", self)
-        objectListToolBar.addWidget(ObjectList())
+        objectListToolBar.addWidget(ObjectList(self.centralWidget.viewport.scene))
         self.addToolBar(Qt.LeftToolBarArea, objectListToolBar)
 
         # Zoom

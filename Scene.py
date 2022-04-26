@@ -1,7 +1,14 @@
-from PyQt5.QtWidgets import QGraphicsScene
-
-class Scene(QGraphicsScene):
+import sys, random
+from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import *
+from Shapes import *
+class Scene():
     def __init__(self):
-        super().__init__()
-        self.addText("Hello, world!")
-        
+        self.shapes = []
+        for _ in range(20):
+            pos = QtCore.QPoint(*random.choices(range(500), k=2))
+            length = random.randrange(100)
+            color = QtGui.QColor(*random.choices(range(256), k=3))
+            self.shapes.append(Circle("teste", length, pos, color))

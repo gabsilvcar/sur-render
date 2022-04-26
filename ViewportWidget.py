@@ -4,12 +4,15 @@ from Constants import Constants
 from Scene import Scene
 from Viewport import Viewport
 
-class ViewportWidget(QWidget):
+class ViewportWidget(QGroupBox):
 
     def __init__(self):
         super().__init__()
         self.scene = Scene()
         self.viewport = Viewport(self.scene)
+        self.viewport.show()
+        self.setTitle("Viewport")
+        self.setFlat(True)
         self.init_ui()
 
     def init_ui(self):
@@ -27,7 +30,7 @@ class ViewportWidget(QWidget):
     def __createWidgets(self):
         layout = QGridLayout()
 
-        layout.addWidget(QLabel('<h3>Viewport</h3>', parent=self), 0, 0)
+        # layout.addWidget(QLabel('<h3>Viewport</h3>', parent=self), 0, 0)
 
         layout.addWidget(self.viewport, 1, 0)
   
