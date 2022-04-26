@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
-from Constants import Constants
-from Viewport import Viewport
+from src.Constants import Constants
+from src.Viewport import Viewport
 from PyQt5.QtGui import QStandardItemModel,QStandardItem
 from PyQt5.QtCore import Qt
 

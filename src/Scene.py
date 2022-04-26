@@ -3,7 +3,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
-from Shapes import *
+from src.Shapes import *
 class Scene():
     def __init__(self):
         self.shapes = []

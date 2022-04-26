@@ -1,13 +1,13 @@
 import sys
-from Menus.AddObject import AddObject
-from Menus.AddObject import AddObject
-from Menus.Movement import Movement
-from Menus.ObjectList import ObjectList
-from Menus.Zoom import Zoom
-import qrc_resources
+from src.menus.AddObject import AddObject
+from src.menus.AddObject import AddObject
+from src.menus.Movement import Movement
+from src.menus.ObjectList import ObjectList
+from src.menus.Zoom import Zoom
+import src.qrc_resources
 
-from Constants import Constants
-from ViewportWidget import ViewportWidget
+from src.Constants import Constants
+from src.ViewportWidget import ViewportWidget
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *

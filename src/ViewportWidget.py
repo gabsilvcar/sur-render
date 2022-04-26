@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
-from Constants import Constants
-from Scene import Scene
-from Viewport import Viewport
+from src.Constants import Constants
+from src.Scene import Scene
+from src.Viewport import Viewport
 
 class ViewportWidget(QGroupBox):
 

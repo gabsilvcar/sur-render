@@ -3,7 +3,7 @@ import sys
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QGraphicsView
 import random
-from Shapes import *
+from src.Shapes import *
 from PyQt5.QtWidgets import * 
   
 # creating a class
