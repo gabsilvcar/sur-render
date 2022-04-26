@@ -33,10 +33,10 @@ class Movement(QWidget):
         self.viewportwidget.viewport.translationY += Constants.PIX_PER_MOVEMENT
         self.viewportwidget.viewport.repaint()
     def moveLeft(self):
-        self.viewportwidget.viewport.translationX -= Constants.PIX_PER_MOVEMENT
+        self.viewportwidget.viewport.translationX += Constants.PIX_PER_MOVEMENT
         self.viewportwidget.viewport.repaint()
     def moveRight(self):
-        self.viewportwidget.viewport.translationX += Constants.PIX_PER_MOVEMENT
+        self.viewportwidget.viewport.translationX -= Constants.PIX_PER_MOVEMENT
         self.viewportwidget.viewport.repaint()
     def moveDown(self):
         self.viewportwidget.viewport.translationY -= Constants.PIX_PER_MOVEMENT
