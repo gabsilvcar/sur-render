@@ -30,14 +30,14 @@ class Movement(QWidget):
         self.setLayout(layout)
         
     def moveUp(self):
-        self.viewportwidget.viewport.translationY += Constants.PIX_PER_MOVEMENT
-        self.viewportwidget.viewport.repaint()
+        self.viewportwidget.viewport.move_up(Constants.PIX_PER_MOVEMENT)
+
     def moveLeft(self):
-        self.viewportwidget.viewport.translationX += Constants.PIX_PER_MOVEMENT
-        self.viewportwidget.viewport.repaint()
+        self.viewportwidget.viewport.move_left(Constants.PIX_PER_MOVEMENT)
+
     def moveRight(self):
-        self.viewportwidget.viewport.translationX -= Constants.PIX_PER_MOVEMENT
-        self.viewportwidget.viewport.repaint()
+        self.viewportwidget.viewport.move_right(Constants.PIX_PER_MOVEMENT)
+
     def moveDown(self):
-        self.viewportwidget.viewport.translationY -= Constants.PIX_PER_MOVEMENT
-        self.viewportwidget.viewport.repaint()
+        self.viewportwidget.viewport.move_down(Constants.PIX_PER_MOVEMENT)
+        

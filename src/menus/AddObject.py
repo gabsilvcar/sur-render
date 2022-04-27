@@ -9,7 +9,6 @@ from PyQt5.QtWidgets import *
 # creating a class
 # that inherits the QDialog class
 class AddObject(QWidget):
-  
     # constructor
     def __init__(self, viewport_widget, objectview):
         super(AddObject, self).__init__()
@@ -30,17 +29,17 @@ class AddObject(QWidget):
         self.nameLineEdit = QLineEdit()
   
   
-        self.Lx1LineEdit = QLineEdit();
-        self.Rx1LineEdit = QLineEdit();
-        self.Lx2LineEdit = QLineEdit();
-        self.Rx2LineEdit = QLineEdit();
-        self.Ly1LineEdit = QLineEdit();
-        self.Ry1LineEdit = QLineEdit();
-        self.Ly2LineEdit = QLineEdit();
-        self.Ry2LineEdit = QLineEdit();
-        self.Cx1LineEdit = QLineEdit();
-        self.Cy1LineEdit = QLineEdit();
-        self.CRLineEdit = QLineEdit();
+        self.Lx1LineEdit = QLineEdit()
+        self.Rx1LineEdit = QLineEdit()
+        self.Lx2LineEdit = QLineEdit()
+        self.Rx2LineEdit = QLineEdit()
+        self.Ly1LineEdit = QLineEdit()
+        self.Ry1LineEdit = QLineEdit()
+        self.Ly2LineEdit = QLineEdit()
+        self.Ry2LineEdit = QLineEdit()
+        self.Cx1LineEdit = QLineEdit()
+        self.Cy1LineEdit = QLineEdit()
+        self.CRLineEdit = QLineEdit()
 
         # calling the method that create the form
         self.createForm()
@@ -85,6 +84,11 @@ class AddObject(QWidget):
         print("Y1C : {0}".format(self.Cy1LineEdit.text()))
         print("R : {0}".format(self.CRLineEdit.text()))
 
+        if (self.tabs.tabText(self.tabs.currentIndex()) == "Point"):
+            pos = QtCore.QPoint(int(self.Lx1LineEdit.text()), int(self.Ly1LineEdit.text()))
+            shape = Line(self.nameLineEdit.text(), pos1, color)
+            
+
         if (self.tabs.tabText(self.tabs.currentIndex()) == "Line"):
             pos1 = QtCore.QPoint(int(self.Lx1LineEdit.text()), int(self.Ly1LineEdit.text()))
             pos2 = QtCore.QPoint(int(self.Lx2LineEdit.text()), int(self.Ly2LineEdit.text()))
@@ -110,6 +114,7 @@ class AddObject(QWidget):
             self.viewportWidget.scene.shapes.append(shape)
 
         self.objectview.update()
+        self.viewportWidget.viewport.repaint()
         
   
     # creat form method
@@ -123,9 +128,10 @@ class AddObject(QWidget):
         layout.addRow(QLabel("Name"), self.nameLineEdit)
         
         self.tabs = QTabWidget()
-        self.tabs.addTab(Line(self),"Line")
-        self.tabs.addTab(Rectangle(self),"Rectangle")
-        self.tabs.addTab(Circle(self),"Circle")
+        self.tabs.addTab(LineWidget(self),"Point")
+        self.tabs.addTab(LineWidget(self),"Line")
+        self.tabs.addTab(RectangleWidget(self),"Rectangle")
+        self.tabs.addTab(CircleWidget(self),"Circle")
 
         
         layout.addWidget(self.tabs)
@@ -136,7 +142,25 @@ class AddObject(QWidget):
         # setting layout
         self.formGroupBox.setLayout(layout)
   
-class Line(QWidget):
+class PointWidget(QWidget):
+    def __init__(self, parent): 
+        super().__init__()
+        layout = QFormLayout()
+        layout.addRow(QLabel("X"), parent.Lx1LineEdit)
+        layout.addRow(QLabel("Y"), parent.Ly1LineEdit)
+        self.setLayout(layout)
+
+# class LineWidget(QWidget):
+#     def __init__(self, parent): 
+#         super().__init__()
+#         layout = QFormLayout()
+#         layout.addRow(QLabel("X1"), parent.Lx1LineEdit)
+#         layout.addRow(QLabel("Y1"), parent.Ly1LineEdit)
+#         layout.addRow(QLabel("X2"), parent.Lx2LineEdit)
+#         layout.addRow(QLabel("Y2"), parent.Ly2LineEdit)
+#         self.setLayout(layout)
+
+class LineWidget(QWidget):
     def __init__(self, parent): 
         super().__init__()
         layout = QFormLayout()
@@ -146,7 +170,7 @@ class Line(QWidget):
         layout.addRow(QLabel("Y2"), parent.Ly2LineEdit)
         self.setLayout(layout)
 
-class Rectangle(QWidget):
+class RectangleWidget(QWidget):
     def __init__(self, parent): 
         super().__init__()
         layout = QFormLayout()
@@ -156,7 +180,7 @@ class Rectangle(QWidget):
         layout.addRow(QLabel("Y2"), parent.Ry2LineEdit)
         self.setLayout(layout)
 
-class Circle(QWidget):
+class CircleWidget(QWidget):
     def __init__(self, parent): 
         super().__init__()
         layout = QFormLayout()

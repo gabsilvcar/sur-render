@@ -22,6 +22,10 @@ class Zoom(QWidget):
         self.setLayout(layout)
         
     def zoomMore(self):
-        self.viewportwidget.viewport.resize(Constants.ZOOM_IN_FACTOR * self.viewportwidget.viewport.size())
+        self.viewportwidget.viewport.zoom_in(Constants.ZOOM_IN_FACTOR)
+
+        # self.viewportwidget.viewport.resize(Constants.ZOOM_IN_FACTOR * self.viewportwidget.viewport.size())
+
     def zoomLess(self):
-        self.viewportwidget.viewport.resize(Constants.ZOOM_OUT_FACTOR * self.viewportwidget.viewport.size())
+        self.viewportwidget.viewport.zoom_out(Constants.ZOOM_IN_FACTOR)
+        # self.viewportwidget.viewport.resize(Constants.ZOOM_OUT_FACTOR * self.viewportwidget.viewport.size())
