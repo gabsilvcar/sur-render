@@ -23,7 +23,6 @@ class ObjectList(QTreeView):
             types = QStandardItem(str(shape.__class__.__name__))
             color = QStandardItem(shape.color.name())
 
-            self.model.setItem(i, 0, select)
-            self.model.setItem(i, 1, name)
-            self.model.setItem(i, 2, types)
-            self.model.setItem(i, 3, color)
+            self.model.setItem(i, 0, name)
+            self.model.setItem(i, 1, types)
+            self.model.setItem(i, 2, color)
