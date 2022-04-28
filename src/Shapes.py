@@ -50,9 +50,9 @@ class Polygon(Shape):
         self.coordinates = points
 
         for a, b in zip(points, points[1:]):
-            self.segments.append(QtCore.QLine(a, b))
+            self.segments.append(Segment(a, b))
 
-        self.segments.append(QtCore.QLine(points[0], points[-1]))
+        self.segments.append(Segment(points[0], points[-1]))
 
 # class Shape():
 #     def __init__(self, name, position1, position2, color, parent=None):

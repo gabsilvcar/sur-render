@@ -18,8 +18,10 @@ class Vector:
         return self.data[2]
 
     def __str__(self):
-        return f"Vector({self.x}, {self.y}, {self.z})"
+        return f'Vector({self.x}, {self.y}, {self.z})'
     
+    def __repr__(self):
+        return str(self)
 
 class Segment:
     def __init__(self, p0, p1):

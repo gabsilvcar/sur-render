@@ -1,4 +1,5 @@
 import sys
+import re
 
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QGraphicsView
@@ -30,77 +31,37 @@ class AddObject(QWidget):
         self.layout().addWidget(self.button_ok)
 
     def button_ok_callback(self):
-  
-        # printing the form information
-        # print("Current : {0}".format(self.tabs.tabText(self.tabs.currentIndex())))
-        # print("Person Name : {0}".format(self.nameLineEdit.text()))
-        # print("Age : {0}".format(self.ageSpinBar.text()))
-        # print("X1L : {0}".format(self.Lx1LineEdit.text()))
-        # print("Y1L : {0}".format(self.Ly1LineEdit.text()))
-        # print("X2L : {0}".format(self.Lx2LineEdit.text()))
-        # print("Y2L : {0}".format(self.Ly2LineEdit.text()))
-        # print("X1R : {0}".format(self.Rx1LineEdit.text()))
-        # print("Y1R : {0}".format(self.Ry1LineEdit.text()))
-        # print("X2R : {0}".format(self.Rx2LineEdit.text()))
-        # print("Y2R : {0}".format(self.Ry2LineEdit.text()))
-        # print("X1C : {0}".format(self.Cx1LineEdit.text()))
-        # print("Y1C : {0}".format(self.Cy1LineEdit.text()))
-        # print("R : {0}".format(self.CRLineEdit.text()))
-
+        name = self.nameLineEdit.text()
         widget = self.tabs.currentWidget()
+        shape = None
 
-        if (self.tabs.tabText(self.tabs.currentIndex()) == "Point"):
-            name = self.nameLineEdit.text()
+        if isinstance(widget, PointWidget):
             pos = Vector(widget.x(), widget.y())
             shape = Point(name, pos)
-            self.viewport.scene.add_shape(shape)
 
-        if (self.tabs.tabText(self.tabs.currentIndex()) == "Line"):
-            name = self.nameLineEdit.text()
+        if isinstance(widget, LineWidget):
             s = Vector(widget.x0(), widget.y0())
             e = Vector(widget.x1(), widget.y1())
             shape = Line(name, s, e)
+
+        if isinstance(widget, PolygonWidget):
+            vectors = [Vector(p[0], p[1]) for p in widget.data()]
+            shape = Polygon(name, vectors)
+
+        if isinstance(widget, RectangleWidget):
+            vectors = [
+                Vector(widget.x0(), widget.y0()),
+                Vector(widget.x1(), widget.y0()),
+                Vector(widget.x1(), widget.y1()),
+                Vector(widget.x0(), widget.y1()),
+            ]
+            shape = Polygon(name, vectors)
+
+        if shape is not None:
             self.viewport.scene.add_shape(shape)
-
-
-            # pos1 = QtCore.QPoint(widget.x0(), widget.y0())
-            # pos2 = QtCore.QPoint(widget.x1(), widget.y1())
-            # length = random.randrange(100)
-            # color = QtGui.QColor(*random.choices(range(256), k=3))
-            # shape = Line(self.nameLineEdit.text(), pos1, pos2, color)
-            # self.viewport.scene.shapes.append(shape)
-
-        # s = Polygon("Polinho", 
-        #     [
-        #         QtCore.QPoint(0, 0),
-        #         QtCore.QPoint(100, 100),
-        #         QtCore.QPoint(50, 20),
-        #         QtCore.QPoint(10, 40),
-        #     ]
-        # )
-
-        # self.viewport.scene.shapes.append(s)
-            
-        # if (self.tabs.tabText(self.tabs.currentIndex()) == "Rectangle"):
-        #     pos1 = QtCore.QPoint(int(self.Lx1LineEdit.text()), int(self.Ly1LineEdit.text()))
-        #     pos2 = QtCore.QPoint(int(self.Lx2LineEdit.text()), int(self.Ly2LineEdit.text()))
-        #     length = random.randrange(100)
-        #     color = QtGui.QColor(*random.choices(range(256), k=3))
-        #     shape = Rectangle(self.nameLineEdit.text(), pos1, pos2, color)
-        #     self.viewport.scene.shapes.append(shape)
-    
-        # if (self.tabs.tabText(self.tabs.currentIndex()) == "Circle"):
-        #     pos = QtCore.QPoint(int(self.Cx1LineEdit.text()), int(self.Cy1LineEdit.text()))
-        #     length = int(self.CRLineEdit.text())
-        #     color = QtGui.QColor(*random.choices(range(256), k=3))  
-        #     print(length, pos, color)          
-        #     shape = Circle(self.nameLineEdit.text(), length, pos, color)
-        #     self.viewport.scene.shapes.append(shape)
-
-        self.objectview.update()
-        self.viewport.repaint()
+            self.objectview.update()
+            self.viewport.repaint()
         
-  
     # creat form method
     def createForm(self):
         self.formGroupBox = QGroupBox("Add Object")
@@ -113,18 +74,13 @@ class AddObject(QWidget):
         layout.addRow(QLabel("Name"), self.nameLineEdit)
         
         self.tabs = QTabWidget()
-        self.tabs.addTab(PointWidget(self),"Point")
-        self.tabs.addTab(LineWidget(self),"Line")
-        # self.tabs.addTab(RectangleWidget(self),"Rectangle")
+        self.tabs.addTab(PointWidget(self), "Point")
+        self.tabs.addTab(LineWidget(self), "Line")
+        self.tabs.addTab(PolygonWidget(self), "Polygon")
+        self.tabs.addTab(RectangleWidget(self),"Rectangle")
         # self.tabs.addTab(CircleWidget(self),"Circle")
-
         
         layout.addWidget(self.tabs)
-
-        # for age and adding spin box
-        # layout.addRow(QLabel("Age"), self.ageSpinBar)
-  
-        # setting layout
         self.formGroupBox.setLayout(layout)
   
 class PointWidget(QWidget):
@@ -144,6 +100,7 @@ class PointWidget(QWidget):
     def y(self):
         txt = self.y_line.text()
         return int(txt) if txt else None
+
 
 class LineWidget(QWidget):
     def __init__(self, parent): 
@@ -175,15 +132,50 @@ class LineWidget(QWidget):
         txt = self.y1_line.text()
         return int(txt) if txt else None
 
-# class RectangleWidget(QWidget):
-#     def __init__(self, parent): 
-#         super().__init__()
-#         layout = QFormLayout()
-#         layout.addRow(QLabel("X1"), parent.Rx1LineEdit)
-#         layout.addRow(QLabel("Y1"), parent.Ry1LineEdit)
-#         layout.addRow(QLabel("X2"), parent.Rx2LineEdit)
-#         layout.addRow(QLabel("Y2"), parent.Ry2LineEdit)
-#         self.setLayout(layout)
+
+class PolygonWidget(QWidget):
+    def __init__(self, parent): 
+        super().__init__()
+        self.line = QLineEdit()
+
+        self.setLayout(QFormLayout())
+        self.layout().addRow('YourPoints', self.line)
+
+    def data(self):
+        get_digits = lambda x: tuple(int(i) for i in re.findall(r'\d+', x))
+        between_brackets = re.findall(r'\((.*?)\)', self.line.text())
+        return [get_digits(i) for i in between_brackets]
+
+
+class RectangleWidget(QWidget):
+    def __init__(self, parent): 
+        super().__init__()
+        self.x0_line = QLineEdit()
+        self.y0_line = QLineEdit()
+        self.x1_line = QLineEdit()
+        self.y1_line = QLineEdit()
+
+        self.setLayout(QFormLayout())
+        self.layout().addRow('X0', self.x0_line)
+        self.layout().addRow('Y0', self.y0_line)
+        self.layout().addRow('X1', self.x1_line)
+        self.layout().addRow('Y1', self.y1_line)
+
+    def x0(self):
+        txt = self.x0_line.text()
+        return int(txt) if txt else None
+
+    def y0(self):
+        txt = self.y0_line.text()
+        return int(txt) if txt else None
+
+    def x1(self):
+        txt = self.x1_line.text()
+        return int(txt) if txt else None
+
+    def y1(self):
+        txt = self.y1_line.text()
+        return int(txt) if txt else None
 
 # class CircleWidget(QWidget):
 #     def __init__(self, parent): 

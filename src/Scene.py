@@ -11,4 +11,6 @@ class Scene:
         self.shapes = []
 
     def add_shape(self, shape):
+        if shape is None:
+            return
         self.shapes.append(shape)
