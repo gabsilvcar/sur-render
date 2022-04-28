@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
-from src.Constants import Constants
 from src.Viewport import Viewport
 from PyQt5.QtGui import QStandardItemModel,QStandardItem
 from PyQt5.QtCore import Qt
@@ -22,8 +21,11 @@ class ObjectList(QTreeView):
         for shape in self.scene.shapes:
             parent1 = QStandardItem('{}'.format(shape.name))
             self.model.setItem(i,0,parent1)
+
             parent1 = QStandardItem('{}'.format(shape.__class__.__name__))
             self.model.setItem(i,1,parent1)
+
             parent1 = QStandardItem('{}'.format(shape.color.name()))
             self.model.setItem(i,2,parent1)
+
             i+= 1

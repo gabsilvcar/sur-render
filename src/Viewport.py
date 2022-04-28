@@ -3,8 +3,10 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QTransform        
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
-from src.Shapes import *
 
+from src.Shapes import *
+from src.Scene import Scene
+from src.math_transforms import viewport_transform
 
 class View:
     def __init__(self, xmin, ymin, xmax, ymax):
@@ -24,10 +26,9 @@ class View:
 
 
 class Viewport(QWidget):
-    def __init__(self, scene):
+    def __init__(self):
         super().__init__()
-        self.scene = scene
-        self.win = None
+        self.scene = Scene()
     
     def zoom_in(self, factor):
         w = self.win.width() * factor / 2
@@ -67,37 +68,40 @@ class Viewport(QWidget):
         self.win.xmax -= amount
         self.repaint()
 
-    def transform(self, point):
-        if self.win is None:
-            self.win = View(0, 0, self.width(), self.height())
-
-        w = self.win
-        vp = View(0, 0, self.width(), self.height())
-        out = Coord(0,0)
-
-        out.x = (vp.xmax - vp.xmin)
-        out.x *= (point.x() - w.xmin)
-        out.x /= (w.xmax - w.xmin)
-
-        out.y = (point.y() - w.ymin) / (w.ymax - w.ymin)
-        out.y *= (vp.ymax - vp.ymin)
-        
-        return out
+    def draw_point(self, point, painter=None):
+        if painter is None:
+            painter = QPainter(self)
+        point = viewport_transform(point, self.win, self.vp)
+        painter.drawPoint(point.x, point.y)
+    
+    def draw_segment(self, segment, painter=None):
+        if painter is None:
+            painter = QPainter(self)
+        p0 = viewport_transform(segment.p0, self.win, self.vp)
+        p1 = viewport_transform(segment.p1, self.win, self.vp)
+        painter.drawLine(p0.x, p0.y, p1.x, p1.y)
 
     def resizeEvent(self, event):
+        self.vp = View(0, 0, self.width(), self.height())
         self.win = View(0, 0, self.width(), self.height())
     
     def paintEvent(self, event):
         super().paintEvent(event)
+
+        if self.win is None:
+            self.win = View(0, 0, self.width(), self.height())
+            self.vp = View(0, 0, self.width(), self.height())
         
+        pen = QPen()
+        pen.setWidth(4)
+        pen.setCapStyle(Qt.RoundCap)
+
         painter = QPainter(self)
+        painter.setPen(pen)
 
         for shape in self.scene.shapes:
-            for coord in shape.coordinates:
-                c = self.transform(coord)
-                painter.drawPoint(c.x, c.y)
+            for point in shape.coordinates:
+                self.draw_point(point, painter)
 
             for segment in shape.segments:
-                s = self.transform(segment.p1())
-                e = self.transform(segment.p2())
-                painter.drawLine(s.x, s.y, e.x, e.y)
+                self.draw_segment(segment, painter)

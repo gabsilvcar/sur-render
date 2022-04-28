@@ -6,7 +6,7 @@ from src.menus.ObjectList import ObjectList
 from src.menus.Zoom import Zoom
 import src.qrc_resources
 
-from src.Constants import Constants
+from src.Constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
 from src.ViewportWidget import ViewportWidget
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
@@ -26,8 +26,8 @@ class MainWindow(QMainWindow):
         self.show()
         
     def init_ui(self):
-        self.resize(Constants.WINDOW_HEIGHT, Constants.WINDOW_WIDTH)
-        self.setWindowTitle(Constants.APPLICATION_NAME)
+        self.resize(WINDOW_HEIGHT, WINDOW_WIDTH)
+        self.setWindowTitle(APPLICATION_NAME)
         self.setWindowIcon(QtGui.QIcon(":logo"))
         self.centralWidget = ViewportWidget()
         self.setCentralWidget(self.centralWidget)
@@ -42,6 +42,23 @@ class MainWindow(QMainWindow):
         self.cutAction = QAction("C&ut", self)
         self.helpContentAction = QAction("&Help Content", self)
         self.aboutAction = QAction("&About", self)
+
+    def __createMenuBar(self):
+        menuBar = self.menuBar()
+
+        # File menu
+        fileMenu = QMenu("&File", self)
+        menuBar.addMenu(fileMenu)
+        fileMenu.addAction(self.newAction)
+        fileMenu.addAction(self.openAction)
+        fileMenu.addAction(self.saveAction)
+        fileMenu.addAction(self.exitAction)
+
+        # Edit menu
+        editMenu = menuBar.addMenu("&Edit")
+        editMenu.addAction(self.copyAction)
+        editMenu.addAction(self.pasteAction)
+        editMenu.addAction(self.cutAction)
         
     def __createToolBars(self):
         # Object List
@@ -52,35 +69,19 @@ class MainWindow(QMainWindow):
 
         # Zoom
         zoomToolBar = QToolBar("Zoom", self)
-        zoomToolBar.addWidget(Zoom(self, self.centralWidget))
+        zoomToolBar.addWidget(Zoom(self, self.centralWidget.viewport))
         self.addToolBar(Qt.LeftToolBarArea, zoomToolBar)
+
         # Movement
         movementToolBar = QToolBar("Movement", self)
-        movementToolBar.addWidget(Movement(self, self.centralWidget))
+        movementToolBar.addWidget(Movement(self, self.centralWidget.viewport))
         self.addToolBar(Qt.LeftToolBarArea, movementToolBar)
+
         # AddObject
         addObjToolBar = QToolBar("Add Object", self)
-        addObjToolBar.addWidget(AddObject(self.centralWidget, self.objectview))
+        addObjToolBar.addWidget(AddObject(self.centralWidget.viewport, self.objectview))
         self.addToolBar(Qt.LeftToolBarArea, addObjToolBar)
 
-    def __createMenuBar(self):
-        menuBar = self.menuBar()
-        # File menu
-        fileMenu = QMenu("&File", self)
-        menuBar.addMenu(fileMenu)
-        fileMenu.addAction(self.newAction)
-        fileMenu.addAction(self.openAction)
-        fileMenu.addAction(self.saveAction)
-        fileMenu.addAction(self.exitAction)
-        # Edit menu
-        editMenu = menuBar.addMenu("&Edit")
-        editMenu.addAction(self.copyAction)
-        editMenu.addAction(self.pasteAction)
-        editMenu.addAction(self.cutAction)
-        # Help menu
-        # helpMenu = menuBar.addMenu(QIcon(":help-content.svg"), "&Help")
-        # helpMenu.addAction(self.helpContentAction)
-        # helpMenu.addAction(self.aboutAction)
 
         
         

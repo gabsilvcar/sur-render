@@ -1,13 +1,13 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
-from src.Constants import Constants
+from src.Constants import PIX_PER_MOVEMENT
 from src.Scene import Scene
 from src.Viewport import Viewport
 
 class Movement(QWidget):
-    def __init__(self, parent, viewportwidget): 
+    def __init__(self, parent, viewport): 
         super().__init__()
-        self.viewportwidget = viewportwidget
+        self.viewport = viewport
         
         self.up = QPushButton("Up")
         self.down = QPushButton("Down")
@@ -30,14 +30,14 @@ class Movement(QWidget):
         self.setLayout(layout)
         
     def moveUp(self):
-        self.viewportwidget.viewport.move_up(Constants.PIX_PER_MOVEMENT)
+        self.viewport.move_up(PIX_PER_MOVEMENT)
 
     def moveLeft(self):
-        self.viewportwidget.viewport.move_left(Constants.PIX_PER_MOVEMENT)
+        self.viewport.move_left(PIX_PER_MOVEMENT)
 
     def moveRight(self):
-        self.viewportwidget.viewport.move_right(Constants.PIX_PER_MOVEMENT)
+        self.viewport.move_right(PIX_PER_MOVEMENT)
 
     def moveDown(self):
-        self.viewportwidget.viewport.move_down(Constants.PIX_PER_MOVEMENT)
+        self.viewport.move_down(PIX_PER_MOVEMENT)
         

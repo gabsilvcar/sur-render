@@ -8,9 +8,6 @@ from src.Shapes import *
 
 class Scene:
     def __init__(self):
-        # s = Shape('forma', 0)
-        # s.segments.append(Segment(Coord(0,0), Coord(100,100)))
-
         self.shapes = []
 
     def add_shape(self, shape):

@@ -4,48 +4,36 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
+from src.primitives import Segment
+
 class Color:
-    def __init__(self, name=""):
-        pass 
+    def __init__(self, r, g, b):
+        self.r = r
+        self.g = g 
+        self.b = b
     
     def name(self):
         return "name"
-
-class Coord:
-    def __init__(self, x, y, z=0):
-        self.x = x 
-        self.y = y 
-        self.z = z
-
-
-class Segment:
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
-
 
 class Shape:
     def __init__(self, name, objtype):
         self.name = name
         self.type = objtype
-        self.color = Color("cor")
+        self.color = Color(0,0,0)
 
         self.coordinates = []
         self.segments = []
 
 
 class Point(Shape):
-    def __init__(self, name, p, color):
+    def __init__(self, name, pos):
         super().__init__(name, type(self))
-
-        self.x = x 
-        self.y = y
-
-        self.coordinates.append(p)
+        self.pos = pos
+        self.coordinates.append(pos)
 
 
 class Line(Shape):
-    def __init__(self, name, start, end, color):
+    def __init__(self, name, start, end):
         super().__init__(name, type(self))
 
         self.start = start
@@ -53,19 +41,18 @@ class Line(Shape):
 
         self.coordinates.append(start)
         self.coordinates.append(end)
-        self.segments.append(QtCore.QLine(start, end))
+        self.segments.append(Segment(start, end))
 
-# class Polygon(Shape):
-#     def __init__(self, name, points):
-#         super().__init__(name, type(self))
+class Polygon(Shape):
+    def __init__(self, name, points):
+        super().__init__(name, type(self))
 
-#     def paint(self, painter):
-#         pass 
-    
+        self.coordinates = points
 
+        for a, b in zip(points, points[1:]):
+            self.segments.append(QtCore.QLine(a, b))
 
-
-
+        self.segments.append(QtCore.QLine(points[0], points[-1]))
 
 # class Shape():
 #     def __init__(self, name, position1, position2, color, parent=None):

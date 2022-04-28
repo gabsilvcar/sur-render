@@ -5,120 +5,105 @@ from PyQt5.QtWidgets import QGraphicsView
 import random
 from src.Shapes import *
 from PyQt5.QtWidgets import * 
-  
-# creating a class
-# that inherits the QDialog class
-class AddObject(QWidget):
-    # constructor
-    def __init__(self, viewport_widget, objectview):
-        super(AddObject, self).__init__()
-        self.viewportWidget = viewport_widget
-        # setting window title
-        self.objectview = objectview
-  
-        # setting geometry to the window
-        self.setGeometry(100, 100, 300, 400)
-  
-        # creating a group box
-        self.formGroupBox = QGroupBox("Add Object")
-  
-        # creating spin box to select age
-        self.ageSpinBar = QSpinBox()
-  
-        # creating a line edit
-        self.nameLineEdit = QLineEdit()
-  
-  
-        self.Lx1LineEdit = QLineEdit()
-        self.Rx1LineEdit = QLineEdit()
-        self.Lx2LineEdit = QLineEdit()
-        self.Rx2LineEdit = QLineEdit()
-        self.Ly1LineEdit = QLineEdit()
-        self.Ry1LineEdit = QLineEdit()
-        self.Ly2LineEdit = QLineEdit()
-        self.Ry2LineEdit = QLineEdit()
-        self.Cx1LineEdit = QLineEdit()
-        self.Cy1LineEdit = QLineEdit()
-        self.CRLineEdit = QLineEdit()
 
-        # calling the method that create the form
+from src.primitives import Vector, Segment
+  
+
+class AddObject(QWidget):
+    def __init__(self, viewport, objectview):
+        super(AddObject, self).__init__()
+        self.viewport = viewport
+        self.objectview = objectview
+
+        self.init_ui()
+
+    def init_ui(self):
+        self.setGeometry(100, 100, 300, 400)
+
+        self.nameLineEdit = QLineEdit()
         self.createForm()
-  
-        # creating a dialog button for ok and cancel
-        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok)
-  
-        # adding action when form is accepted
-        self.buttonBox.accepted.connect(self.getInfo)
-  
-        # adding action when form is rejected
-        # self.buttonBox.rejected.connect(self.reject)
-  
-        # creating a vertical layout
-        mainLayout = QVBoxLayout()
-  
-        # adding form group box to the layout
-        mainLayout.addWidget(self.formGroupBox)
-  
-        # adding button box to the layout
-        mainLayout.addWidget(self.buttonBox)
-  
-        # setting lay out
-        self.setLayout(mainLayout)
-  
-    # get info method called when form is accepted
-    def getInfo(self):
+        self.button_ok = QDialogButtonBox(QDialogButtonBox.Ok)
+        self.button_ok.accepted.connect(self.button_ok_callback)
+        
+        self.setLayout(QVBoxLayout())
+        self.layout().addWidget(self.formGroupBox)
+        self.layout().addWidget(self.button_ok)
+
+    def button_ok_callback(self):
   
         # printing the form information
-        print("Current : {0}".format(self.tabs.tabText(self.tabs.currentIndex())))
-        print("Person Name : {0}".format(self.nameLineEdit.text()))
-        print("Age : {0}".format(self.ageSpinBar.text()))
-        print("X1L : {0}".format(self.Lx1LineEdit.text()))
-        print("Y1L : {0}".format(self.Ly1LineEdit.text()))
-        print("X2L : {0}".format(self.Lx2LineEdit.text()))
-        print("Y2L : {0}".format(self.Ly2LineEdit.text()))
-        print("X1R : {0}".format(self.Rx1LineEdit.text()))
-        print("Y1R : {0}".format(self.Ry1LineEdit.text()))
-        print("X2R : {0}".format(self.Rx2LineEdit.text()))
-        print("Y2R : {0}".format(self.Ry2LineEdit.text()))
-        print("X1C : {0}".format(self.Cx1LineEdit.text()))
-        print("Y1C : {0}".format(self.Cy1LineEdit.text()))
-        print("R : {0}".format(self.CRLineEdit.text()))
+        # print("Current : {0}".format(self.tabs.tabText(self.tabs.currentIndex())))
+        # print("Person Name : {0}".format(self.nameLineEdit.text()))
+        # print("Age : {0}".format(self.ageSpinBar.text()))
+        # print("X1L : {0}".format(self.Lx1LineEdit.text()))
+        # print("Y1L : {0}".format(self.Ly1LineEdit.text()))
+        # print("X2L : {0}".format(self.Lx2LineEdit.text()))
+        # print("Y2L : {0}".format(self.Ly2LineEdit.text()))
+        # print("X1R : {0}".format(self.Rx1LineEdit.text()))
+        # print("Y1R : {0}".format(self.Ry1LineEdit.text()))
+        # print("X2R : {0}".format(self.Rx2LineEdit.text()))
+        # print("Y2R : {0}".format(self.Ry2LineEdit.text()))
+        # print("X1C : {0}".format(self.Cx1LineEdit.text()))
+        # print("Y1C : {0}".format(self.Cy1LineEdit.text()))
+        # print("R : {0}".format(self.CRLineEdit.text()))
+
+        widget = self.tabs.currentWidget()
 
         if (self.tabs.tabText(self.tabs.currentIndex()) == "Point"):
-            pos = QtCore.QPoint(int(self.Lx1LineEdit.text()), int(self.Ly1LineEdit.text()))
-            shape = Line(self.nameLineEdit.text(), pos1, color)
-            
+            name = self.nameLineEdit.text()
+            pos = Vector(widget.x(), widget.y())
+            shape = Point(name, pos)
+            self.viewport.scene.add_shape(shape)
 
         if (self.tabs.tabText(self.tabs.currentIndex()) == "Line"):
-            pos1 = QtCore.QPoint(int(self.Lx1LineEdit.text()), int(self.Ly1LineEdit.text()))
-            pos2 = QtCore.QPoint(int(self.Lx2LineEdit.text()), int(self.Ly2LineEdit.text()))
-            length = random.randrange(100)
-            color = QtGui.QColor(*random.choices(range(256), k=3))
-            shape = Line(self.nameLineEdit.text(), pos1, pos2, color)
-            self.viewportWidget.scene.shapes.append(shape)
+            name = self.nameLineEdit.text()
+            s = Vector(widget.x0(), widget.y0())
+            e = Vector(widget.x1(), widget.y1())
+            shape = Line(name, s, e)
+            self.viewport.scene.add_shape(shape)
+
+
+            # pos1 = QtCore.QPoint(widget.x0(), widget.y0())
+            # pos2 = QtCore.QPoint(widget.x1(), widget.y1())
+            # length = random.randrange(100)
+            # color = QtGui.QColor(*random.choices(range(256), k=3))
+            # shape = Line(self.nameLineEdit.text(), pos1, pos2, color)
+            # self.viewport.scene.shapes.append(shape)
+
+        # s = Polygon("Polinho", 
+        #     [
+        #         QtCore.QPoint(0, 0),
+        #         QtCore.QPoint(100, 100),
+        #         QtCore.QPoint(50, 20),
+        #         QtCore.QPoint(10, 40),
+        #     ]
+        # )
+
+        # self.viewport.scene.shapes.append(s)
             
-        if (self.tabs.tabText(self.tabs.currentIndex()) == "Rectangle"):
-            pos1 = QtCore.QPoint(int(self.Lx1LineEdit.text()), int(self.Ly1LineEdit.text()))
-            pos2 = QtCore.QPoint(int(self.Lx2LineEdit.text()), int(self.Ly2LineEdit.text()))
-            length = random.randrange(100)
-            color = QtGui.QColor(*random.choices(range(256), k=3))
-            shape = Rectangle(self.nameLineEdit.text(), pos1, pos2, color)
-            self.viewportWidget.scene.shapes.append(shape)
+        # if (self.tabs.tabText(self.tabs.currentIndex()) == "Rectangle"):
+        #     pos1 = QtCore.QPoint(int(self.Lx1LineEdit.text()), int(self.Ly1LineEdit.text()))
+        #     pos2 = QtCore.QPoint(int(self.Lx2LineEdit.text()), int(self.Ly2LineEdit.text()))
+        #     length = random.randrange(100)
+        #     color = QtGui.QColor(*random.choices(range(256), k=3))
+        #     shape = Rectangle(self.nameLineEdit.text(), pos1, pos2, color)
+        #     self.viewport.scene.shapes.append(shape)
     
-        if (self.tabs.tabText(self.tabs.currentIndex()) == "Circle"):
-            pos = QtCore.QPoint(int(self.Cx1LineEdit.text()), int(self.Cy1LineEdit.text()))
-            length = int(self.CRLineEdit.text())
-            color = QtGui.QColor(*random.choices(range(256), k=3))  
-            print(length, pos, color)          
-            shape = Circle(self.nameLineEdit.text(), length, pos, color)
-            self.viewportWidget.scene.shapes.append(shape)
+        # if (self.tabs.tabText(self.tabs.currentIndex()) == "Circle"):
+        #     pos = QtCore.QPoint(int(self.Cx1LineEdit.text()), int(self.Cy1LineEdit.text()))
+        #     length = int(self.CRLineEdit.text())
+        #     color = QtGui.QColor(*random.choices(range(256), k=3))  
+        #     print(length, pos, color)          
+        #     shape = Circle(self.nameLineEdit.text(), length, pos, color)
+        #     self.viewport.scene.shapes.append(shape)
 
         self.objectview.update()
-        self.viewportWidget.viewport.repaint()
+        self.viewport.repaint()
         
   
     # creat form method
     def createForm(self):
+        self.formGroupBox = QGroupBox("Add Object")
   
         # creating a form layout
         layout = QFormLayout()
@@ -128,10 +113,10 @@ class AddObject(QWidget):
         layout.addRow(QLabel("Name"), self.nameLineEdit)
         
         self.tabs = QTabWidget()
-        self.tabs.addTab(LineWidget(self),"Point")
+        self.tabs.addTab(PointWidget(self),"Point")
         self.tabs.addTab(LineWidget(self),"Line")
-        self.tabs.addTab(RectangleWidget(self),"Rectangle")
-        self.tabs.addTab(CircleWidget(self),"Circle")
+        # self.tabs.addTab(RectangleWidget(self),"Rectangle")
+        # self.tabs.addTab(CircleWidget(self),"Circle")
 
         
         layout.addWidget(self.tabs)
@@ -145,49 +130,69 @@ class AddObject(QWidget):
 class PointWidget(QWidget):
     def __init__(self, parent): 
         super().__init__()
-        layout = QFormLayout()
-        layout.addRow(QLabel("X"), parent.Lx1LineEdit)
-        layout.addRow(QLabel("Y"), parent.Ly1LineEdit)
-        self.setLayout(layout)
+        self.x_line = QLineEdit()
+        self.y_line = QLineEdit()
 
-# class LineWidget(QWidget):
-#     def __init__(self, parent): 
-#         super().__init__()
-#         layout = QFormLayout()
-#         layout.addRow(QLabel("X1"), parent.Lx1LineEdit)
-#         layout.addRow(QLabel("Y1"), parent.Ly1LineEdit)
-#         layout.addRow(QLabel("X2"), parent.Lx2LineEdit)
-#         layout.addRow(QLabel("Y2"), parent.Ly2LineEdit)
-#         self.setLayout(layout)
+        self.setLayout(QFormLayout())
+        self.layout().addRow('X', self.x_line)
+        self.layout().addRow('Y', self.y_line)
+    
+    def x(self):
+        txt = self.x_line.text()
+        return int(txt) if txt else None
+    
+    def y(self):
+        txt = self.y_line.text()
+        return int(txt) if txt else None
 
 class LineWidget(QWidget):
     def __init__(self, parent): 
         super().__init__()
-        layout = QFormLayout()
-        layout.addRow(QLabel("X1"), parent.Lx1LineEdit)
-        layout.addRow(QLabel("Y1"), parent.Ly1LineEdit)
-        layout.addRow(QLabel("X2"), parent.Lx2LineEdit)
-        layout.addRow(QLabel("Y2"), parent.Ly2LineEdit)
-        self.setLayout(layout)
+        self.x0_line = QLineEdit()
+        self.y0_line = QLineEdit()
+        self.x1_line = QLineEdit()
+        self.y1_line = QLineEdit()
 
-class RectangleWidget(QWidget):
-    def __init__(self, parent): 
-        super().__init__()
-        layout = QFormLayout()
-        layout.addRow(QLabel("X1"), parent.Rx1LineEdit)
-        layout.addRow(QLabel("Y1"), parent.Ry1LineEdit)
-        layout.addRow(QLabel("X2"), parent.Rx2LineEdit)
-        layout.addRow(QLabel("Y2"), parent.Ry2LineEdit)
-        self.setLayout(layout)
+        self.setLayout(QFormLayout())
+        self.layout().addRow('X0', self.x0_line)
+        self.layout().addRow('Y0', self.y0_line)
+        self.layout().addRow('X1', self.x1_line)
+        self.layout().addRow('Y1', self.y1_line)
 
-class CircleWidget(QWidget):
-    def __init__(self, parent): 
-        super().__init__()
-        layout = QFormLayout()
-        layout.addRow(QLabel("X1"), parent.Cx1LineEdit)
-        layout.addRow(QLabel("Y1"), parent.Cy1LineEdit)
-        layout.addRow(QLabel("R"), parent.CRLineEdit)
-        self.setLayout(layout)
+    def x0(self):
+        txt = self.x0_line.text()
+        return int(txt) if txt else None
+
+    def y0(self):
+        txt = self.y0_line.text()
+        return int(txt) if txt else None
+
+    def x1(self):
+        txt = self.x1_line.text()
+        return int(txt) if txt else None
+
+    def y1(self):
+        txt = self.y1_line.text()
+        return int(txt) if txt else None
+
+# class RectangleWidget(QWidget):
+#     def __init__(self, parent): 
+#         super().__init__()
+#         layout = QFormLayout()
+#         layout.addRow(QLabel("X1"), parent.Rx1LineEdit)
+#         layout.addRow(QLabel("Y1"), parent.Ry1LineEdit)
+#         layout.addRow(QLabel("X2"), parent.Rx2LineEdit)
+#         layout.addRow(QLabel("Y2"), parent.Ry2LineEdit)
+#         self.setLayout(layout)
+
+# class CircleWidget(QWidget):
+#     def __init__(self, parent): 
+#         super().__init__()
+#         layout = QFormLayout()
+#         layout.addRow(QLabel("X1"), parent.Cx1LineEdit)
+#         layout.addRow(QLabel("Y1"), parent.Cy1LineEdit)
+#         layout.addRow(QLabel("R"), parent.CRLineEdit)
+#         self.setLayout(layout)
 
   
 # main method
