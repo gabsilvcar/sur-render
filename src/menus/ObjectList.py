@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
 from src.Viewport import Viewport
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QBrush, QColor
 from PyQt5.QtCore import Qt, QSize
 
 class ObjectList(QTreeView):
@@ -18,10 +18,10 @@ class ObjectList(QTreeView):
             
     def update(self):
         for i, shape in enumerate(self.scene.shapes):
-            select = QStandardItem()
             name = QStandardItem(str(shape.name))
             types = QStandardItem(str(shape.__class__.__name__))
-            color = QStandardItem(shape.color.name())
+            color = QStandardItem()
+            color.setBackground(QBrush(QColor(*shape.color)))
 
             self.model.setItem(i, 0, name)
             self.model.setItem(i, 1, types)

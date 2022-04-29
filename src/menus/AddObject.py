@@ -1,5 +1,6 @@
 import sys
 import re
+from random import randint
 
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QGraphicsView
@@ -33,20 +34,21 @@ class AddObject(QWidget):
     def button_ok_callback(self):
         name = self.nameLineEdit.text()
         widget = self.tabs.currentWidget()
+        color = tuple(randint(0, 255) for i in range(3))
         shape = None
 
         if isinstance(widget, PointWidget):
             pos = Vector(widget.x(), widget.y())
-            shape = Point(name, pos)
+            shape = Point(name, pos, color)
 
         if isinstance(widget, LineWidget):
             s = Vector(widget.x0(), widget.y0())
             e = Vector(widget.x1(), widget.y1())
-            shape = Line(name, s, e)
+            shape = Line(name, s, e, color)
 
         if isinstance(widget, PolygonWidget):
             vectors = [Vector(p[0], p[1]) for p in widget.data()]
-            shape = Polygon(name, vectors)
+            shape = Polygon(name, vectors, color)
 
         if isinstance(widget, RectangleWidget):
             vectors = [
@@ -55,7 +57,7 @@ class AddObject(QWidget):
                 Vector(widget.x1(), widget.y1()),
                 Vector(widget.x0(), widget.y1()),
             ]
-            shape = Polygon(name, vectors)
+            shape = Polygon(name, vectors, color)
 
         if shape is not None:
             self.viewport.scene.add_shape(shape)
@@ -89,9 +91,23 @@ class PointWidget(QWidget):
         self.x_line = QLineEdit()
         self.y_line = QLineEdit()
 
+        self.random_button = QPushButton('Generate Random')
+        self.random_button.pressed.connect(self.random_button_callback)
+
         self.setLayout(QFormLayout())
         self.layout().addRow('X', self.x_line)
         self.layout().addRow('Y', self.y_line)
+        self.layout().addRow(self.random_button)
+    
+    def random_button_callback(self):
+        lines = [
+            self.x_line,
+            self.y_line,
+        ]
+
+        for line in lines:
+            n = randint(0, 400)
+            line.setText(str(n))
     
     def x(self):
         txt = self.x_line.text()
@@ -109,12 +125,28 @@ class LineWidget(QWidget):
         self.y0_line = QLineEdit()
         self.x1_line = QLineEdit()
         self.y1_line = QLineEdit()
+        
+        self.random_button = QPushButton('Generate Random')
+        self.random_button.pressed.connect(self.random_button_callback)
 
         self.setLayout(QFormLayout())
         self.layout().addRow('X0', self.x0_line)
         self.layout().addRow('Y0', self.y0_line)
         self.layout().addRow('X1', self.x1_line)
         self.layout().addRow('Y1', self.y1_line)
+        self.layout().addRow(self.random_button)
+    
+    def random_button_callback(self):
+        lines = [
+            self.x0_line,
+            self.y0_line,
+            self.x1_line,
+            self.y1_line,
+        ]
+
+        for line in lines:
+            n = randint(0, 400)
+            line.setText(str(n))
 
     def x0(self):
         txt = self.x0_line.text()
@@ -138,9 +170,19 @@ class PolygonWidget(QWidget):
         super().__init__()
         self.line = QLineEdit()
 
+        self.random_button = QPushButton('Generate Random')
+        self.random_button.pressed.connect(self.random_button_callback)
+
         self.setLayout(QFormLayout())
         self.layout().addRow('YourPoints', self.line)
+        self.layout().addRow(self.random_button)
 
+    def random_button_callback(self):
+        n_points = randint(3, 10)
+        points = [(randint(0,400), randint(0,400)) for i in range(n_points)]
+        text =  ''.join(f'{i}, ' for i in points)
+        self.line.setText(text)
+        
     def data(self):
         get_digits = lambda x: tuple(int(i) for i in re.findall(r'\d+', x))
         between_brackets = re.findall(r'\((.*?)\)', self.line.text())
@@ -155,11 +197,27 @@ class RectangleWidget(QWidget):
         self.x1_line = QLineEdit()
         self.y1_line = QLineEdit()
 
+        self.random_button = QPushButton('Generate Random')
+        self.random_button.pressed.connect(self.random_button_callback)
+
         self.setLayout(QFormLayout())
         self.layout().addRow('X0', self.x0_line)
         self.layout().addRow('Y0', self.y0_line)
         self.layout().addRow('X1', self.x1_line)
         self.layout().addRow('Y1', self.y1_line)
+        self.layout().addRow(self.random_button)
+
+    def random_button_callback(self):
+        lines = [
+            self.x0_line,
+            self.y0_line,
+            self.x1_line,
+            self.y1_line,
+        ]
+
+        for line in lines:
+            n = randint(0, 400)
+            line.setText(str(n))
 
     def x0(self):
         txt = self.x0_line.text()

@@ -1,4 +1,4 @@
-import sys, random
+import sys
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
@@ -17,25 +17,23 @@ class Color:
         return "name"
 
 class Shape:
-    def __init__(self, name, objtype):
+    def __init__(self, name, objtype, color=(0,0,0)):
         self.name = name
         self.type = objtype
-        self.color = Color(0,0,0)
+        self.color = color
 
         self.coordinates = []
         self.segments = []
 
-
 class Point(Shape):
-    def __init__(self, name, pos):
-        super().__init__(name, type(self))
+    def __init__(self, name, pos, color=(0,0,0)):
+        super().__init__(name, type(self), color)
         self.pos = pos
         self.coordinates.append(pos)
 
-
 class Line(Shape):
-    def __init__(self, name, start, end):
-        super().__init__(name, type(self))
+    def __init__(self, name, start, end, color=(0,0,0)):
+        super().__init__(name, type(self), color)
 
         self.start = start
         self.end = end
@@ -45,8 +43,8 @@ class Line(Shape):
         self.segments.append(Segment(start, end))
 
 class Polygon(Shape):
-    def __init__(self, name, points):
-        super().__init__(name, type(self))
+    def __init__(self, name, points, color=(0,0,0)):
+        super().__init__(name, type(self), color)
 
         self.coordinates = points
 

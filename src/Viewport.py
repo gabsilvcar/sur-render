@@ -1,6 +1,6 @@
 import sys, random
 from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QTransform        
+from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform        
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
@@ -97,9 +97,11 @@ class Viewport(QWidget):
         pen.setCapStyle(Qt.RoundCap)
 
         painter = QPainter(self)
-        painter.setPen(pen)
 
         for shape in self.scene.shapes:
+            pen.setColor(QColor(*shape.color))
+            painter.setPen(pen)
+
             for point in shape.coordinates:
                 self.draw_point(point, painter)
 
