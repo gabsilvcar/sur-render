@@ -3,7 +3,6 @@ from SurRender.menus.add_object import AddObject
 from SurRender.menus.movement import Movement
 from SurRender.menus.object_list import ObjectList
 from SurRender.menus.zoom import Zoom
-import SurRender.qrc_resources
 
 from SurRender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
 from SurRender.viewport_widget import ViewportWidget
@@ -27,7 +26,7 @@ class MainWindow(QMainWindow):
     def init_ui(self):
         self.resize(WINDOW_HEIGHT, WINDOW_WIDTH)
         self.setWindowTitle(APPLICATION_NAME)
-        self.setWindowIcon(QtGui.QIcon(":logo"))
+        self.setWindowIcon(QtGui.QIcon('resources/logo.jpg'))
         self.centralWidget = ViewportWidget()
         self.setCentralWidget(self.centralWidget)
 
