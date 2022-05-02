@@ -5,10 +5,10 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
-from src.Shapes import *
-from src.Scene import Scene
-from src.primitives import Vector
-from src.math_transforms import (viewport_transform, 
+from SurRender.shapes import *
+from SurRender.scene import Scene
+from SurRender.primitives import Vector
+from SurRender.math_transforms import (viewport_transform, 
                                  translation_matrix, 
                                  scale_matrix, 
                                  rotation_matrix)

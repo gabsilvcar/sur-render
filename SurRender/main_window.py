@@ -1,13 +1,12 @@
 import sys
-from src.menus.AddObject import AddObject
-from src.menus.AddObject import AddObject
-from src.menus.Movement import Movement
-from src.menus.ObjectList import ObjectList
-from src.menus.Zoom import Zoom
-import src.qrc_resources
+from SurRender.menus.add_object import AddObject
+from SurRender.menus.movement import Movement
+from SurRender.menus.object_list import ObjectList
+from SurRender.menus.zoom import Zoom
+import SurRender.qrc_resources
 
-from src.Constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
-from src.ViewportWidget import ViewportWidget
+from SurRender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
+from SurRender.viewport_widget import ViewportWidget
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *

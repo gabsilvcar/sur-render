@@ -2,9 +2,9 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
-from src.Constants import PIX_PER_MOVEMENT
-from src.Scene import Scene
-from src.Viewport import Viewport
+from SurRender.constants import PIX_PER_MOVEMENT
+from SurRender.scene import Scene
+from SurRender.viewport import Viewport
 
 class Movement(QWidget):
     def __init__(self, parent, viewport): 

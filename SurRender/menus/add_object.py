@@ -5,10 +5,10 @@ from random import randint
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QGraphicsView
 import random
-from src.Shapes import *
+from SurRender.shapes import *
 from PyQt5.QtWidgets import * 
 
-from src.primitives import Vector, Segment
+from SurRender.primitives import Vector, Segment
   
 
 class AddObject(QWidget):

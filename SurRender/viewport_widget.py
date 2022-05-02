@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
-from src.Scene import Scene
-from src.Viewport import Viewport
+from SurRender.scene import Scene
+from SurRender.viewport import Viewport
 
 class ViewportWidget(QGroupBox):
     def __init__(self):

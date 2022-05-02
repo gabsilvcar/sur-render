@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
-from src.Constants import ZOOM_FACTOR
-from src.Scene import Scene
-from src.Viewport import Viewport
+from SurRender.constants import ZOOM_FACTOR
+from SurRender.scene import Scene
+from SurRender.viewport import Viewport
 
 class Zoom(QWidget):
     def __init__(self, parent, viewport): 
