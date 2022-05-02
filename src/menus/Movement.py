@@ -1,5 +1,7 @@
-from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import *
+
 from src.Constants import PIX_PER_MOVEMENT
 from src.Scene import Scene
 from src.Viewport import Viewport
@@ -28,7 +30,29 @@ class Movement(QWidget):
         layout.addWidget(self.down, 2, 2)
 
         self.setLayout(layout)
-        
+        self.add_actions()
+
+    def add_actions(self):
+        self.move_up_action = QAction('Up')
+        self.move_down_action = QAction('Down')
+        self.move_left_action = QAction('Left')
+        self.move_right_action = QAction('Right')
+
+        self.move_up_action.setShortcuts([Qt.Key_Up, 'W'])
+        self.move_down_action.setShortcuts([Qt.Key_Down, 'S'])
+        self.move_left_action.setShortcuts([Qt.Key_Left, 'A'])
+        self.move_right_action.setShortcuts([Qt.Key_Right, 'D'])
+
+        self.move_up_action.triggered.connect(self.moveUp)
+        self.move_down_action.triggered.connect(self.moveDown)
+        self.move_left_action.triggered.connect(self.moveLeft)
+        self.move_right_action.triggered.connect(self.moveRight)
+
+        self.addAction(self.move_up_action)
+        self.addAction(self.move_down_action)
+        self.addAction(self.move_left_action)
+        self.addAction(self.move_right_action)
+
     def moveUp(self):
         self.viewport.move_up(PIX_PER_MOVEMENT)
 

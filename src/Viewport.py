@@ -1,4 +1,5 @@
 import sys, random
+import numpy as np 
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform        
 from PyQt5.QtCore import Qt
@@ -6,21 +7,40 @@ from PyQt5.QtWidgets import *
 
 from src.Shapes import *
 from src.Scene import Scene
-from src.math_transforms import viewport_transform
+from src.primitives import Vector
+from src.math_transforms import (viewport_transform, 
+                                 translation_matrix, 
+                                 scale_matrix, 
+                                 rotation_matrix)
 
 class View:
-    def __init__(self, xmin, ymin, xmax, ymax):
-        self.xmin = xmin
-        self.ymin = ymin
-        self.xmax = xmax
-        self.ymax = ymax
+    def __init__(self, start, end):
+        self.min = start
+        self.max = end
 
     def width(self):
-        return self.xmax - self.xmin 
+        return (end - start).x
 
     def height(self):
-        return self.ymax - self.ymin
+        return (end - start).y
+
+    def move(self, delta):
+        matrix = translation_matrix(delta)
+        self.min @= matrix
+        self.max @= matrix
     
+    def middle(self):
+        return (self.min + self.max) / 2
+    
+    def zoom(self, amount, around=None):
+        if around is None:
+            around = Vector(100, 100)
+
+        matrix = scale_matrix(Vector(amount, amount))
+
+        self.min @= matrix
+        self.max @= matrix
+        
     def __str__(self):
         return f"View({self.xmin} {self.ymin}  {self.xmax} {self.ymax})"
 
@@ -31,59 +51,52 @@ class Viewport(QWidget):
         self.scene = Scene()
     
     def zoom_in(self, factor):
-        w = self.win.width() * factor / 2
-        h = self.win.height() * factor / 2
-        self.win.xmin += w
-        self.win.xmax -= w
-        self.win.ymin += h
-        self.win.ymax -= h
+        self.win.zoom(1/factor)
         self.repaint()
 
     def zoom_out(self, factor):
-        w = self.win.width() * factor / 2
-        h = self.win.height() * factor / 2
-        self.win.xmin -= w
-        self.win.xmax += w
-        self.win.ymin -= h
-        self.win.ymax += h
+        self.win.zoom(factor)
         self.repaint()
     
     def move_up(self, amount):
-        self.win.ymin += amount
-        self.win.ymax += amount
+        v = Vector(0, -amount)
+        self.win.move(v)
         self.repaint()
     
     def move_down(self, amount):
-        self.win.ymin -= amount
-        self.win.ymax -= amount
+        v = Vector(0, amount)
+        self.win.move(v)
         self.repaint()
 
     def move_left(self, amount):
-        self.win.xmin += amount
-        self.win.xmax += amount
+        v = Vector(amount, 0)
+        self.win.move(v)
         self.repaint()
 
     def move_right(self, amount):
-        self.win.xmin -= amount
-        self.win.xmax -= amount
+        v = Vector(-amount, 0)
+        self.win.move(v)
         self.repaint()
 
     def draw_point(self, point, painter=None):
         if painter is None:
             painter = QPainter(self)
         point = viewport_transform(point, self.win, self.vp)
-        painter.drawPoint(point.x, point.y)
+        painter.drawPoint(int(point.x), int(point.y))
     
     def draw_segment(self, segment, painter=None):
         if painter is None:
             painter = QPainter(self)
         p0 = viewport_transform(segment.p0, self.win, self.vp)
         p1 = viewport_transform(segment.p1, self.win, self.vp)
-        painter.drawLine(p0.x, p0.y, p1.x, p1.y)
+        painter.drawLine(int(p0.x), int(p0.y), int(p1.x), int(p1.y))
 
     def resizeEvent(self, event):
-        self.vp = View(0, 0, self.width(), self.height())
-        self.win = View(0, 0, self.width(), self.height())
+        self.vp = View(Vector(0,0), 
+                       Vector(self.width(), self.width()))
+
+        self.win = View(Vector(0,0), 
+                        Vector(self.width(), self.width()))
     
     def paintEvent(self, event):
         super().paintEvent(event)

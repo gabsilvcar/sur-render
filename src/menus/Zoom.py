@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
-from src.Constants import ZOOM_IN_FACTOR
+from src.Constants import ZOOM_FACTOR
 from src.Scene import Scene
 from src.Viewport import Viewport
 
@@ -19,9 +19,23 @@ class Zoom(QWidget):
         layout.addWidget(self.zoom_in, 0, 3)
 
         self.setLayout(layout)
+        self.add_actions()
+
+    def add_actions(self):
+        self.zoom_in_action = QAction('zoom in')
+        self.zoom_out_action = QAction('zoom out')
+
+        self.zoom_in_action.setShortcut('+')
+        self.zoom_out_action.setShortcut('-')
+
+        self.zoom_in_action.triggered.connect(self.zoom_in_callback)
+        self.zoom_out_action.triggered.connect(self.zoom_out_callback)
+
+        self.addAction(self.zoom_in_action)
+        self.addAction(self.zoom_out_action)
         
     def zoom_in_callback(self):
-        self.viewport.zoom_in(ZOOM_IN_FACTOR)
+        self.viewport.zoom_in(ZOOM_FACTOR)
 
     def zoom_out_callback(self):
-        self.viewport.zoom_out(ZOOM_IN_FACTOR)
+        self.viewport.zoom_out(ZOOM_FACTOR)
