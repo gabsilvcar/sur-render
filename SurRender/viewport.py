@@ -77,6 +77,11 @@ class Viewport(QWidget):
         v = Vector(-amount, 0)
         self.win.move(v)
         self.repaint()
+        
+    def move_xy(self, x, y):
+        v = Vector(x, y)
+        self.win.move(v)
+        self.repaint()
 
     def draw_point(self, point, painter=None):
         if painter is None:
