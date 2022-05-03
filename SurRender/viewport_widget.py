@@ -1,5 +1,7 @@
+from ast import Constant
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
+from SurRender import constants
 from SurRender.scene import Scene
 from SurRender.viewport import Viewport
 
@@ -33,3 +35,15 @@ class ViewportWidget(QGroupBox):
   
         self.setLayout(layout)
 
+    # def mousePressEvent(self, event):
+    #     self.offset = event.pos()
+        
+    def mouseMoveEvent(self, event):
+        self.viewport.move(event.x(), event.y())
+        
+    def wheelEvent(self,event):
+        x = event.angleDelta().y() / 120
+        if x > 0:
+            self.viewport.zoom_in(constants.ZOOM_FACTOR)
+        elif x < 0:
+            self.viewport.zoom_out(constants.ZOOM_FACTOR)
