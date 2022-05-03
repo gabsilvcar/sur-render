@@ -9,9 +9,9 @@ from SurRender.shapes import *
 from SurRender.scene import Scene
 from SurRender.primitives import Vector
 from SurRender.math_transforms import (viewport_transform, 
-                                 translation_matrix, 
-                                 scale_matrix, 
-                                 rotation_matrix)
+                                       translation_matrix, 
+                                       scale_matrix, 
+                                       rotation_matrix)
 
 class View:
     def __init__(self, start, end):
@@ -42,7 +42,7 @@ class View:
         self.max @= matrix
         
     def __str__(self):
-        return f"View({self.xmin} {self.ymin}  {self.xmax} {self.ymax})"
+        return f"View({self.min} {self.max})"
 
 
 class Viewport(QWidget):
@@ -98,18 +98,14 @@ class Viewport(QWidget):
 
     def resizeEvent(self, event):
         self.vp = View(Vector(0,0), 
-                       Vector(self.width(), self.width()))
-
+                       Vector(self.width(), self.height()))
+    
         self.win = View(Vector(0,0), 
-                        Vector(self.width(), self.width()))
+                        Vector(self.width(), self.height()))
     
     def paintEvent(self, event):
         super().paintEvent(event)
-
-        if self.win is None:
-            self.win = View(0, 0, self.width(), self.height())
-            self.vp = View(0, 0, self.width(), self.height())
-        
+ 
         pen = QPen()
         pen.setWidth(4)
         pen.setCapStyle(Qt.RoundCap)

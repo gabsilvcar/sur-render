@@ -6,11 +6,11 @@ def viewport_transform(vector, source, target):
     x /= source.max.x - source.min.x
     x *= target.max.x - target.min.x
 
-    y = vector.y - - source.min.y
+    y = vector.y - source.min.y
     y /= source.max.y - source.min.y
-    # y = 1 - y
+    y = 1 - y
     y *= target.max.y - target.min.y
-    
+
     return Vector(x, y)
 
 def translation_matrix(delta):
