@@ -1,5 +1,5 @@
 import numpy as np
-from SurRender.primitives import Vector
+from SurRender.vector import Vector
 
 def viewport_transform(vector, source, target):
     x = vector.x - source.min.x

@@ -4,17 +4,8 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
-from SurRender.primitives import Segment
+from SurRender.math_transforms import viewport_transform
 
-
-class Color:
-    def __init__(self, r, g, b):
-        self.r = r
-        self.g = g 
-        self.b = b
-    
-    def name(self):
-        return "name"
 
 class Shape:
     def __init__(self, name, objtype, color=(0,0,0)):
@@ -22,14 +13,14 @@ class Shape:
         self.type = objtype
         self.color = color
 
-        self.coordinates = []
-        self.segments = []
-
 class Point(Shape):
     def __init__(self, name, pos, color=(0,0,0)):
         super().__init__(name, type(self), color)
         self.pos = pos
-        self.coordinates.append(pos)
+
+    def change_viewport(self, source, target):
+        pos = viewport_transform(self.pos, source, target)
+        return Point(self.name, pos, self.color)
 
 class Line(Shape):
     def __init__(self, name, start, end, color=(0,0,0)):
@@ -38,17 +29,16 @@ class Line(Shape):
         self.start = start
         self.end = end
 
-        self.coordinates.append(start)
-        self.coordinates.append(end)
-        self.segments.append(Segment(start, end))
+    def change_viewport(self, source, target):
+        start = viewport_transform(self.start, source, target)
+        end = viewport_transform(self.end, source, target)
+        return Line(self.name, start, end, self.color)
 
 class Polygon(Shape):
     def __init__(self, name, points, color=(0,0,0)):
         super().__init__(name, type(self), color)
+        self.points = points
 
-        self.coordinates = points
-
-        for a, b in zip(points, points[1:]):
-            self.segments.append(Segment(a, b))
-
-        self.segments.append(Segment(points[0], points[-1]))
+    def change_viewport(self, source, target):
+        points = [viewport_transform(i, source, target) for i in self.points]
+        return Polygon(self.name, points, self.color)

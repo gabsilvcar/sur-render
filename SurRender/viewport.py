@@ -5,45 +5,15 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
+from SurRender.utils import adjacents
+from SurRender.view import View
 from SurRender.shapes import *
 from SurRender.scene import Scene
-from SurRender.primitives import Vector
+from SurRender.vector import Vector
 from SurRender.math_transforms import (viewport_transform, 
                                        translation_matrix, 
                                        scale_matrix, 
                                        rotation_matrix)
-
-class View:
-    def __init__(self, start, end):
-        self.min = start
-        self.max = end
-
-    def width(self):
-        return (end - start).x
-
-    def height(self):
-        return (end - start).y
-
-    def move(self, delta):
-        matrix = translation_matrix(delta)
-        self.min @= matrix
-        self.max @= matrix
-    
-    def middle(self):
-        return (self.min + self.max) / 2
-    
-    def zoom(self, amount, around=None):
-        if around is None:
-            around = Vector(100, 100)
-
-        matrix = scale_matrix(Vector(amount, amount))
-
-        self.min @= matrix
-        self.max @= matrix
-        
-    def __str__(self):
-        return f"View({self.min} {self.max})"
-
 
 class Viewport(QWidget):
     def __init__(self):
@@ -83,20 +53,29 @@ class Viewport(QWidget):
         self.win.move(v)
         self.repaint()
 
-    def draw_point(self, point, painter=None):
+    def draw_shape(self, shape, painter=None):
         if painter is None:
             painter = QPainter(self)
-        point = viewport_transform(point, self.win, self.vp)
-        painter.drawPoint(int(point.x), int(point.y))
-    
-    def draw_segment(self, segment, painter=None):
-        if painter is None:
-            painter = QPainter(self)
-        p0 = viewport_transform(segment.p0, self.win, self.vp)
-        p1 = viewport_transform(segment.p1, self.win, self.vp)
-        painter.drawLine(int(p0.x), int(p0.y), int(p1.x), int(p1.y))
+
+        if isinstance(shape, Point):
+            painter.drawPoint(int(shape.pos.x), int(shape.pos.y)) 
+
+        elif isinstance(shape, Line):
+            painter.drawLine(int(shape.start.x), 
+                             int(shape.start.y), 
+                             int(shape.end.x), 
+                             int(shape.end.y))
+        
+        elif isinstance(shape, Polygon):
+            for start, end in adjacents(shape.points, circular=True):
+                painter.drawLine(int(start.x), 
+                                 int(start.y), 
+                                 int(end.x), 
+                                 int(end.y))
 
     def resizeEvent(self, event):
+        super().resizeEvent(event)
+
         self.vp = View(Vector(0,0), 
                        Vector(self.width(), self.height()))
     
@@ -112,12 +91,8 @@ class Viewport(QWidget):
 
         painter = QPainter(self)
 
-        for shape in self.scene.shapes:
+        for shape in self.scene.projected_shapes(self.win, self.vp):
             pen.setColor(QColor(*shape.color))
             painter.setPen(pen)
 
-            for point in shape.coordinates:
-                self.draw_point(point, painter)
-
-            for segment in shape.segments:
-                self.draw_segment(segment, painter)
+            self.draw_shape(shape, painter)

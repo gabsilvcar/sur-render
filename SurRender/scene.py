@@ -9,6 +9,11 @@ from SurRender.shapes import *
 class Scene:
     def __init__(self):
         self.shapes = []
+        self.window = None
+    
+    def projected_shapes(self, origin, target):
+        shapes = [shape.change_viewport(origin, target) for shape in self.shapes]
+        return shapes
 
     def add_shape(self, shape):
         if shape is None:

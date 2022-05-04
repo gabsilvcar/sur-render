@@ -8,7 +8,7 @@ import random
 from SurRender.shapes import *
 from PyQt5.QtWidgets import * 
 
-from SurRender.primitives import Vector, Segment
+from SurRender.vector import Vector
   
 
 class AddObject(QWidget):
