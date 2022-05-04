@@ -19,7 +19,7 @@ class Viewport(QWidget):
     def __init__(self):
         super().__init__()
         self.scene = Scene()
-    
+
     def zoom_in(self, factor):
         self.win.zoom(1/factor)
         self.repaint()

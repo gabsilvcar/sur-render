@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         
     def __createToolBars(self):
         # Object List
-        self.objectview = ObjectList(self.centralWidget.viewport.scene)
+        self.objectview = ObjectList(self.centralWidget.viewport)
         objectListToolBar = QToolBar("Object List", self)
         objectListToolBar.addWidget(self.objectview)
         self.addToolBar(Qt.LeftToolBarArea, objectListToolBar)
