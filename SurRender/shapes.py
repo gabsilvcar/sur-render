@@ -12,6 +12,15 @@ class Shape:
         self.name = name
         self.type = objtype
         self.color = color
+    
+    def move(x, y):
+        pass 
+
+    def scale(x, y, around=0):
+        pass
+    
+    def rotate(x, y, around=0):
+        pass
 
 class Point(Shape):
     def __init__(self, name, pos, color=(0,0,0)):

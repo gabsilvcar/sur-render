@@ -24,6 +24,10 @@ class ObjectList(QWidget):
         self.delete_button.clicked.connect(self.delete_callback)
         self.delete_button.setShortcut(Qt.Key_Delete)
 
+        # self.move = MoveWidget(viewport)
+        # self.scale = ScaleWidget(viewport)
+        # self.rotate = RotateWidget(viewport)
+
         layout = QVBoxLayout()
         layout.addWidget(self.tree)
         layout.addWidget(self.delete_button)
@@ -51,3 +55,4 @@ class ObjectList(QWidget):
     def update(self):
         super().update()
         self.populate_tree()
+
