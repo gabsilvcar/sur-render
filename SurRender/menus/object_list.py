@@ -32,6 +32,9 @@ class ObjectList(QWidget):
         layout.addWidget(self.tree)
         layout.addWidget(self.delete_button)
         self.setLayout(layout)
+    
+    def selected_index(self):
+        return self.tree.currentIndex().row()
 
     def delete_callback(self):
         try:

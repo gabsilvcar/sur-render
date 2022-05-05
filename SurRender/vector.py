@@ -51,6 +51,9 @@ class Vector:
         self.data = (self @ other).data
         return self
 
+    def __neg__(self):
+        return Vector(-self.x, -self.y)
+
     def __str__(self):
         return f'Vector({self.x}, {self.y}, {self.z})'
     

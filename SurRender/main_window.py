@@ -71,10 +71,10 @@ class MainWindow(QMainWindow):
         zoomToolBar.addWidget(Zoom(self, self.centralWidget.viewport))
         self.addToolBar(Qt.LeftToolBarArea, zoomToolBar)
 
-        # Movement
-        movementToolBar = QToolBar("Movement", self)
-        movementToolBar.addWidget(Movement(self, self.centralWidget.viewport))
-        self.addToolBar(Qt.LeftToolBarArea, movementToolBar)
+        # # Movement
+        # movementToolBar = QToolBar("Movement", self)
+        # movementToolBar.addWidget(Movement(self, self.centralWidget.viewport))
+        # self.addToolBar(Qt.LeftToolBarArea, movementToolBar)
 
         # ModifyObject
         modifyObjToolBar = QToolBar("Add Object", self)
