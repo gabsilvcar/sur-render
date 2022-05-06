@@ -98,3 +98,15 @@ class Polygon(Shape):
     def change_viewport(self, source, target):
         points = [viewport_transform(i, source, target) for i in self.points]
         return Polygon(self.name, points, self.color)
+    
+
+class Rectangle(Polygon):
+    def __init__(self, name, start, end, color=(0,0,0)):
+
+        self.p0 = start
+        self.p1 = Vector(start.x, end.y)
+        self.p2 = end
+        self.p3 = Vector(end.x, start.y)
+
+        points = [self.p0, self.p1, self.p2, self.p3]
+        super().__init__(name, points, color)

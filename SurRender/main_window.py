@@ -1,9 +1,10 @@
 import sys
 from SurRender.menus.add_object import AddObject
-from SurRender.menus.movement import Movement
+# from SurRender.menus.movement import Movement
+# from SurRender.menus.zoom import Zoom
 from SurRender.menus.object_list import ObjectList
 from SurRender.menus.modify_object import ModifyObject
-from SurRender.menus.zoom import Zoom
+from SurRender.menus.modify_view import ModifyView
 
 from SurRender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
 from SurRender.viewport_widget import ViewportWidget
@@ -65,19 +66,15 @@ class MainWindow(QMainWindow):
         objectListToolBar = QToolBar("Object List", self)
         objectListToolBar.addWidget(self.objectview)
         self.addToolBar(Qt.LeftToolBarArea, objectListToolBar)
-        
-        # Zoom
-        zoomToolBar = QToolBar("Zoom", self)
-        zoomToolBar.addWidget(Zoom(self, self.centralWidget.viewport))
-        self.addToolBar(Qt.LeftToolBarArea, zoomToolBar)
 
-        # # Movement
-        # movementToolBar = QToolBar("Movement", self)
-        # movementToolBar.addWidget(Movement(self, self.centralWidget.viewport))
-        # self.addToolBar(Qt.LeftToolBarArea, movementToolBar)
+        # ModifyView
+        modifyViewToolBar = QToolBar("Mod View", self)
+        modifyViewToolBar.addWidget(ModifyView(self.centralWidget.viewport))
+        modifyViewToolBar.hide()
+        self.addToolBar(Qt.LeftToolBarArea, modifyViewToolBar)
 
         # ModifyObject
-        modifyObjToolBar = QToolBar("Add Object", self)
+        modifyObjToolBar = QToolBar("Mod Object", self)
         modifyObjToolBar.addWidget(ModifyObject(self.centralWidget.viewport, self.objectview))
         self.addToolBar(Qt.LeftToolBarArea, modifyObjToolBar)
 

@@ -50,18 +50,21 @@ class MoveWidget(QWidget):
         self.setLayout(layout)
 
     def apply_callback(self):
-        x = self.x_line.text()
-        y = self.y_line.text()
+        try:
+            x = self.x_line.text()
+            y = self.y_line.text()
 
-        x = float(x) if x else 0
-        y = float(y) if y else 0
+            x = float(x) if x else 0
+            y = float(y) if y else 0
 
-        i = self.object_list.selected_index()
-        shape = self.viewport.scene.shapes[i]
+            i = self.object_list.selected_index()
+            shape = self.viewport.scene.shapes[i]
 
-        shape.move(Vector(x,y))
-        self.viewport.update()
+            shape.move(Vector(x,y))
+            self.viewport.update()
 
+        except IndexError:
+            pass 
 
 class ScaleWidget(QWidget):
     def __init__(self, viewport, object_list): 
@@ -82,17 +85,20 @@ class ScaleWidget(QWidget):
         self.setLayout(layout)
     
     def apply_callback(self):
-        x = self.x_line.text()
-        y = self.y_line.text()
+        try:
+            x = self.x_line.text()
+            y = self.y_line.text()
 
-        x = float(x) if x else 1
-        y = float(y) if y else 1
+            x = float(x) if x else 1
+            y = float(y) if y else 1
 
-        i = self.object_list.selected_index()
-        shape = self.viewport.scene.shapes[i]
+            i = self.object_list.selected_index()
+            shape = self.viewport.scene.shapes[i]
 
-        shape.scale(Vector(x,y), shape.center())
-        self.viewport.update()
+            shape.scale(Vector(x,y), shape.center())
+            self.viewport.update()
+        except IndexError:
+            pass 
 
 
 class RotateWidget(QWidget):
@@ -128,27 +134,31 @@ class RotateWidget(QWidget):
         self.setLayout(layout)
 
     def apply_callback(self):
-        x = self.x_line.text()
-        y = self.y_line.text()
-        a = self.angle_line.text()
-        x = float(x) if x else 1
-        y = float(y) if y else 1
-        a = float(a) if a else 0
-        a = np.radians(a)
+        try:
+            x = self.x_line.text()
+            y = self.y_line.text()
+            a = self.angle_line.text()
+            x = float(x) if x else 1
+            y = float(y) if y else 1
+            a = float(a) if a else 0
+            a = np.radians(a)
 
-        i = self.object_list.selected_index()
-        shape = self.viewport.scene.shapes[i]
-        txt = self.combobox.currentText()
+            i = self.object_list.selected_index()
+            shape = self.viewport.scene.shapes[i]
+            txt = self.combobox.currentText()
 
-        if txt == 'Rotate Around Origin':
-            around = Vector(0,0)
-        elif txt == 'Rotate Around Center':
-            around = shape.center()
-        elif txt == 'Rotate Around Vector':
-            around = Vector(x,y)
+            if txt == 'Rotate Around Origin':
+                around = Vector(0,0)
+            elif txt == 'Rotate Around Center':
+                around = shape.center()
+            elif txt == 'Rotate Around Vector':
+                around = Vector(x,y)
 
-        shape.rotate(a, around)
-        self.viewport.update()
+            shape.rotate(a, around)
+            self.viewport.update()
+
+        except IndexError:
+            pass 
 
     
     def box_callback(self):

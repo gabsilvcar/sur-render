@@ -1,4 +1,7 @@
 def adjacents(sequence, circular=False):
+    if not sequence:
+        return None
+
     size = len(sequence) - 1
 
     for i in range(size):

@@ -14,129 +14,103 @@ from SurRender.vector import Vector
 class AddObject(QWidget):
     def __init__(self, viewport, objectview):
         super(AddObject, self).__init__()
+
         self.viewport = viewport
         self.objectview = objectview
+        self.create_tabs()
 
-        self.init_ui()
-
-    def init_ui(self):
-        self.setGeometry(100, 100, 300, 400)
-
-        self.nameLineEdit = QLineEdit()
-        self.createForm()
-        self.button_ok = QDialogButtonBox(QDialogButtonBox.Ok)
-        self.button_ok.accepted.connect(self.button_ok_callback)
-        
-        self.setLayout(QVBoxLayout())
-        self.layout().addWidget(self.formGroupBox)
-        self.layout().addWidget(self.button_ok)
-
-    def button_ok_callback(self):
-        name = self.nameLineEdit.text()
-        widget = self.tabs.currentWidget()
-        color = tuple(randint(0, 255) for i in range(3))
-        shape = None
-
-        if isinstance(widget, PointWidget):
-            pos = Vector(widget.x(), widget.y())
-            shape = Point(name, pos, color)
-
-        if isinstance(widget, LineWidget):
-            s = Vector(widget.x0(), widget.y0())
-            e = Vector(widget.x1(), widget.y1())
-            shape = Line(name, s, e, color)
-
-        if isinstance(widget, PolygonWidget):
-            vectors = [Vector(p[0], p[1]) for p in widget.data()]
-            shape = Polygon(name, vectors, color)
-
-        if isinstance(widget, RectangleWidget):
-            vectors = [
-                Vector(widget.x0(), widget.y0()),
-                Vector(widget.x1(), widget.y0()),
-                Vector(widget.x1(), widget.y1()),
-                Vector(widget.x0(), widget.y1()),
-            ]
-            shape = Polygon(name, vectors, color)
-
-        if shape is not None:
-            self.viewport.scene.add_shape(shape)
-            self.objectview.update()
-            self.viewport.repaint()
-        
-    # creat form method
-    def createForm(self):
-        self.formGroupBox = QGroupBox("Add Object")
-  
-        # creating a form layout
-        layout = QFormLayout()
-  
-        # adding rows
-        # for name and adding input text
-        layout.addRow(QLabel("Name"), self.nameLineEdit)
-        
-        self.tabs = QTabWidget()
-        self.tabs.addTab(PointWidget(self), "Point")
-        self.tabs.addTab(LineWidget(self), "Line")
-        self.tabs.addTab(PolygonWidget(self), "Polygon")
-        self.tabs.addTab(RectangleWidget(self),"Rectangle")
-        # self.tabs.addTab(CircleWidget(self),"Circle")
-        
+        layout = QVBoxLayout()
         layout.addWidget(self.tabs)
-        self.formGroupBox.setLayout(layout)
+        self.setLayout(layout)
+
+    def create_tabs(self):
+        self.tabs = QTabWidget()
+        self.tabs.addTab(PointWidget(self.viewport, self.objectview), "Point")
+        self.tabs.addTab(LineWidget(self.viewport, self.objectview), "Line")
+        self.tabs.addTab(PolygonWidget(self.viewport, self.objectview), "Polygon")
+        self.tabs.addTab(RectangleWidget(self.viewport, self.objectview), "Rectangle")
+
   
-class PointWidget(QWidget):
-    def __init__(self, parent): 
+class GenericShapeWidget(QWidget):
+    def __init__(self, viewport, object_list):
         super().__init__()
+
+        self.viewport = viewport
+        self.object_list = object_list
+
+        self.name_line = QLineEdit()
+        self.random_button = QPushButton('Generate Random')
+        self.apply_button = QPushButton('Apply')
+
+        self.random_button.pressed.connect(self.random_callback)
+        self.apply_button.pressed.connect(self.apply_callback)
+
+    def add_shape(self, shape):
+        self.viewport.scene.add_shape(shape)
+        self.object_list.update()
+        self.viewport.repaint()
+
+    def random_callback(self):
+        pass 
+    
+    def apply_callback(self):
+        pass 
+
+
+class PointWidget(GenericShapeWidget):
+    def __init__(self, viewport, object_list): 
+        super().__init__(viewport, object_list)
+
         self.x_line = QLineEdit()
         self.y_line = QLineEdit()
 
-        self.random_button = QPushButton('Generate Random')
-        self.random_button.pressed.connect(self.random_button_callback)
-
-        self.setLayout(QFormLayout())
-        self.layout().addRow('X', self.x_line)
-        self.layout().addRow('Y', self.y_line)
-        self.layout().addRow(self.random_button)
+        layout = QFormLayout()
+        layout.addRow('Name', self.name_line)
+        layout.addRow('X', self.x_line)
+        layout.addRow('Y', self.y_line)
+        layout.addRow(self.random_button)
+        layout.addRow(self.apply_button)
+        self.setLayout(layout)
     
-    def random_button_callback(self):
-        lines = [
-            self.x_line,
-            self.y_line,
-        ]
-
+    def random_callback(self):
+        lines = [self.x_line, self.y_line]
         for line in lines:
             n = randint(0, 400)
             line.setText(str(n))
-    
-    def x(self):
-        txt = self.x_line.text()
-        return int(txt) if txt else None
-    
-    def y(self):
-        txt = self.y_line.text()
-        return int(txt) if txt else None
 
+    def apply_callback(self):
+        try:
+            name = self.name_line.text()
+            color = tuple(randint(0, 255) for i in range(3))
+            x = int(self.x_line.text())
+            y = int(self.y_line.text())
 
-class LineWidget(QWidget):
-    def __init__(self, parent): 
-        super().__init__()
+            pos = Vector(x, y)
+            shape = Point(name, pos, color)
+            self.add_shape(shape)
+        except ValueError:
+            pass
+
+class LineWidget(GenericShapeWidget):
+    def __init__(self, viewport, object_list): 
+        super().__init__(viewport, object_list)
+
         self.x0_line = QLineEdit()
         self.y0_line = QLineEdit()
         self.x1_line = QLineEdit()
         self.y1_line = QLineEdit()
-        
-        self.random_button = QPushButton('Generate Random')
-        self.random_button.pressed.connect(self.random_button_callback)
 
-        self.setLayout(QFormLayout())
-        self.layout().addRow('X0', self.x0_line)
-        self.layout().addRow('Y0', self.y0_line)
-        self.layout().addRow('X1', self.x1_line)
-        self.layout().addRow('Y1', self.y1_line)
-        self.layout().addRow(self.random_button)
+        layout = QFormLayout()
+        layout.addRow('Name', self.name_line)
+        layout.addRow('X0', self.x0_line)
+        layout.addRow('Y0', self.y0_line)
+        layout.addRow('X1', self.x1_line)
+        layout.addRow('Y1', self.y1_line)
+        layout.addRow(self.random_button)
+        layout.addRow(self.apply_button)
+        self.setLayout(layout)
     
-    def random_button_callback(self):
+    def random_callback(self):
         lines = [
             self.x0_line,
             self.y0_line,
@@ -148,66 +122,80 @@ class LineWidget(QWidget):
             n = randint(0, 400)
             line.setText(str(n))
 
-    def x0(self):
-        txt = self.x0_line.text()
-        return int(txt) if txt else None
+    def apply_callback(self):
+        try:
+            name = self.name_line.text()
+            color = tuple(randint(0, 255) for i in range(3))
+            x0 = int(self.x0_line.text())
+            y0 = int(self.y0_line.text())
+            x1 = int(self.x1_line.text())
+            y1 = int(self.y1_line.text())
 
-    def y0(self):
-        txt = self.y0_line.text()
-        return int(txt) if txt else None
-
-    def x1(self):
-        txt = self.x1_line.text()
-        return int(txt) if txt else None
-
-    def y1(self):
-        txt = self.y1_line.text()
-        return int(txt) if txt else None
+            s = Vector(x0, y0)
+            e = Vector(x1, y1)
+            shape = Line(name, s, e, color)
+            self.add_shape(shape)
+        except ValueError:
+            pass
 
 
-class PolygonWidget(QWidget):
-    def __init__(self, parent): 
-        super().__init__()
-        self.line = QLineEdit()
+class PolygonWidget(GenericShapeWidget):
+    def __init__(self, viewport, object_list): 
+        super().__init__(viewport, object_list)
 
-        self.random_button = QPushButton('Generate Random')
-        self.random_button.pressed.connect(self.random_button_callback)
+        self.points_line = QLineEdit()
 
-        self.setLayout(QFormLayout())
-        self.layout().addRow('YourPoints', self.line)
-        self.layout().addRow(self.random_button)
+        layout = QFormLayout()
+        layout.addRow('Name', self.name_line)
+        layout.addRow('Your Points', self.points_line)
+        layout.addRow(self.random_button)
+        layout.addRow(self.apply_button)
+        self.setLayout(layout)
 
-    def random_button_callback(self):
+    def random_callback(self):
         n_points = randint(3, 10)
         points = [(randint(0,400), randint(0,400)) for i in range(n_points)]
         text =  ''.join(f'{i}, ' for i in points)
-        self.line.setText(text)
-        
-    def data(self):
-        get_digits = lambda x: tuple(int(i) for i in re.findall(r'\d+', x))
-        between_brackets = re.findall(r'\((.*?)\)', self.line.text())
-        return [get_digits(i) for i in between_brackets]
+        self.points_line.setText(text)
+    
+    def apply_callback(self):
+        try:
+            get_digits = lambda x: tuple(int(i) for i in re.findall(r'\d+', x))
+            between_brackets = re.findall(r'\((.*?)\)', self.points_line.text())
+            
+            name = self.name_line.text()
+            color = tuple(randint(0, 255) for i in range(3))
+            digits = [get_digits(i) for i in between_brackets]
 
+            vectors = [Vector(p[0], p[1]) for p in digits]
+            shape = Polygon(name, vectors, color)
 
-class RectangleWidget(QWidget):
-    def __init__(self, parent): 
-        super().__init__()
+            if vectors:
+               self.add_shape(shape)
+               
+        except ValueError:
+            pass
+
+class RectangleWidget(GenericShapeWidget):
+    def __init__(self, viewport, object_list): 
+        super().__init__(viewport, object_list)
+
         self.x0_line = QLineEdit()
         self.y0_line = QLineEdit()
         self.x1_line = QLineEdit()
         self.y1_line = QLineEdit()
 
-        self.random_button = QPushButton('Generate Random')
-        self.random_button.pressed.connect(self.random_button_callback)
+        layout = QFormLayout()
+        layout.addRow('Name', self.name_line)
+        layout.addRow('X0', self.x0_line)
+        layout.addRow('Y0', self.y0_line)
+        layout.addRow('X1', self.x1_line)
+        layout.addRow('Y1', self.y1_line)
+        layout.addRow(self.random_button)
+        layout.addRow(self.apply_button)
+        self.setLayout(layout)
 
-        self.setLayout(QFormLayout())
-        self.layout().addRow('X0', self.x0_line)
-        self.layout().addRow('Y0', self.y0_line)
-        self.layout().addRow('X1', self.x1_line)
-        self.layout().addRow('Y1', self.y1_line)
-        self.layout().addRow(self.random_button)
-
-    def random_button_callback(self):
+    def random_callback(self):
         lines = [
             self.x0_line,
             self.y0_line,
@@ -219,43 +207,18 @@ class RectangleWidget(QWidget):
             n = randint(0, 400)
             line.setText(str(n))
 
-    def x0(self):
-        txt = self.x0_line.text()
-        return int(txt) if txt else None
+    def apply_callback(self):
+        try:
+            name = self.name_line.text()
+            color = tuple(randint(0, 255) for i in range(3))
+            x0 = int(self.x0_line.text())
+            y0 = int(self.y0_line.text())
+            x1 = int(self.x1_line.text())
+            y1 = int(self.y1_line.text())
 
-    def y0(self):
-        txt = self.y0_line.text()
-        return int(txt) if txt else None
-
-    def x1(self):
-        txt = self.x1_line.text()
-        return int(txt) if txt else None
-
-    def y1(self):
-        txt = self.y1_line.text()
-        return int(txt) if txt else None
-
-# class CircleWidget(QWidget):
-#     def __init__(self, parent): 
-#         super().__init__()
-#         layout = QFormLayout()
-#         layout.addRow(QLabel("X1"), parent.Cx1LineEdit)
-#         layout.addRow(QLabel("Y1"), parent.Cy1LineEdit)
-#         layout.addRow(QLabel("R"), parent.CRLineEdit)
-#         self.setLayout(layout)
-
-  
-# main method
-if __name__ == '__main__':
-  
-    # create pyqt5 app
-    app = QApplication(sys.argv)
-  
-    # create the instance of our Window
-    window = AddObject()
-  
-    # showing the window
-    window.show()
-  
-    # start the app
-    sys.exit(app.exec())
+            s = Vector(x0, y0)
+            e = Vector(x1, y1)
+            shape = Rectangle(name, s, e, color)
+            self.add_shape(shape)
+        except ValueError:
+            pass

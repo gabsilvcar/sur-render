@@ -1,12 +1,67 @@
-from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt
+from PyQt5 import QtGui
 
-from SurRender.constants import PIX_PER_MOVEMENT
+from SurRender.constants import PIX_PER_MOVEMENT, ZOOM_FACTOR
 from SurRender.scene import Scene
 from SurRender.viewport import Viewport
 
-class Movement(QWidget):
+
+class ModifyView(QWidget):
+    def __init__(self, viewport):
+        super().__init__()
+
+        self.viewport = viewport
+        self.create_tabs()
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.tabs)
+        self.setLayout(layout)
+
+    def create_tabs(self):
+        self.tabs = QTabWidget()
+        self.tabs.addTab(MovementWidget(self, self.viewport), 'Scale')
+        self.tabs.addTab(ZoomWidget(self, self.viewport), 'Move')
+
+
+class ZoomWidget(QWidget):
+    def __init__(self, parent, viewport): 
+        super().__init__()
+        self.viewport = viewport
+        self.zoom_in = QPushButton("+")
+        self.zoom_out = QPushButton("-")
+        self.zoom_in.clicked.connect(self.zoom_in_callback)
+        self.zoom_out.clicked.connect(self.zoom_out_callback)
+        
+        layout = QGridLayout()
+        layout.addWidget(self.zoom_out, 0, 1)
+        layout.addWidget(QLabel('<center><h6>Zoom</h6><\center>'), 0, 2)
+        layout.addWidget(self.zoom_in, 0, 3)
+
+        self.setLayout(layout)
+        self.add_actions()
+
+    def add_actions(self):
+        self.zoom_in_action = QAction('zoom in')
+        self.zoom_out_action = QAction('zoom out')
+
+        self.zoom_in_action.setShortcut('+')
+        self.zoom_out_action.setShortcut('-')
+
+        self.zoom_in_action.triggered.connect(self.zoom_in_callback)
+        self.zoom_out_action.triggered.connect(self.zoom_out_callback)
+
+        self.addAction(self.zoom_in_action)
+        self.addAction(self.zoom_out_action)
+        
+    def zoom_in_callback(self):
+        self.viewport.zoom_in(ZOOM_FACTOR)
+
+    def zoom_out_callback(self):
+        self.viewport.zoom_out(ZOOM_FACTOR)
+
+
+class MovementWidget(QWidget):
     def __init__(self, parent, viewport): 
         super().__init__()
         self.viewport = viewport
@@ -25,7 +80,7 @@ class Movement(QWidget):
         
         layout.addWidget(self.up, 0, 2)
         layout.addWidget(self.left, 1, 1)
-        layout.addWidget(QLabel('<center><h6>Move</h6><\center>', parent), 1, 2)
+        layout.addWidget(QLabel('<center><h6>Move</h6><\center>'), 1, 2)
         layout.addWidget(self.right, 1, 3)
         layout.addWidget(self.down, 2, 2)
 

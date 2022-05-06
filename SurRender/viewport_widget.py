@@ -35,11 +35,13 @@ class ViewportWidget(QGroupBox):
   
         self.setLayout(layout)
 
-    # def mousePressEvent(self, event):
-    #     self.offset = event.pos()
+    def mousePressEvent(self, event):
+        self.start_pos = event.pos()
         
     def mouseMoveEvent(self, event):
-        self.viewport.move(event.x(), event.y())
+        delta = self.start_pos - event.pos() 
+        self.start_pos = event.pos()
+        self.viewport.move_xy(delta.x(), -delta.y())
         
     def wheelEvent(self,event):
         x = event.angleDelta().y() / 120
