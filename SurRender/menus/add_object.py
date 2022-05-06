@@ -41,7 +41,11 @@ class GenericShapeWidget(QWidget):
         self.name_line = QLineEdit()
         self.random_button = QPushButton('Generate Random')
         self.apply_button = QPushButton('Apply')
+        self.color_button = QPushButton('')
+        self.color = (255,0,0)
 
+        self.color_button.setStyleSheet(f'background-color: rgb({self.color[0]},{self.color[1]},{self.color[2]})')
+        self.color_button.pressed.connect(self.color_callback)
         self.random_button.pressed.connect(self.random_callback)
         self.apply_button.pressed.connect(self.apply_callback)
 
@@ -49,6 +53,11 @@ class GenericShapeWidget(QWidget):
         self.viewport.scene.add_shape(shape)
         self.object_list.update()
         self.viewport.repaint()
+
+    def color_callback(self):
+        c = QColorDialog.getColor()
+        self.color = (c.red(), c.green(), c.blue())
+        self.color_button.setStyleSheet(f'background-color: rgb({self.color[0]},{self.color[1]},{self.color[2]})')
 
     def random_callback(self):
         pass 
@@ -68,6 +77,7 @@ class PointWidget(GenericShapeWidget):
         layout.addRow('Name', self.name_line)
         layout.addRow('X', self.x_line)
         layout.addRow('Y', self.y_line)
+        layout.addRow('Color', self.color_button)
         layout.addRow(self.random_button)
         layout.addRow(self.apply_button)
         self.setLayout(layout)
@@ -81,12 +91,11 @@ class PointWidget(GenericShapeWidget):
     def apply_callback(self):
         try:
             name = self.name_line.text()
-            color = tuple(randint(0, 255) for i in range(3))
             x = int(self.x_line.text())
             y = int(self.y_line.text())
 
             pos = Vector(x, y)
-            shape = Point(name, pos, color)
+            shape = Point(name, pos, self.color)
             self.add_shape(shape)
         except ValueError:
             pass
@@ -106,6 +115,7 @@ class LineWidget(GenericShapeWidget):
         layout.addRow('Y0', self.y0_line)
         layout.addRow('X1', self.x1_line)
         layout.addRow('Y1', self.y1_line)
+        layout.addRow('Color', self.color_button)
         layout.addRow(self.random_button)
         layout.addRow(self.apply_button)
         self.setLayout(layout)
@@ -125,7 +135,6 @@ class LineWidget(GenericShapeWidget):
     def apply_callback(self):
         try:
             name = self.name_line.text()
-            color = tuple(randint(0, 255) for i in range(3))
             x0 = int(self.x0_line.text())
             y0 = int(self.y0_line.text())
             x1 = int(self.x1_line.text())
@@ -133,7 +142,7 @@ class LineWidget(GenericShapeWidget):
 
             s = Vector(x0, y0)
             e = Vector(x1, y1)
-            shape = Line(name, s, e, color)
+            shape = Line(name, s, e, self.color)
             self.add_shape(shape)
         except ValueError:
             pass
@@ -148,6 +157,7 @@ class PolygonWidget(GenericShapeWidget):
         layout = QFormLayout()
         layout.addRow('Name', self.name_line)
         layout.addRow('Your Points', self.points_line)
+        layout.addRow('Color', self.color_button)
         layout.addRow(self.random_button)
         layout.addRow(self.apply_button)
         self.setLayout(layout)
@@ -164,11 +174,10 @@ class PolygonWidget(GenericShapeWidget):
             between_brackets = re.findall(r'\((.*?)\)', self.points_line.text())
             
             name = self.name_line.text()
-            color = tuple(randint(0, 255) for i in range(3))
             digits = [get_digits(i) for i in between_brackets]
 
             vectors = [Vector(p[0], p[1]) for p in digits]
-            shape = Polygon(name, vectors, color)
+            shape = Polygon(name, vectors, self.color)
 
             if vectors:
                self.add_shape(shape)
@@ -191,6 +200,7 @@ class RectangleWidget(GenericShapeWidget):
         layout.addRow('Y0', self.y0_line)
         layout.addRow('X1', self.x1_line)
         layout.addRow('Y1', self.y1_line)
+        layout.addRow('Color', self.color_button)
         layout.addRow(self.random_button)
         layout.addRow(self.apply_button)
         self.setLayout(layout)
@@ -210,7 +220,6 @@ class RectangleWidget(GenericShapeWidget):
     def apply_callback(self):
         try:
             name = self.name_line.text()
-            color = tuple(randint(0, 255) for i in range(3))
             x0 = int(self.x0_line.text())
             y0 = int(self.y0_line.text())
             x1 = int(self.x1_line.text())
@@ -218,7 +227,7 @@ class RectangleWidget(GenericShapeWidget):
 
             s = Vector(x0, y0)
             e = Vector(x1, y1)
-            shape = Rectangle(name, s, e, color)
+            shape = Rectangle(name, s, e, self.color)
             self.add_shape(shape)
         except ValueError:
             pass
