@@ -102,6 +102,13 @@ class Polygon(Shape):
 
 class Rectangle(Polygon):
     def __init__(self, name, start, end, color=(0,0,0)):
+        '''
+        p0 ------ p1 
+        |          |
+        |          |
+        |          |
+        p2 ------ p3 
+        '''
 
         self.p0 = start
         self.p1 = Vector(start.x, end.y)

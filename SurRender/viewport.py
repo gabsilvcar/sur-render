@@ -9,7 +9,7 @@ from SurRender.utils import adjacents
 from SurRender.view import View
 from SurRender.shapes import *
 from SurRender.scene import Scene
-from SurRender.vector import Vector
+from SurRender.vector import Vector, angle
 from SurRender.math_transforms import (viewport_transform, 
                                        translation_matrix, 
                                        scale_matrix, 
@@ -76,12 +76,20 @@ class Viewport(QWidget):
     def resizeEvent(self, event):
         super().resizeEvent(event)
 
-        self.vp = View(Vector(0,0), 
-                       Vector(self.width(), self.height()))
-    
-        self.win = View(Vector(0,0), 
-                        Vector(self.width(), self.height()))
-    
+        self.vp = View(
+            Vector(0, self.height()),
+            Vector(self.width(), self.height()),
+            Vector(0,0), 
+            Vector(self.width(), 0),
+        )
+
+        self.win = View(
+            Vector(0, self.height()),
+            Vector(self.width(), self.height()),
+            Vector(0,0), 
+            Vector(self.width(), 0),
+        )
+
     def paintEvent(self, event):
         super().paintEvent(event)
  

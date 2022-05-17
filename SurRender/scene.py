@@ -4,7 +4,7 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 from SurRender.shapes import *
-
+from SurRender.vector import Vector, angle
 
 class Scene:
     def __init__(self):
