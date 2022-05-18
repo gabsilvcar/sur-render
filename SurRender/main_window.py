@@ -32,9 +32,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.centralWidget)
 
     def save_callback(self):
-        print('SALVANDOOOOo')
+        path, _ = QFileDialog.getSaveFileName(self, 'Save File', '', 'Wavefront *.obj')
         viewport = self.centralWidget.viewport
-        viewport.scene.save('teste.obj')
+        if path:
+            viewport.scene.save(path)
 
     def __createActions(self):
         self.newAction = QAction(QtGui.QIcon(":logo"), "&New", self)
