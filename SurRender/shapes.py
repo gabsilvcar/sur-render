@@ -1,4 +1,5 @@
 import sys
+
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
@@ -16,12 +17,24 @@ class Shape:
         self.name = name
         self.type = objtype
         self.color = color
+
+    def points(self):
+        return []
     
     def apply_transform(self, matrix):
-        pass
+        for p in self.points():
+            p.apply_transform(matrix)
 
-    def center(self, matrix):
-        return Vector(0,0)
+    def center(self):
+        pts = self.points()
+        s = Vector(0,0,0)
+
+        for p in pts:
+            s += p
+        
+        if pts:
+            s /= len(pts)
+        return s 
     
     def move(self, vector):
         matrix = translation_matrix(vector)
@@ -49,11 +62,8 @@ class Point(Shape):
         super().__init__(name, type(self), color)
         self.pos = pos
     
-    def center(self):
-        return self.pos
-
-    def apply_transform(self, matrix):
-        self.pos @= matrix
+    def points(self):
+        return [self.pos]
         
     def change_viewport(self, source, target):
         pos = viewport_transform(self.pos, source, target)
@@ -66,12 +76,8 @@ class Line(Shape):
         self.start = start
         self.end = end
     
-    def center(self):
-        return (self.start + self.end) / 2
-
-    def apply_transform(self, matrix):
-        self.start @= matrix
-        self.end @= matrix
+    def points(self):
+        return [self.start, self.end]
 
     def change_viewport(self, source, target):
         start = viewport_transform(self.start, source, target)
@@ -81,22 +87,13 @@ class Line(Shape):
 class Polygon(Shape):
     def __init__(self, name, points, color=(0,0,0)):
         super().__init__(name, type(self), color)
-        self.points = points
+        self.pts = points
     
-    def center(self):
-        s = Vector(0,0,0)
-        for p in self.points:
-            s += p
-        s /= len(self.points)
-        s.data[2] = 1
-        return s 
-
-    def apply_transform(self, matrix):
-        for p in self.points:
-            p @= matrix
+    def points(self):
+        return self.pts
 
     def change_viewport(self, source, target):
-        points = [viewport_transform(i, source, target) for i in self.points]
+        points = [viewport_transform(i, source, target) for i in self.pts]
         return Polygon(self.name, points, self.color)
     
 

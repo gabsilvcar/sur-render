@@ -71,7 +71,7 @@ class Viewport(QWidget):
                              int(shape.end.y))
         
         elif isinstance(shape, Polygon):
-            for start, end in adjacents(shape.points, circular=True):
+            for start, end in adjacents(shape.points(), circular=True):
                 painter.drawLine(int(start.x), 
                                  int(start.y), 
                                  int(end.x), 

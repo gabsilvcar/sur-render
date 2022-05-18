@@ -1,5 +1,5 @@
 import numpy as np
-from SurRender.vector import Vector
+
 
 def viewport_transform(vector, source, target):
     x = vector.x - source.min().x
@@ -11,7 +11,9 @@ def viewport_transform(vector, source, target):
     y = 1 - y
     y *= target.max().y - target.min().y
 
-    return Vector(x, y)
+    vector.x = x
+    vector.y = y
+    return vector
 
 def translation_matrix(delta):
     matrix = np.identity(3)

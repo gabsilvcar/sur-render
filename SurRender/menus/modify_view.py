@@ -22,8 +22,8 @@ class ModifyView(QWidget):
 
     def create_tabs(self):
         self.tabs = QTabWidget()
-        self.tabs.addTab(MovementWidget(self, self.viewport), 'Scale')
-        self.tabs.addTab(ZoomWidget(self, self.viewport), 'Move')
+        self.tabs.addTab(MovementWidget(self, self.viewport), 'Move')
+        self.tabs.addTab(ZoomWidget(self, self.viewport), 'Scale')
         self.tabs.addTab(RotationWidget(self, self.viewport), 'Rotate')
 
 
@@ -133,6 +133,7 @@ class RotationWidget(QWidget):
         self.apply_button = QPushButton("Apply")
 
         self.angle_box.setRange(-360, 360)
+        self.angle_box.setSingleStep(10)
         self.apply_button.clicked.connect(self.apply_callback)
 
         layout = QFormLayout()

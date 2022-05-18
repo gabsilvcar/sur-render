@@ -1,5 +1,5 @@
 from SurRender.math_transforms import translation_matrix, scale_matrix, rotation_matrix
-from SurRender.vector import Vector
+from SurRender.vector import Vector, angle
 
 
 class View:
@@ -51,6 +51,10 @@ class View:
         return (self.p0 + self.p1 + self.p2 + self.p3) / 4
 
     def move(self, delta):
+        around = self.center()
+        a = angle(self.up_vector(), Vector(0,1,0))
+        delta.rotate(-a)
+        
         matrix = translation_matrix(delta)
 
         self.p0 @= matrix
