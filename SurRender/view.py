@@ -63,10 +63,11 @@ class View:
         self.p3 @= matrix
         
     def zoom(self, amount, around=None):
-        if around is None:
-            around = Vector(100, 100)
-
-        matrix = scale_matrix(Vector(amount, amount))
+        around = self.center()
+        t0 = translation_matrix(-around)
+        t1 = translation_matrix(around)
+        s = scale_matrix(Vector(amount, amount))
+        matrix = t0 @ s @ t1
 
         self.p0 @= matrix
         self.p1 @= matrix
