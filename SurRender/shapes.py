@@ -69,6 +69,7 @@ class Point(Shape):
         pos = viewport_transform(self.pos, source, target)
         return Point(self.name, pos, self.color)
 
+
 class Line(Shape):
     def __init__(self, name, start, end, color=(0,0,0)):
         super().__init__(name, type(self), color)
@@ -83,6 +84,7 @@ class Line(Shape):
         start = viewport_transform(self.start, source, target)
         end = viewport_transform(self.end, source, target)
         return Line(self.name, start, end, self.color)
+
 
 class Polygon(Shape):
     def __init__(self, name, points, color=(0,0,0)):

@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
+from SurRender.io.obj_writer import OBJWriter
 from SurRender.utils import adjacents
 from SurRender.view import View
 from SurRender.shapes import *

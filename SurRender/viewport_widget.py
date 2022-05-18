@@ -28,11 +28,7 @@ class ViewportWidget(QGroupBox):
 
     def __createWidgets(self):
         layout = QGridLayout()
-
-        # layout.addWidget(QLabel('<h3>Viewport</h3>', parent=self), 0, 0)
-
         layout.addWidget(self.viewport, 1, 0)
-  
         self.setLayout(layout)
 
     def mousePressEvent(self, event):

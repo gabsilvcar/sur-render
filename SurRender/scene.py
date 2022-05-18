@@ -9,11 +9,17 @@ from PyQt5.QtWidgets import *
 
 from SurRender.shapes import *
 from SurRender.vector import Vector, angle
+from SurRender.io.obj_writer import OBJWriter
+
 
 class Scene:
     def __init__(self):
         self.shapes = []
         self.window = None
+
+    def save(self, path):
+        ow = OBJWriter(self.shapes)
+        ow.write(path)
 
     def ppc_shapes(self, view):
         wc = view.center()

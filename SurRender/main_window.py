@@ -1,16 +1,15 @@
 import sys
-from SurRender.menus.add_object import AddObject
-# from SurRender.menus.movement import Movement
-# from SurRender.menus.zoom import Zoom
-from SurRender.menus.object_list import ObjectList
-from SurRender.menus.modify_object import ModifyObject
-from SurRender.menus.modify_view import ModifyView
 
-from SurRender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
-from SurRender.viewport_widget import ViewportWidget
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
+
+from SurRender.menus.add_object import AddObject
+from SurRender.menus.object_list import ObjectList
+from SurRender.menus.modify_object import ModifyObject
+from SurRender.menus.modify_view import ModifyView
+from SurRender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
+from SurRender.viewport_widget import ViewportWidget
 
 
 class MainWindow(QMainWindow):
@@ -32,6 +31,11 @@ class MainWindow(QMainWindow):
         self.centralWidget = ViewportWidget()
         self.setCentralWidget(self.centralWidget)
 
+    def save_callback(self):
+        print('SALVANDOOOOo')
+        viewport = self.centralWidget.viewport
+        viewport.scene.save('teste.obj')
+
     def __createActions(self):
         self.newAction = QAction(QtGui.QIcon(":logo"), "&New", self)
         self.openAction = QAction("&Open...", self)
@@ -42,6 +46,9 @@ class MainWindow(QMainWindow):
         self.cutAction = QAction("C&ut", self)
         self.helpContentAction = QAction("&Help Content", self)
         self.aboutAction = QAction("&About", self)
+
+        self.saveAction.triggered.connect(self.save_callback)
+
 
     def __createMenuBar(self):
         menuBar = self.menuBar()
