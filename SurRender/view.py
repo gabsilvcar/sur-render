@@ -16,6 +16,21 @@ class View:
         self.p1 = p1
         self.p2 = p2
         self.p3 = p3
+    
+    def ppc(self):
+        w = self.width()
+        h = self.height()
+        v = Vector(-w/2, -h/2)
+
+        ppc = View(
+            Vector(0, h),
+            Vector(w, h),
+            Vector(0,0), 
+            Vector(w, 0)
+        )
+
+        ppc.move(v)
+        return ppc
 
     def min(self):
         return self.p2
@@ -27,10 +42,13 @@ class View:
         return self.p0 - self.p2
 
     def width(self):
-        return (self.max() - self.min()).x.size()
+        return (self.p1 - self.p0).size()
 
     def height(self):
-        return (self.max() - self.min()).y.size()
+        return (self.p0 - self.p2).size()
+    
+    def center(self):
+        return (self.p0 + self.p1 + self.p2 + self.p3) / 4
 
     def move(self, delta):
         matrix = translation_matrix(delta)
@@ -39,10 +57,7 @@ class View:
         self.p1 @= matrix
         self.p2 @= matrix
         self.p3 @= matrix
-    
-    def middle(self):
-        return (self.p0 + self.p1 + self.p2 + self.p3) / 4
-    
+        
     def zoom(self, amount, around=None):
         if around is None:
             around = Vector(100, 100)
@@ -55,17 +70,16 @@ class View:
         self.p3 @= matrix
 
     def rotate(self, angle):
-        around = self.middle()
-
+        around = self.center()
         t0 = translation_matrix(-around)
         t1 = translation_matrix(around)
         r = rotation_matrix(angle)
         matrix = t0 @ r @ t1
 
-        points = [self.p0, self.p1, self.p2, self.p3]
-        for p in points:
-            p @= matrix
-
+        self.p0 @= matrix
+        self.p1 @= matrix
+        self.p2 @= matrix
+        self.p3 @= matrix
         
     def __str__(self):
         return f"View({self.min} {self.max})"

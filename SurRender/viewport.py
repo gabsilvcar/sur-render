@@ -47,6 +47,10 @@ class Viewport(QWidget):
         v = Vector(-amount, 0)
         self.win.move(v)
         self.repaint()
+    
+    def rotate(self, angle):
+        self.win.rotate(angle)
+        self.repaint()
         
     def move_xy(self, x, y):
         v = Vector(x, y)
@@ -76,18 +80,21 @@ class Viewport(QWidget):
     def resizeEvent(self, event):
         super().resizeEvent(event)
 
+        w = self.width()
+        h = self.height()
+
         self.vp = View(
-            Vector(0, self.height()),
-            Vector(self.width(), self.height()),
+            Vector(0, h),
+            Vector(w, h),
             Vector(0,0), 
-            Vector(self.width(), 0),
+            Vector(w, 0),
         )
 
         self.win = View(
-            Vector(0, self.height()),
-            Vector(self.width(), self.height()),
+            Vector(0, h),
+            Vector(w, h),
             Vector(0,0), 
-            Vector(self.width(), 0),
+            Vector(w, 0),
         )
 
     def paintEvent(self, event):
@@ -102,5 +109,4 @@ class Viewport(QWidget):
         for shape in self.scene.projected_shapes(self.win, self.vp):
             pen.setColor(QColor(*shape.color))
             painter.setPen(pen)
-
             self.draw_shape(shape, painter)

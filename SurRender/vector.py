@@ -1,14 +1,10 @@
 import numpy as np
 
 def angle(v0, v1):
-    a = v0.data
-    b = v1.data
-
-    inner = np.inner(a, b)
-    norms = np.linalg.norm(a) * np.linalg.norm(b)
-
-    cos = inner / norms
-    return np.arccos(np.clip(cos, -1.0, 1.0))
+    uv0 = v0.data / np.linalg.norm(v0.data)
+    uv1 = v1.data / np.linalg.norm(v1.data)
+    cos = np.dot(uv0, uv1)
+    return np.arccos(cos)
 
 
 class Vector:

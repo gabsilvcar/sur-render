@@ -4,10 +4,9 @@ from random import randint
 
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QGraphicsView
-import random
-from SurRender.shapes import *
 from PyQt5.QtWidgets import * 
 
+from SurRender.shapes import *
 from SurRender.vector import Vector
   
 
@@ -44,7 +43,7 @@ class GenericShapeWidget(QWidget):
         self.color_button = QPushButton('')
         self.color = (255,0,0)
 
-        self.color_button.setStyleSheet(f'background-color: rgb({self.color[0]},{self.color[1]},{self.color[2]})')
+        self.paint_button(self.color_button, self.color)
         self.color_button.pressed.connect(self.color_callback)
         self.random_button.pressed.connect(self.random_callback)
         self.apply_button.pressed.connect(self.apply_callback)
@@ -57,7 +56,10 @@ class GenericShapeWidget(QWidget):
     def color_callback(self):
         c = QColorDialog.getColor()
         self.color = (c.red(), c.green(), c.blue())
-        self.color_button.setStyleSheet(f'background-color: rgb({self.color[0]},{self.color[1]},{self.color[2]})')
+        self.paint_button(self.color_button, self.color)
+
+    def paint_button(self, button, color):
+        button.setStyleSheet(f'background-color: rgb({color[0]},{color[1]},{color[2]})')
 
     def random_callback(self):
         pass 
@@ -83,6 +85,9 @@ class PointWidget(GenericShapeWidget):
         self.setLayout(layout)
     
     def random_callback(self):
+        self.color = [randint(0,255) for _ in range(3)]
+        self.paint_button(self.color_button, self.color)
+
         lines = [self.x_line, self.y_line]
         for line in lines:
             n = randint(0, 400)
@@ -121,6 +126,9 @@ class LineWidget(GenericShapeWidget):
         self.setLayout(layout)
     
     def random_callback(self):
+        self.color = [randint(0,255) for _ in range(3)]
+        self.paint_button(self.color_button, self.color)
+
         lines = [
             self.x0_line,
             self.y0_line,
@@ -163,6 +171,9 @@ class PolygonWidget(GenericShapeWidget):
         self.setLayout(layout)
 
     def random_callback(self):
+        self.color = [randint(0,255) for _ in range(3)]
+        self.paint_button(self.color_button, self.color)
+
         n_points = randint(3, 10)
         points = [(randint(0,400), randint(0,400)) for i in range(n_points)]
         text =  ''.join(f'{i}, ' for i in points)
@@ -206,6 +217,9 @@ class RectangleWidget(GenericShapeWidget):
         self.setLayout(layout)
 
     def random_callback(self):
+        self.color = [randint(0,255) for _ in range(3)]
+        self.paint_button(self.color_button, self.color)
+
         lines = [
             self.x0_line,
             self.y0_line,

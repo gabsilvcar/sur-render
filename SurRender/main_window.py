@@ -70,18 +70,18 @@ class MainWindow(QMainWindow):
         # ModifyView
         modifyViewToolBar = QToolBar("Mod View", self)
         modifyViewToolBar.addWidget(ModifyView(self.centralWidget.viewport))
-        modifyViewToolBar.hide()
+        # modifyViewToolBar.hide()
         self.addToolBar(Qt.LeftToolBarArea, modifyViewToolBar)
-
-        # ModifyObject
-        modifyObjToolBar = QToolBar("Mod Object", self)
-        modifyObjToolBar.addWidget(ModifyObject(self.centralWidget.viewport, self.objectview))
-        self.addToolBar(Qt.LeftToolBarArea, modifyObjToolBar)
 
         # AddObject
         addObjToolBar = QToolBar("Add Object", self)
         addObjToolBar.addWidget(AddObject(self.centralWidget.viewport, self.objectview))
-        self.addToolBar(Qt.LeftToolBarArea, addObjToolBar)
+        self.addToolBar(Qt.RightToolBarArea, addObjToolBar)
+
+        # ModifyObject
+        modifyObjToolBar = QToolBar("Mod Object", self)
+        modifyObjToolBar.addWidget(ModifyObject(self.centralWidget.viewport, self.objectview))
+        self.addToolBar(Qt.RightToolBarArea, modifyObjToolBar)
 
 
         

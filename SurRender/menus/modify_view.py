@@ -1,3 +1,5 @@
+import numpy as np 
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5 import QtGui
@@ -22,6 +24,7 @@ class ModifyView(QWidget):
         self.tabs = QTabWidget()
         self.tabs.addTab(MovementWidget(self, self.viewport), 'Scale')
         self.tabs.addTab(ZoomWidget(self, self.viewport), 'Move')
+        self.tabs.addTab(RotationWidget(self, self.viewport), 'Rotate')
 
 
 class ZoomWidget(QWidget):
@@ -119,4 +122,25 @@ class MovementWidget(QWidget):
 
     def moveDown(self):
         self.viewport.move_down(PIX_PER_MOVEMENT)
-        
+    
+
+class RotationWidget(QWidget):
+    def __init__(self, parent, viewport):
+        super().__init__()
+        self.viewport = viewport
+
+        self.angle_box = QSpinBox()
+        self.apply_button = QPushButton("Apply")
+
+        self.angle_box.setRange(-360, 360)
+        self.apply_button.clicked.connect(self.apply_callback)
+
+        layout = QFormLayout()
+        layout.addRow('Angle', self.angle_box)
+        layout.addRow('', self.apply_button)
+        self.setLayout(layout)
+    
+    def apply_callback(self):
+        angle = self.angle_box.value()
+        angle = np.radians(angle)
+        self.viewport.rotate(angle)
