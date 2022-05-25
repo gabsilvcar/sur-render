@@ -1,13 +1,15 @@
 import sys
+import numpy as np
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
-from SurRender.vector import Vector
-from SurRender.math_transforms import (viewport_transform,
-                                       translation_matrix,
+from SurRender.vector import Vector, angle
+from SurRender.utils import adjacents
+from SurRender.projection import viewport_transform
+from SurRender.math_transforms import (translation_matrix,
                                        scale_matrix,
                                        rotation_matrix,)
 
@@ -93,6 +95,21 @@ class Polygon(Shape):
     
     def points(self):
         return self.pts
+    
+    def lines(self):
+        for start, end in adjacents(self.points(), circular=True):
+            yield Line('', start, end)
+
+    def surrounds(self, point):
+        last = self.points()[-1] - point
+        a = 0
+
+        for p in self.points():
+            delta = p - point
+            a += angle(last, delta)
+            last = delta
+            
+        return int(np.degrees(a)) % 360 == 0
 
     def change_viewport(self, source, target):
         points = [viewport_transform(i, source, target) for i in self.pts]

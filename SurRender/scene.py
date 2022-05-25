@@ -8,6 +8,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
 from SurRender.shapes import *
+from SurRender.projection import world_to_ppc, clip
 from SurRender.vector import Vector, angle
 from SurRender.io.obj_writer import OBJWriter
 
@@ -15,6 +16,7 @@ from SurRender.io.obj_writer import OBJWriter
 class Scene:
     def __init__(self):
         self.shapes = []
+        self.gliphs = []
         self.window = None
 
     def save(self, path):
@@ -36,11 +38,28 @@ class Scene:
             shapes.append(shape)
 
         return shapes
-    
+
     def projected_shapes(self, origin, target):
-        a = self.ppc_shapes(origin)
-        shapes = [shape.change_viewport(origin.ppc(), target) for shape in a]
+        # a = self.ppc_shapes(origin)
+        shapes = world_to_ppc(self.shapes, origin)
+        shapes = clip(shapes, origin.ppc())
+        shapes = [shape.change_viewport(origin.ppc(), target) for shape in shapes]
         return shapes
+
+    def get_gliphs(self, target):
+        # return self.gliphs
+
+        start = Vector(50,50)
+        end   = Vector(target.width(), target.height()) - start
+
+        rect = Rectangle(
+            "Limits",
+            start, 
+            end,
+            (255,0,0)
+        )
+
+        return [rect]
 
     def add_shape(self, shape):
         if shape is None:
