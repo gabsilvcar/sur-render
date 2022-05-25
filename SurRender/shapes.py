@@ -23,6 +23,9 @@ class Shape:
     def points(self):
         return []
     
+    def clip(self, view):
+        return None
+
     def apply_transform(self, matrix):
         for p in self.points():
             p.apply_transform(matrix)
@@ -89,10 +92,11 @@ class Line(Shape):
 
 
 class Polygon(Shape):
-    def __init__(self, name, points, color=(0,0,0)):
+    def __init__(self, name, points, color=(0,0,0), fill=False):
         super().__init__(name, type(self), color)
         self.pts = points
-    
+        self.fill = fill
+
     def points(self):
         return self.pts
     
@@ -113,11 +117,11 @@ class Polygon(Shape):
 
     def change_viewport(self, source, target):
         points = [viewport_transform(i, source, target) for i in self.pts]
-        return Polygon(self.name, points, self.color)
+        return Polygon(self.name, points, self.color, self.fill)
     
 
 class Rectangle(Polygon):
-    def __init__(self, name, start, end, color=(0,0,0)):
+    def __init__(self, name, start, end, color=(0,0,0), fill=False):
         '''
         p0 ------ p1 
         |          |
@@ -132,4 +136,4 @@ class Rectangle(Polygon):
         self.p3 = Vector(end.x, start.y)
 
         points = [self.p0, self.p1, self.p2, self.p3]
-        super().__init__(name, points, color)
+        super().__init__(name, points, color, fill)

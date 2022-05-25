@@ -161,11 +161,13 @@ class PolygonWidget(GenericShapeWidget):
         super().__init__(viewport, object_list)
 
         self.points_line = QLineEdit()
+        self.fill_box = QCheckBox()
 
         layout = QFormLayout()
         layout.addRow('Name', self.name_line)
         layout.addRow('Your Points', self.points_line)
         layout.addRow('Color', self.color_button)
+        layout.addRow('Fill color', self.fill_box)
         layout.addRow(self.random_button)
         layout.addRow(self.apply_button)
         self.setLayout(layout)
@@ -186,9 +188,10 @@ class PolygonWidget(GenericShapeWidget):
             
             name = self.name_line.text()
             digits = [get_digits(i) for i in between_brackets]
+            fill = bool(self.fill_box.checkState())
 
             vectors = [Vector(p[0], p[1]) for p in digits]
-            shape = Polygon(name, vectors, self.color)
+            shape = Polygon(name, vectors, self.color, fill)
 
             if vectors:
                self.add_shape(shape)
@@ -204,6 +207,7 @@ class RectangleWidget(GenericShapeWidget):
         self.y0_line = QLineEdit()
         self.x1_line = QLineEdit()
         self.y1_line = QLineEdit()
+        self.fill_box = QCheckBox()
 
         layout = QFormLayout()
         layout.addRow('Name', self.name_line)
@@ -212,6 +216,7 @@ class RectangleWidget(GenericShapeWidget):
         layout.addRow('X1', self.x1_line)
         layout.addRow('Y1', self.y1_line)
         layout.addRow('Color', self.color_button)
+        layout.addRow('Fill color', self.fill_box)
         layout.addRow(self.random_button)
         layout.addRow(self.apply_button)
         self.setLayout(layout)
@@ -238,10 +243,11 @@ class RectangleWidget(GenericShapeWidget):
             y0 = int(self.y0_line.text())
             x1 = int(self.x1_line.text())
             y1 = int(self.y1_line.text())
+            fill = bool(self.fill_box.checkState())
 
             s = Vector(x0, y0)
             e = Vector(x1, y1)
-            shape = Rectangle(name, s, e, self.color)
+            shape = Rectangle(name, s, e, self.color, fill)
             self.add_shape(shape)
         except ValueError:
             pass

@@ -78,8 +78,14 @@ class Viewport(QWidget):
         if painter is None:
             painter = QPainter(self)
 
-        for line in polygon.lines():
-            self.draw_line(line, painter)
+        if polygon.fill:
+            poly = QtGui.QPolygonF() 
+            for p in polygon.points():
+                poly.append(QtCore.QPointF(p.x, p.y))
+            painter.drawPolygon(poly)
+        else:
+            for line in polygon.lines():
+                self.draw_line(line, painter)
 
     def draw_shape(self, shape, painter=None):
         if painter is None:
@@ -124,14 +130,21 @@ class Viewport(QWidget):
         pen.setWidth(4)
         pen.setCapStyle(Qt.RoundCap)
 
+        brush = QBrush()
+        brush.setStyle(1)
+
         painter = QPainter(self)
 
         for shape in self.scene.projected_shapes(self.win, self.vp):
             pen.setColor(QColor(*shape.color))
+            brush.setColor(QColor(*shape.color))
             painter.setPen(pen)
+            painter.setBrush(brush)
             self.draw_shape(shape, painter)
 
         for shape in self.scene.get_gliphs(self.vp):
             pen.setColor(QColor(*shape.color))
+            brush.setColor(QColor(*shape.color))
             painter.setPen(pen)
+            painter.setBrush(brush)
             self.draw_shape(shape, painter)
