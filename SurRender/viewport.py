@@ -7,15 +7,11 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
-from SurRender.io.obj_writer import OBJWriter
-from SurRender.view import View
 from SurRender.shapes import *
+from SurRender.view import View
 from SurRender.scene import Scene
 from SurRender.vector import Vector, angle
-from SurRender.projection import viewport_transform
-from SurRender.math_transforms import (translation_matrix, 
-                                       scale_matrix, 
-                                       rotation_matrix)
+
 
 class Viewport(QWidget):
     def __init__(self):

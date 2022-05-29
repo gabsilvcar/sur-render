@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+from copy import deepcopy
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
@@ -9,9 +10,6 @@ from PyQt5.QtWidgets import *
 from SurRender.vector import Vector, angle
 from SurRender.utils import adjacents
 from SurRender.projection import viewport_transform
-from SurRender.math_transforms import (translation_matrix,
-                                       scale_matrix,
-                                       rotation_matrix,)
 
 
 class Shape:
@@ -30,6 +28,12 @@ class Shape:
         for p in self.points():
             p.apply_transform(matrix)
 
+    def change_viewport(self, source, target):
+        v = deepcopy(self)
+        for p in self.points():
+            viewport_transform(p, source, target)
+        return self
+
     def center(self):
         pts = self.points()
         s = Vector(0,0,0)
@@ -40,27 +44,19 @@ class Shape:
         if pts:
             s /= len(pts)
         return s 
-    
+
     def move(self, vector):
-        matrix = translation_matrix(vector)
-        self.apply_transform(matrix)
+        for p in self.points():
+            p.move(vector)
 
-    def scale(self, vector, around=Vector(0,0)):    
-        t0 = translation_matrix(-around)
-        t1 = translation_matrix(around)
-        s = scale_matrix(vector)
-
-        matrix = t0 @ s @ t1
-        self.apply_transform(matrix)
-
-    def rotate(self, angle, around=Vector(0,0)):
-        t0 = translation_matrix(-around)
-        t1 = translation_matrix(around)
-        r = rotation_matrix(angle)
-
-        matrix = t0 @ r @ t1
-        self.apply_transform(matrix)
-
+    def scale(self, vector, around=None):
+        for p in self.points():
+            p.scale(vector, around)
+    
+    def rotate(self, angle, around=None):
+        for p in self.points():
+            p.rotate(angle, around)
+    
         
 class Point(Shape):
     def __init__(self, name, pos, color=(0,0,0)):
@@ -70,10 +66,6 @@ class Point(Shape):
     def points(self):
         return [self.pos]
         
-    def change_viewport(self, source, target):
-        pos = viewport_transform(self.pos, source, target)
-        return Point(self.name, pos, self.color)
-
 
 class Line(Shape):
     def __init__(self, name, start, end, color=(0,0,0)):
@@ -84,11 +76,6 @@ class Line(Shape):
     
     def points(self):
         return [self.start, self.end]
-
-    def change_viewport(self, source, target):
-        start = viewport_transform(self.start, source, target)
-        end = viewport_transform(self.end, source, target)
-        return Line(self.name, start, end, self.color)
 
 
 class Polygon(Shape):
@@ -115,10 +102,6 @@ class Polygon(Shape):
             
         return int(np.degrees(a)) % 360 == 0
 
-    def change_viewport(self, source, target):
-        points = [viewport_transform(i, source, target) for i in self.pts]
-        return Polygon(self.name, points, self.color, self.fill)
-    
 
 class Rectangle(Polygon):
     def __init__(self, name, start, end, color=(0,0,0), fill=False):

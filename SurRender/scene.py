@@ -40,9 +40,7 @@ class Scene:
         return shapes
 
     def projected_shapes(self, origin, target):
-        # a = self.ppc_shapes(origin)
         shapes = world_to_ppc(self.shapes, origin)
-        shapes = clip(shapes, origin.ppc())
         shapes = [shape.change_viewport(origin.ppc(), target) for shape in shapes]
         return shapes
 
