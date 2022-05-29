@@ -32,16 +32,9 @@ def cohen_sutherland(segment, window):
         return segment
 
     if outside_window:
-        return None
-
-    # else if crossing window:
+        return None     
 
     m = (segment.end.y - segment.start.y) / (segment.end.x - segment.start.x)
-
-    left  = Vector(0,0)
-    right = Vector(0,0)
-    up    = Vector(0,0)
-    down  = Vector(0,0)
 
     x = window.min().x
     y = m * (x - segment.start.x) + segment.start.y 
@@ -59,10 +52,21 @@ def cohen_sutherland(segment, window):
     x = segment.start.x + (y - segment.start.y) / m
     down = Vector(x, y)
 
-    return (left, right, up, down)
+    to_test = [segment.start, segment.end, up, down, left, write]
+    avaliable = []
 
+    while to_test and (avaliable < 2):
+        p = to_test.pop()
+        if point_code(p, window) == 0:
+            avaliable.push(p)
+    
+    if len(avaliable) == 2:
+        return Segment(avaliable[0], avaliable[1])
+    else:
+        return None
 
 def clip(shapes, window):
+    return shapes
     clipped = []
     for line in shapes:
         s = cohen_sutherland(line, window)
@@ -71,5 +75,5 @@ def clip(shapes, window):
         print()
         # print(point_code(line.start, window))
         # print(point_code(line.end, window))
-    print('lines inside window:', len(clipped))
+    # print('lines inside window:', len(clipped))
     return shapes

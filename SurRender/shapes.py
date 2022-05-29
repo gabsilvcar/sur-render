@@ -63,6 +63,15 @@ class Point(Shape):
         super().__init__(name, type(self), color)
         self.pos = pos
     
+    def clipped(self, window):
+        inx = window.min().x <= self.pos.x <= window.max().x
+        iny = window.min().y <= self.pos.y <= window.max().y   
+
+        if inx and iny:
+            return deepcopy(self)
+        else:
+            return None
+    
     def points(self):
         return [self.pos]
         
