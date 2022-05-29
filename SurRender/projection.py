@@ -23,11 +23,13 @@ def world_to_ppc(shapes, window):
     uv = window.up_vector()
 
     transformed = []
+    y  = Vector(0,1,0)
+    a  = angle(y, uv) 
+
+    if uv.x < 0:
+        a = -a
 
     for shape in shapes:
-        y  = Vector(0,1,0)
-        a  = angle(uv, y) 
-
         shape = deepcopy(shape)
         shape.move(-wc)
         shape.rotate(a)
