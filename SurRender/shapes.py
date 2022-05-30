@@ -85,23 +85,25 @@ class Line(Shape):
     COHEN_SUTHERLAND = 1
     LIANG_BARSKY = 2
 
-    def __init__(self, name, start, end, color=(0,0,0), clipping_algorithm=1):
+    CLIPPING_ALGORITHM = COHEN_SUTHERLAND
+
+
+    def __init__(self, name, start, end, color=(0,0,0)):
         super().__init__(name, type(self), color)
 
         self.start = start
         self.end = end
-        self.clipping_algorithm = 2
 
     def points(self):
         return [self.start, self.end]
 
     def clipped(self, window):
-        if self.clipping_algorithm == self.COHEN_SUTHERLAND:
+        if self.CLIPPING_ALGORITHM == self.COHEN_SUTHERLAND:
             p = cohen_sutherland(self.start, self.end, window)
-        elif self.clipping_algorithm == self.LIANG_BARSKY:
+        elif self.CLIPPING_ALGORITHM == self.LIANG_BARSKY:
             p = liang_barsky(self.start, self.end, window)
         else:
-            return None
+            return self
             
         if p is None:
             return None

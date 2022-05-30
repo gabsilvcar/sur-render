@@ -7,7 +7,7 @@ from PyQt5 import QtGui
 from SurRender.constants import PIX_PER_MOVEMENT, ZOOM_FACTOR
 from SurRender.scene import Scene
 from SurRender.viewport import Viewport
-
+from SurRender.shapes import Line
 
 class ModifyView(QWidget):
     def __init__(self, viewport):
@@ -25,6 +25,7 @@ class ModifyView(QWidget):
         self.tabs.addTab(MovementWidget(self, self.viewport), 'Move')
         self.tabs.addTab(ZoomWidget(self, self.viewport), 'Scale')
         self.tabs.addTab(RotationWidget(self, self.viewport), 'Rotate')
+        self.tabs.addTab(ClippingWidget(self, self.viewport), 'Clipping')
 
 
 class ZoomWidget(QWidget):
@@ -145,3 +146,34 @@ class RotationWidget(QWidget):
         angle = self.angle_box.value()
         angle = np.radians(angle)
         self.viewport.rotate(angle)
+
+
+class ClippingWidget(QWidget):
+    def __init__(self, parent, viewport):
+        super().__init__()
+        self.viewport = viewport
+
+        self.line_algorithm_buttons = [
+            QRadioButton('Nothing'),
+            QRadioButton('Cohen Sutherland'),
+            QRadioButton('Liang Barsky'),
+        ]
+        self.line_algorithm_buttons[1].setChecked(True)
+
+        self.line_group = QButtonGroup()
+        self.line_group.addButton(self.line_algorithm_buttons[0], 0)
+        self.line_group.addButton(self.line_algorithm_buttons[1], 1)
+        self.line_group.addButton(self.line_algorithm_buttons[2], 2)
+        self.line_group.buttonClicked.connect(self.line_algorithm_callback)
+
+        layout = QVBoxLayout()
+
+        for button in self.line_algorithm_buttons:
+            layout.addWidget(button)
+
+        self.setLayout(layout)
+
+    def line_algorithm_callback(self):
+        i = self.line_group.checkedId()
+        Line.CLIPPING_ALGORITHM = i
+        self.viewport.repaint()
