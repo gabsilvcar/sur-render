@@ -116,6 +116,11 @@ class Line(Shape):
 
 
 class Polygon(Shape):
+    DO_NOT_CLIP = 0
+    WEILER_ATHERTON = 1
+
+    CLIPPING_ALGORITHM = WEILER_ATHERTON
+
     def __init__(self, name, points, color=(0,0,0), fill=False):
         super().__init__(name, type(self), color)
         self.pts = points
@@ -127,6 +132,36 @@ class Polygon(Shape):
     def lines(self):
         for start, end in adjacents(self.points(), circular=True):
             yield Line('', start, end)
+
+    def clipped(self, window):
+        clipped_points = []
+
+        if self.CLIPPING_ALGORITHM == self.DO_NOT_CLIP:
+            return self
+
+        inx = lambda point: window.min().x <= point.x <= window.max().x
+        iny = lambda point: window.min().y <= point.y <= window.max().y
+        inside_window = lambda point: inx(point) and iny(point)
+
+        out = False
+        last = self.points()[-1]
+        for current in self.points():
+            p = liang_barsky(last, current, window)
+            
+            last = current
+            if p is None:
+                continue
+
+            if not inside_window(current):
+                out = True
+            
+            clipped_points.append(p[0])
+            if out:
+                clipped_points.append(p[1])
+
+        c = deepcopy(self)
+        c.pts = clipped_points
+        return c 
 
     def surrounds(self, point):
         last = self.points()[-1] - point

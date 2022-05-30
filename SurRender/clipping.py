@@ -155,4 +155,3 @@ def liang_barsky(p0, p1, window):
         points.append(Vector(x,y))
     
     return points
-

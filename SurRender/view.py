@@ -20,18 +20,6 @@ class View(Polygon):
 
         points = [self.p0, self.p1, self.p2, self.p3]
         super().__init__('', points)
-        
-        if border:
-            self.__margins = deepcopy(self)
-            self.__margins.zoom(border)
-        else:
-            self.__margins = None
-
-    def margins(self):
-        if self.__margins is None:
-            return self
-        else:
-            return self.__margins
 
     def ppc(self):
         w = self.width()

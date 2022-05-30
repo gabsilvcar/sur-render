@@ -7,7 +7,7 @@ from PyQt5 import QtGui
 from SurRender.constants import PIX_PER_MOVEMENT, ZOOM_FACTOR
 from SurRender.scene import Scene
 from SurRender.viewport import Viewport
-from SurRender.shapes import Line
+from SurRender.shapes import Line, Polygon
 
 class ModifyView(QWidget):
     def __init__(self, viewport):
@@ -158,17 +158,36 @@ class ClippingWidget(QWidget):
             QRadioButton('Cohen Sutherland'),
             QRadioButton('Liang Barsky'),
         ]
+
+        self.polygon_algorithm_buttons = [
+            QRadioButton('Nothing'),
+            QRadioButton('Weiler Atherton'),
+        ]
+
         self.line_algorithm_buttons[1].setChecked(True)
+        self.polygon_algorithm_buttons[1].setChecked(True)
 
         self.line_group = QButtonGroup()
-        self.line_group.addButton(self.line_algorithm_buttons[0], 0)
-        self.line_group.addButton(self.line_algorithm_buttons[1], 1)
-        self.line_group.addButton(self.line_algorithm_buttons[2], 2)
+        self.polygon_group = QButtonGroup()
+
+        for i, b in enumerate(self.line_algorithm_buttons):
+            self.line_group.addButton(b, i)
+
+        for i, b in enumerate(self.polygon_algorithm_buttons):
+            self.polygon_group.addButton(b, i)
+
         self.line_group.buttonClicked.connect(self.line_algorithm_callback)
+        self.polygon_group.buttonClicked.connect(self.polygon_algorithm_callback)
 
         layout = QVBoxLayout()
+        # layout = QFormLayout()
 
+        layout.addWidget(QLabel('Line algorithms'))
         for button in self.line_algorithm_buttons:
+            layout.addWidget(button)
+
+        layout.addWidget(QLabel('Polygon algorithms'))
+        for button in self.polygon_algorithm_buttons:
             layout.addWidget(button)
 
         self.setLayout(layout)
@@ -176,4 +195,9 @@ class ClippingWidget(QWidget):
     def line_algorithm_callback(self):
         i = self.line_group.checkedId()
         Line.CLIPPING_ALGORITHM = i
+        self.viewport.repaint()
+    
+    def polygon_algorithm_callback(self):
+        i = self.polygon_group.checkedId()
+        Polygon.CLIPPING_ALGORITHM = i
         self.viewport.repaint()
