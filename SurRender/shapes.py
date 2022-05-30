@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import *
 from SurRender.vector import Vector, angle
 from SurRender.utils import adjacents
 from SurRender.projection import viewport_transform
+from SurRender.clipping import cohen_sutherland
 
 
 class Shape:
@@ -17,6 +18,9 @@ class Shape:
         self.name = name
         self.type = objtype
         self.color = color
+
+    def clipped(self, window):
+        return self
 
     def points(self):
         return []
@@ -63,6 +67,9 @@ class Point(Shape):
         super().__init__(name, type(self), color)
         self.pos = pos
     
+    def points(self):
+        return [self.pos]
+        
     def clipped(self, window):
         inx = window.min().x <= self.pos.x <= window.max().x
         iny = window.min().y <= self.pos.y <= window.max().y   
@@ -71,20 +78,34 @@ class Point(Shape):
             return deepcopy(self)
         else:
             return None
-    
-    def points(self):
-        return [self.pos]
-        
+
 
 class Line(Shape):
-    def __init__(self, name, start, end, color=(0,0,0)):
+    COHEN_SUTHERLAND = 0
+
+    def __init__(self, name, start, end, color=(0,0,0), clipping_algorithm=0):
         super().__init__(name, type(self), color)
 
         self.start = start
         self.end = end
-    
+        self.clipping_algorithm = clipping_algorithm
+
     def points(self):
         return [self.start, self.end]
+
+    def clipped(self, window):
+        p = None
+        if self.clipping_algorithm == self.COHEN_SUTHERLAND:
+            p = cohen_sutherland([self.start, self.end], window)
+
+        if p is None:
+            return None
+
+        l = deepcopy(self)
+        l.start = p[0]
+        l.end = p[1]
+
+        return l
 
 
 class Polygon(Shape):
