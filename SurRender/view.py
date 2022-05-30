@@ -3,7 +3,6 @@ from copy import deepcopy
 from SurRender.vector import Vector, angle
 from SurRender.shapes import Polygon
 
-
 class View(Polygon):
     def __init__(self, p0, p1, p2, p3, border=0):
         '''
@@ -63,6 +62,11 @@ class View(Polygon):
 
     def height(self):
         return (self.p0 - self.p3).size()
+    
+    def move(self, vector):
+        a = angle(self.up_vector(), Vector(0,1,0))
+        vector.rotate(-a)
+        super().move(vector)
 
     def zoom(self, amount, around=None):
         v = Vector(amount, amount)
