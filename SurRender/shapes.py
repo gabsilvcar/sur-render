@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import *
 from SurRender.vector import Vector, angle
 from SurRender.utils import adjacents
 from SurRender.projection import viewport_transform
-from SurRender.clipping import cohen_sutherland
+from SurRender.clipping import cohen_sutherland, liang_barsky
 
 
 class Shape:
@@ -81,23 +81,28 @@ class Point(Shape):
 
 
 class Line(Shape):
-    COHEN_SUTHERLAND = 0
+    DO_NOT_CLIP = 0
+    COHEN_SUTHERLAND = 1
+    LIANG_BARSKY = 2
 
-    def __init__(self, name, start, end, color=(0,0,0), clipping_algorithm=0):
+    def __init__(self, name, start, end, color=(0,0,0), clipping_algorithm=1):
         super().__init__(name, type(self), color)
 
         self.start = start
         self.end = end
-        self.clipping_algorithm = clipping_algorithm
+        self.clipping_algorithm = 2
 
     def points(self):
         return [self.start, self.end]
 
     def clipped(self, window):
-        p = None
         if self.clipping_algorithm == self.COHEN_SUTHERLAND:
-            p = cohen_sutherland([self.start, self.end], window)
-
+            p = cohen_sutherland(self.start, self.end, window)
+        elif self.clipping_algorithm == self.LIANG_BARSKY:
+            p = liang_barsky(self.start, self.end, window)
+        else:
+            return None
+            
         if p is None:
             return None
 
