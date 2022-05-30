@@ -34,8 +34,14 @@ def cohen_sutherland(p0, p1, window):
     if outside_window:
         return None     
 
-    m = (p1.y - p0.y) / (p1.x - p0.x)
+    dx = p1.x - p0.x
+    dy = p1.y - p0.y
 
+    if dx:
+        m = dy / dx
+    else:
+        m = 0
+        
     x = window.min().x
     y = m * (x - p0.x) + p0.y 
     left = Vector(x, y)
@@ -44,13 +50,22 @@ def cohen_sutherland(p0, p1, window):
     y = m * (x - p0.x) + p0.y 
     right = Vector(x, y)
 
-    y = window.max().y
-    x = p0.x + (y - p0.y) / m
-    up = Vector(x, y)
+    if m == 0:
+        y = window.max().y
+        x = p1.x
+        up = Vector(x, y)
 
-    y = window.min().y
-    x = p0.x + (y - p0.y) / m
-    down = Vector(x, y)
+        y = window.min().y
+        x = p0.x
+        down = Vector(x, y)
+    else:
+        y = window.max().y
+        x = p0.x + (y - p0.y) / m
+        up = Vector(x, y)
+
+        y = window.min().y
+        x = p0.x + (y - p0.y) / m
+        down = Vector(x, y)
 
     if rc_start == 0:
         other = point_code(p1, window)
@@ -108,8 +123,12 @@ def liang_barsky(p0, p1, window):
         p0.y - window.min().y,
         window.max().y - p0.y,
         ]
+    
+    for i in range(4):
+        if p[i] == 0 and q[i] < 0:
+            return None
 
-    r = [qk / pk for qk, pk in zip(q, p)]
+    r = [(qk / pk if pk != 0 else 0) for qk, pk in zip(q, p)]
 
     u = [
         max(0, *[r[k] for k in range(4) if p[k] < 0]),
