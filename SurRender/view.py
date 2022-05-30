@@ -1,9 +1,11 @@
+from copy import deepcopy
+
 from SurRender.vector import Vector, angle
 from SurRender.shapes import Polygon
 
 
 class View(Polygon):
-    def __init__(self, p0, p1, p2, p3):
+    def __init__(self, p0, p1, p2, p3, border=0):
         '''
         p0 ------ p1 
         |          |
@@ -19,6 +21,18 @@ class View(Polygon):
 
         points = [self.p0, self.p1, self.p2, self.p3]
         super().__init__('', points)
+        
+        if border:
+            self.__margins = deepcopy(self)
+            self.__margins.zoom(border)
+        else:
+            self.__margins = None
+
+    def margins(self):
+        if self.__margins is None:
+            return self
+        else:
+            return self.__margins
 
     def ppc(self):
         w = self.width()
@@ -49,15 +63,11 @@ class View(Polygon):
 
     def height(self):
         return (self.p0 - self.p3).size()
-        
+
     def zoom(self, amount, around=None):
         v = Vector(amount, amount)
         around = self.center()
         super().scale(v, around)
-
-    def rotate(self, angle):
-        around = self.center()
-        super().rotate(angle, around)
         
     def __str__(self):
         return f"View({self.min()} {self.max()})"

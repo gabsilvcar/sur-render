@@ -40,28 +40,14 @@ class Scene:
         return shapes
 
     def projected_shapes(self, origin, target):
-        w = origin.ppc()
-        w.zoom(0.8)
-
+        m = target.margins()
         shapes = world_to_ppc(self.shapes, origin)
-        shapes = [shape.clipped(w) for shape in shapes if shape.clipped(w) is not None]
         shapes = [shape.change_viewport(origin.ppc(), target) for shape in shapes]
+        shapes = [shape.clipped(m) for shape in shapes if shape.clipped(m) is not None]
         return shapes
 
     def get_gliphs(self, target):
-        # return self.gliphs
-
-        start = Vector(50,50)
-        end   = Vector(target.width(), target.height()) - start
-
-        rect = Rectangle(
-            "Limits",
-            start, 
-            end,
-            (255,0,0)
-        )
-
-        return [rect]
+        return self.gliphs
 
     def add_shape(self, shape):
         if shape is None:

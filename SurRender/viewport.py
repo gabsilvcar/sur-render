@@ -108,6 +108,7 @@ class Viewport(QWidget):
             Vector(w, h),
             Vector(w, 0),
             Vector(0,0), 
+            border = 0.9,
         )
 
         self.win = View(
@@ -117,7 +118,7 @@ class Viewport(QWidget):
             Vector(0,0), 
         )
 
-        self.scene.gliphs = [self.win]
+        self.scene.gliphs = [self.vp.margins()]
 
     def paintEvent(self, event):
         super().paintEvent(event)
