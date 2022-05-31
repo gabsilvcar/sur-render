@@ -1,9 +1,15 @@
 # SurRender
 Implementação de um sistema gráfico interativo em QT
 
-# Graduandos
-Matrículas:
+# Execução
 
-20100524 
+Este repositório gerencia dependências via poetry. Saiba mais em https://python-poetry.org/
 
-19100515 
+
+<b>Instale as dependencias na primeira execução:</b>
+
+        poetry install
+
+<b>Execute:</b>
+
+        poetry run python SurRender.py
