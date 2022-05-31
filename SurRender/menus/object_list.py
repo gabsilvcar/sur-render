@@ -50,7 +50,7 @@ class ObjectList(QWidget):
 
         for i, shape in enumerate(self.scene.shapes):
             name = QStandardItem(str(shape.name))
-            types = QStandardItem(str(shape.__class__.__name__))
+            types = QStandardItem(str(shape.type))
             color = QStandardItem()
             color.setBackground(QBrush(QColor(*shape.color)))
             self.model.appendRow([name, types, color])

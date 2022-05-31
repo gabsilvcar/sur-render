@@ -33,12 +33,3 @@ def world_to_ppc(shapes, window):
         transformed.append(shape)
 
     return transformed
-
-def clip(shapes, window):
-    clipped = []
-
-    for shape in shapes:
-        if window.surrounds(shape.center()):
-            clipped.append(shape)
-
-    return clipped

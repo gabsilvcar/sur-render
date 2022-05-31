@@ -83,6 +83,13 @@ class Viewport(QWidget):
             for line in polygon.lines():
                 self.draw_line(line, painter)
 
+    def draw_curve(self, curve, painter=None):
+        if painter is None:
+            painter = QPainter(self)
+
+        for line in curve.lines():
+            self.draw_line(line, painter)
+
     def draw_shape(self, shape, painter=None):
         if painter is None:
             painter = QPainter(self)
@@ -96,6 +103,8 @@ class Viewport(QWidget):
         elif isinstance(shape, Polygon):
             self.draw_polygon(shape, painter)
 
+        elif isinstance(shape, GenericCurve):
+            self.draw_curve(shape, painter)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

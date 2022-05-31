@@ -11,7 +11,8 @@ from SurRender.vector import Vector, angle
 from SurRender.utils import adjacents
 from SurRender.projection import viewport_transform
 from SurRender.clipping import cohen_sutherland, liang_barsky, sutherland_hodgeman
-
+from SurRender.parametric_curves import bezier
+from SurRender.utils import group_by
 
 class Shape:
     def __init__(self, name, objtype, color=(0,0,0)):
@@ -64,7 +65,7 @@ class Shape:
         
 class Point(Shape):
     def __init__(self, name, pos, color=(0,0,0)):
-        super().__init__(name, type(self), color)
+        super().__init__(name, 'Point', color)
         self.pos = pos
     
     def points(self):
@@ -87,10 +88,8 @@ class Line(Shape):
 
     CLIPPING_ALGORITHM = COHEN_SUTHERLAND
 
-
     def __init__(self, name, start, end, color=(0,0,0)):
-        super().__init__(name, type(self), color)
-
+        super().__init__(name, 'Line', color)
         self.start = start
         self.end = end
 
@@ -121,10 +120,11 @@ class Polygon(Shape):
 
     CLIPPING_ALGORITHM = SUTHERLAND_HODGEMAN
 
-    def __init__(self, name, points, color=(0,0,0), fill=False):
-        super().__init__(name, type(self), color)
+    def __init__(self, name, points, color=(0,0,0), fill=False, closed=True):
+        super().__init__(name, 'Polygon', color)
         self.pts = points
         self.fill = fill
+        self.closed = closed
 
     def points(self):
         return self.pts
@@ -145,16 +145,49 @@ class Polygon(Shape):
         c.pts = clipped_points
         return c 
 
-    def surrounds(self, point):
-        last = self.points()[-1] - point
-        a = 0
 
-        for p in self.points():
-            delta = p - point
-            a += angle(last, delta)
-            last = delta
-            
-        return int(np.degrees(a)) % 360 == 0
+class GenericCurve(Shape):
+    DO_NOT_CLIP = 0
+    SUTHERLAND_HODGEMAN = 1
+
+    CLIPPING_ALGORITHM = DO_NOT_CLIP
+
+    def __init__(self, name, control_points, color=(0,0,0), fill=False):
+        super().__init__(name, 'Curve', color)
+
+
+class Bezier(GenericCurve):
+    def __init__(self, name, control_points, color=(0,0,0)):
+        super().__init__(name, control_points, color, False)
+        self.type = 'Bezier'
+        self.control_points = control_points
+
+    def points(self):
+        return self.control_points
+    
+    def lines(self):
+        for start, end in adjacents(self.blended_points(), circular=False):
+            yield Line('', start, end)
+
+    def blended_points(self, resolution=50):
+        points = []
+        p = self.points()[:4]
+        for i in range(resolution+1):
+            x, y, z = bezier(i/resolution, p)
+            points.append(Vector(x,y,z))
+        return points
+    
+    def clipped(self, window):
+        clipped_points = []
+
+        if self.CLIPPING_ALGORITHM == self.DO_NOT_CLIP:
+            return self
+        elif self.CLIPPING_ALGORITHM == self.SUTHERLAND_HODGEMAN:
+            clipped_points = sutherland_hodgeman(self.blended_points(), window)
+
+        c = deepcopy(self)
+        c.pts = clipped_points
+        return c 
 
 
 class Rectangle(Polygon):
@@ -166,7 +199,6 @@ class Rectangle(Polygon):
         |          |
         p2 ------ p3 
         '''
-
         self.p0 = start
         self.p1 = Vector(start.x, end.y)
         self.p2 = end
@@ -174,3 +206,4 @@ class Rectangle(Polygon):
 
         points = [self.p0, self.p1, self.p2, self.p3]
         super().__init__(name, points, color, fill)
+        self.type = 'Rectangle'
