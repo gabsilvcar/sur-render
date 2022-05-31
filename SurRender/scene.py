@@ -23,22 +23,6 @@ class Scene:
         ow = OBJWriter(self.shapes)
         ow.write(path)
 
-    def ppc_shapes(self, view):
-        wc = view.center()
-        shapes = []
-
-        for shape in self.shapes:
-            uv = view.up_vector()
-            y  = Vector(0,1,0)
-            a  = angle(uv, y) 
-
-            shape = deepcopy(shape)
-            shape.move(-wc)
-            shape.rotate(a)
-            shapes.append(shape)
-
-        return shapes
-
     def projected_shapes(self, origin, target):
         shapes = world_to_ppc(self.shapes, origin)
         shapes = [shape.change_viewport(origin.ppc(), target) for shape in shapes]

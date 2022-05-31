@@ -1,4 +1,5 @@
 from SurRender.vector import Vector
+from SurRender.utils import adjacents
 
 LEFT   = int('0001', 2)
 RIGHT  = int('0010', 2)
@@ -155,3 +156,148 @@ def liang_barsky(p0, p1, window):
         points.append(Vector(x,y))
     
     return points
+
+def cut_min_x(points, minx):
+    points_with_intersection = []
+
+    for p0, p1 in adjacents(points, True):
+        if p0.x < minx < p1.x:
+            delta = p1 - p0
+            if delta.x == 0:
+                continue
+            m = delta.y / delta.x
+            x = minx 
+            y = m * (x - p0.x) + p0.y
+            points_with_intersection.append(Vector(x,y))
+
+        elif p1.x < minx < p0.x:
+            delta = p0 - p1
+            if delta.x == 0:
+                continue
+            m = delta.y / delta.x
+            x = minx 
+            y = m * (x - p1.x) + p1.y
+            points_with_intersection.append(Vector(x,y))
+        
+        points_with_intersection.append(p1)
+
+    clipped = []
+
+    for point in points_with_intersection:
+        if point.x >= minx:
+            clipped.append(point)
+
+    return clipped
+
+def cut_max_x(points, maxx):
+    points_with_intersection = []
+
+    for p0, p1 in adjacents(points, True):
+        if p0.x > maxx > p1.x:
+            delta = p1 - p0
+            if delta.x == 0:
+                continue
+            m = delta.y / delta.x
+            x = maxx 
+            y = m * (x - p0.x) + p0.y
+            points_with_intersection.append(Vector(x,y))
+
+        elif p1.x > maxx > p0.x:
+            delta = p0 - p1
+            if delta.x == 0:
+                continue
+            m = delta.y / delta.x
+            x = maxx 
+            y = m * (x - p1.x) + p1.y
+            points_with_intersection.append(Vector(x,y))
+        
+        points_with_intersection.append(p1)
+        
+    clipped = []
+
+    for point in points_with_intersection:
+        if point.x <= maxx:
+            clipped.append(point)
+
+    return clipped
+
+def cut_min_y(points, miny):
+    points_with_intersection = []
+
+    for p0, p1 in adjacents(points, True):
+        if p0.y < miny < p1.y:
+            delta = p1 - p0
+            if delta.x == 0:
+                y = miny
+                x = p0.x 
+            else:
+                m = delta.y / delta.x
+                y = miny
+                x = p0.x + (y - p0.y) / m
+            points_with_intersection.append(Vector(x,y))
+
+        elif p1.y < miny < p0.y:
+            delta = p0 - p1
+            if delta.x == 0:
+                y = miny
+                x = p1.x
+            else: 
+                m = delta.y / delta.x
+                y = miny
+                x = p1.x + (y - p1.y) / m
+            points_with_intersection.append(Vector(x,y))
+        
+        points_with_intersection.append(p1)
+
+    clipped = []
+
+    for point in points_with_intersection:
+        if point.y >= miny:
+            clipped.append(point)
+
+    return clipped
+
+def cut_max_y(points, maxy):
+    points_with_intersection = []
+
+    for p0, p1 in adjacents(points, True):
+        if p0.y > maxy > p1.y:
+            delta = p1 - p0
+            if delta.x == 0:
+                y = maxy
+                x = p0.x 
+            else:
+                m = delta.y / delta.x
+                y = maxy
+                x = p0.x + (y - p0.y) / m
+            points_with_intersection.append(Vector(x,y))
+
+        elif p1.y > maxy > p0.y:
+            delta = p0 - p1
+            if delta.x == 0:
+                y = maxy
+                x = p1.x
+            else: 
+                m = delta.y / delta.x
+                y = maxy
+                x = p1.x + (y - p1.y) / m
+            points_with_intersection.append(Vector(x,y))
+        
+        points_with_intersection.append(p1)
+
+    clipped = []
+
+    for point in points_with_intersection:
+        if point.y <= maxy:
+            clipped.append(point)
+
+    return clipped
+
+# POLYGON ALGORITHMS 
+def sutherland_hodgeman(points, window):
+    clipped = points
+    clipped = cut_min_x(clipped, window.min().x)
+    clipped = cut_max_x(clipped, window.max().x)
+    clipped = cut_min_y(clipped, window.min().y)
+    clipped = cut_max_y(clipped, window.max().y)
+    return clipped

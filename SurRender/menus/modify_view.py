@@ -161,7 +161,7 @@ class ClippingWidget(QWidget):
 
         self.polygon_algorithm_buttons = [
             QRadioButton('Nothing'),
-            QRadioButton('Weiler Atherton'),
+            QRadioButton('Sutherland Hodgeman'),
         ]
 
         self.line_algorithm_buttons[1].setChecked(True)

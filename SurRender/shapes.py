@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import *
 from SurRender.vector import Vector, angle
 from SurRender.utils import adjacents
 from SurRender.projection import viewport_transform
-from SurRender.clipping import cohen_sutherland, liang_barsky
+from SurRender.clipping import cohen_sutherland, liang_barsky, sutherland_hodgeman
 
 
 class Shape:
@@ -117,9 +117,9 @@ class Line(Shape):
 
 class Polygon(Shape):
     DO_NOT_CLIP = 0
-    WEILER_ATHERTON = 1
+    SUTHERLAND_HODGEMAN = 1
 
-    CLIPPING_ALGORITHM = WEILER_ATHERTON
+    CLIPPING_ALGORITHM = SUTHERLAND_HODGEMAN
 
     def __init__(self, name, points, color=(0,0,0), fill=False):
         super().__init__(name, type(self), color)
@@ -138,26 +138,8 @@ class Polygon(Shape):
 
         if self.CLIPPING_ALGORITHM == self.DO_NOT_CLIP:
             return self
-
-        inx = lambda point: window.min().x <= point.x <= window.max().x
-        iny = lambda point: window.min().y <= point.y <= window.max().y
-        inside_window = lambda point: inx(point) and iny(point)
-
-        out = False
-        last = self.points()[-1]
-        for current in self.points():
-            p = liang_barsky(last, current, window)
-            
-            last = current
-            if p is None:
-                continue
-
-            if not inside_window(current):
-                out = True
-            
-            clipped_points.append(p[0])
-            if out:
-                clipped_points.append(p[1])
+        elif self.CLIPPING_ALGORITHM == self.SUTHERLAND_HODGEMAN:
+            clipped_points = sutherland_hodgeman(self.points(), window)
 
         c = deepcopy(self)
         c.pts = clipped_points
