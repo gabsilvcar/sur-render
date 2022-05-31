@@ -24,10 +24,7 @@ def world_to_ppc(shapes, window):
 
     transformed = []
     y  = Vector(0,1,0)
-    a  = angle(y, uv) 
-
-    if uv.x < 0:
-        a = -a
+    a  = angle(uv, y) 
 
     for shape in shapes:
         shape = deepcopy(shape)

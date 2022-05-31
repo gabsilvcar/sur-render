@@ -8,7 +8,12 @@ def angle(v0, v1):
     uv0 = v0.data / np.linalg.norm(v0.data)
     uv1 = v1.data / np.linalg.norm(v1.data)
     cos = np.dot(uv0, uv1)
-    return np.arccos(cos)
+    a = np.arccos(cos)
+    if v0.x < 0:
+        return -a
+    else:
+        return a 
+
 
 
 class Vector:
