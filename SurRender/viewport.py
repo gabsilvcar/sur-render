@@ -96,6 +96,7 @@ class Viewport(QWidget):
             painter = QPainter(self)
 
         p = curve.as_polygon()
+        p.CLIPPING_ALGORITHM = curve.CLIPPING_ALGORITHM
         self.draw_polygon(p, painter)
 
     def draw_shape(self, shape, painter=None):

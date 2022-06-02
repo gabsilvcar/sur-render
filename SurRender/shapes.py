@@ -64,6 +64,12 @@ class Shape:
     
         
 class Point(Shape):
+    DO_NOT_CLIP = 0
+    TRIVIAL = 1
+
+    CLIPPING_ALGORITHM = TRIVIAL
+
+
     def __init__(self, name, pos, color=(0,0,0)):
         super().__init__(name, 'Point', color)
         self.pos = pos
@@ -72,6 +78,9 @@ class Point(Shape):
         return [self.pos]
         
     def clipped(self, window):
+        if self.CLIPPING_ALGORITHM == self.DO_NOT_CLIP:
+            return self
+            
         inx = window.min().x <= self.pos.x <= window.max().x
         iny = window.min().y <= self.pos.y <= window.max().y   
 
@@ -159,7 +168,7 @@ class GenericCurve(Shape):
     CLOSED = 1
     FILLED = 2 | CLOSED # if it is filled must be closed as well
 
-    CLIPPING_ALGORITHM = DO_NOT_CLIP
+    CLIPPING_ALGORITHM = SUTHERLAND_HODGEMAN
 
     def __init__(self, name, color=(0,0,0), style=CLOSED):
         super().__init__(name, 'Curve', color)
@@ -212,7 +221,10 @@ class Bezier(GenericCurve):
         for start, end in adjacents(self.points(), circular=False):
             delta = end - start
             size = max(size, delta.x, delta.y, delta.z)
-        self.resolution = int(size) // 15 + 1
+        self.set_resolution(int(size) // 15 + 1)
+
+        if self.CLIPPING_ALGORITHM == self.DO_NOT_CLIP:
+            return self
 
         closed = self.style & self.CLOSED
         clipped_points = sutherland_hodgeman(self.blended_points(), window, closed)

@@ -7,7 +7,7 @@ from PyQt5 import QtGui
 from SurRender.constants import PIX_PER_MOVEMENT, ZOOM_FACTOR
 from SurRender.scene import Scene
 from SurRender.viewport import Viewport
-from SurRender.shapes import Line, Polygon
+from SurRender.shapes import *
 
 class ModifyView(QWidget):
     def __init__(self, viewport):
@@ -153,6 +153,11 @@ class ClippingWidget(QWidget):
         super().__init__()
         self.viewport = viewport
 
+        self.point_algorithm_buttons = [
+            QRadioButton('Nothing'),
+            QRadioButton('Trivial'),
+        ]
+
         self.line_algorithm_buttons = [
             QRadioButton('Nothing'),
             QRadioButton('Cohen Sutherland'),
@@ -164,11 +169,23 @@ class ClippingWidget(QWidget):
             QRadioButton('Sutherland Hodgeman'),
         ]
 
+        self.curve_algorithm_buttons = [
+            QRadioButton('Nothing'),
+            QRadioButton('Sutherland Hodgeman'),
+        ]
+
+        self.point_algorithm_buttons[1].setChecked(True)
         self.line_algorithm_buttons[1].setChecked(True)
         self.polygon_algorithm_buttons[1].setChecked(True)
+        self.curve_algorithm_buttons[1].setChecked(True)
 
+        self.point_group = QButtonGroup()
         self.line_group = QButtonGroup()
         self.polygon_group = QButtonGroup()
+        self.curve_group = QButtonGroup()
+
+        for i, b in enumerate(self.point_algorithm_buttons):
+            self.point_group.addButton(b, i)
 
         for i, b in enumerate(self.line_algorithm_buttons):
             self.line_group.addButton(b, i)
@@ -176,21 +193,38 @@ class ClippingWidget(QWidget):
         for i, b in enumerate(self.polygon_algorithm_buttons):
             self.polygon_group.addButton(b, i)
 
+        for i, b in enumerate(self.curve_algorithm_buttons):
+            self.curve_group.addButton(b, i)
+
+        self.point_group.buttonClicked.connect(self.point_algorithm_callback)
         self.line_group.buttonClicked.connect(self.line_algorithm_callback)
         self.polygon_group.buttonClicked.connect(self.polygon_algorithm_callback)
+        self.curve_group.buttonClicked.connect(self.curve_algorithm_callback)
 
         layout = QVBoxLayout()
-        # layout = QFormLayout()
 
-        layout.addWidget(QLabel('Line algorithms'))
+        layout.addWidget(QLabel('Point clipping algorithm'))
+        for button in self.point_algorithm_buttons:
+            layout.addWidget(button)
+
+        layout.addWidget(QLabel('Line clipping algorithm'))
         for button in self.line_algorithm_buttons:
             layout.addWidget(button)
 
-        layout.addWidget(QLabel('Polygon algorithms'))
+        layout.addWidget(QLabel('Polygon clipping algorithm'))
         for button in self.polygon_algorithm_buttons:
             layout.addWidget(button)
 
+        layout.addWidget(QLabel('Curve clipping algorithm'))
+        for button in self.curve_algorithm_buttons:
+            layout.addWidget(button)
+
         self.setLayout(layout)
+
+    def point_algorithm_callback(self):
+        i = self.point_group.checkedId()
+        Point.CLIPPING_ALGORITHM = i
+        self.viewport.repaint()
 
     def line_algorithm_callback(self):
         i = self.line_group.checkedId()
@@ -200,4 +234,9 @@ class ClippingWidget(QWidget):
     def polygon_algorithm_callback(self):
         i = self.polygon_group.checkedId()
         Polygon.CLIPPING_ALGORITHM = i
+        self.viewport.repaint()
+
+    def curve_algorithm_callback(self):
+        i = self.curve_group.checkedId()
+        GenericCurve.CLIPPING_ALGORITHM = i
         self.viewport.repaint()
