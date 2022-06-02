@@ -164,11 +164,24 @@ class PolygonWidget(GenericShapeWidget):
         self.points_line = QLineEdit()
         self.fill_box = QCheckBox()
 
+        self.type_buttons = [
+            QRadioButton('Open'),
+            QRadioButton('Closed'),
+            QRadioButton('Filled'),
+        ]
+        self.type_buttons[0].setChecked(True)
+        self.type_group = QButtonGroup()
+
+        for i, b in enumerate(self.type_buttons):
+            self.type_group.addButton(b, i)
+
         layout = QFormLayout()
         layout.addRow('Name', self.name_line)
         layout.addRow('Your Points', self.points_line)
         layout.addRow('Color', self.color_button)
-        layout.addRow('Fill color', self.fill_box)
+        layout.addRow('', self.type_buttons[0])
+        layout.addRow('', self.type_buttons[1])
+        layout.addRow('', self.type_buttons[2])
         layout.addRow(self.random_button)
         layout.addRow(self.apply_button)
         self.setLayout(layout)
@@ -189,8 +202,13 @@ class PolygonWidget(GenericShapeWidget):
             
             name = self.name_line.text()
             digits = [get_digits(i) for i in between_brackets]
-            fill = bool(self.fill_box.checkState())
-            style = Polygon.FILLED if fill else Polygon.CLOSED
+
+            types = [
+                Polygon.OPEN,
+                Polygon.CLOSED,
+                Polygon.FILLED
+            ]
+            style = types[self.type_group.checkedId()]
 
             vectors = [Vector(p[0], p[1]) for p in digits]
             shape = Polygon(name, vectors, self.color, style)
@@ -275,7 +293,7 @@ class BezierWidget(GenericShapeWidget):
         self.color = [randint(0,255) for _ in range(3)]
         self.paint_button(self.color_button, self.color)
 
-        n_points = randint(1, 2) * 4
+        n_points = randint(1, 5) * 3 + 1
         points = [(randint(0,400), randint(0,400)) for i in range(n_points)]
         text =  ''.join(f'{i}, ' for i in points)
         self.points_line.setText(text)

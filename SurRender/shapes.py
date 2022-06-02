@@ -223,7 +223,7 @@ class Bezier(GenericCurve):
 
 
 class Rectangle(Polygon):
-    def __init__(self, name, start, end, color=(0,0,0), fill=False):
+    def __init__(self, name, start, end, color=(0,0,0), style=1):
         '''
         p0 ------ p1 
         |          |
@@ -237,5 +237,5 @@ class Rectangle(Polygon):
         self.p3 = Vector(end.x, start.y)
 
         points = [self.p0, self.p1, self.p2, self.p3]
-        super().__init__(name, points, color, Polygon.CLOSED)
+        super().__init__(name, points, color, style)
         self.type = 'Rectangle'
