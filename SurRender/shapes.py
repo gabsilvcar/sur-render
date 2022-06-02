@@ -118,19 +118,23 @@ class Polygon(Shape):
     DO_NOT_CLIP = 0
     SUTHERLAND_HODGEMAN = 1
 
+    OPEN = 0
+    CLOSED = 1
+    FILLED = 2 | CLOSED # if it is filled must be closed as well
+
     CLIPPING_ALGORITHM = SUTHERLAND_HODGEMAN
 
-    def __init__(self, name, points, color=(0,0,0), fill=False, closed=True):
+    def __init__(self, name, points, color=(0,0,0), style=CLOSED):
         super().__init__(name, 'Polygon', color)
         self.pts = points
-        self.fill = fill
-        self.closed = closed
+        self.style = style
 
     def points(self):
         return self.pts
     
     def lines(self):
-        for start, end in adjacents(self.points(), circular=True):
+        circular = self.style != self.OPEN
+        for start, end in adjacents(self.points(), circular=circular):
             yield Line('', start, end)
 
     def clipped(self, window):
@@ -139,7 +143,8 @@ class Polygon(Shape):
         if self.CLIPPING_ALGORITHM == self.DO_NOT_CLIP:
             return self
         elif self.CLIPPING_ALGORITHM == self.SUTHERLAND_HODGEMAN:
-            clipped_points = sutherland_hodgeman(self.points(), window)
+            closed = self.style & self.CLOSED
+            clipped_points = sutherland_hodgeman(self.points(), window, closed)
 
         c = deepcopy(self)
         c.pts = clipped_points
@@ -150,22 +155,39 @@ class GenericCurve(Shape):
     DO_NOT_CLIP = 0
     SUTHERLAND_HODGEMAN = 1
 
+    OPEN = 0
+    CLOSED = 1
+    FILLED = 2 | CLOSED # if it is filled must be closed as well
+
     CLIPPING_ALGORITHM = DO_NOT_CLIP
 
-    def __init__(self, name, control_points, color=(0,0,0), fill=False):
+    def __init__(self, name, color=(0,0,0), style=CLOSED):
         super().__init__(name, 'Curve', color)
+        self.style = style
 
 
 class Bezier(GenericCurve):
     def __init__(self, name, control_points, color=(0,0,0)):
-        super().__init__(name, control_points, color, False)
+        super().__init__(name, color, False)
         self.type = 'Bezier'
-        self.control_points = control_points
+        self.resolution = 50
+        self._control_points = control_points
+        self._blended_points = self.set_resolution(self.resolution)
+
+    def set_resolution(self, resolution):
+        self.resolution = resolution
+        self._blended_points = self.blended_points(resolution)
+
+    def as_polygon(self):
+        p = Polygon(self.name, self._blended_points, self.color, Polygon.OPEN)
+        p.CLIPPING_ALGORITHM = self.CLIPPING_ALGORITHM
+        return p
 
     def points(self):
-        return self.control_points
+        return self._control_points
     
     def lines(self):
+        circular = self.style != self.OPEN
         for start, end in adjacents(self.blended_points(), circular=False):
             yield Line('', start, end)
 
@@ -180,13 +202,12 @@ class Bezier(GenericCurve):
     def clipped(self, window):
         clipped_points = []
 
-        if self.CLIPPING_ALGORITHM == self.DO_NOT_CLIP:
-            return self
-        elif self.CLIPPING_ALGORITHM == self.SUTHERLAND_HODGEMAN:
-            clipped_points = sutherland_hodgeman(self.blended_points(), window)
+        size = min(window.width(), window.height())
+        closed = self.style & self.CLOSED
+        clipped_points = sutherland_hodgeman(self.blended_points(), window, closed)
 
         c = deepcopy(self)
-        c.pts = clipped_points
+        c._blended_points = clipped_points
         return c 
 
 
@@ -205,5 +226,5 @@ class Rectangle(Polygon):
         self.p3 = Vector(end.x, start.y)
 
         points = [self.p0, self.p1, self.p2, self.p3]
-        super().__init__(name, points, color, fill)
+        super().__init__(name, points, color, Polygon.CLOSED)
         self.type = 'Rectangle'

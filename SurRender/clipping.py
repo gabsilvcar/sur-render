@@ -157,30 +157,30 @@ def liang_barsky(p0, p1, window):
     
     return points
 
-def cut_min_x(points, minx):
+def cut_min_x(points, minx, closed):
     points_with_intersection = []
 
-    for p0, p1 in adjacents(points, True):
+    for p0, p1 in adjacents(points, closed):
+        points_with_intersection.append(p0)
         if p0.x < minx < p1.x:
             delta = p1 - p0
-            if delta.x == 0:
-                continue
-            m = delta.y / delta.x
-            x = minx 
-            y = m * (x - p0.x) + p0.y
-            points_with_intersection.append(Vector(x,y))
+            if delta.x != 0:
+                m = delta.y / delta.x
+                x = minx 
+                y = m * (x - p0.x) + p0.y
+                points_with_intersection.append(Vector(x,y))
 
         elif p1.x < minx < p0.x:
             delta = p0 - p1
-            if delta.x == 0:
-                continue
-            m = delta.y / delta.x
-            x = minx 
-            y = m * (x - p1.x) + p1.y
-            points_with_intersection.append(Vector(x,y))
-        
-        points_with_intersection.append(p1)
+            if delta.x != 0:
+                m = delta.y / delta.x
+                x = minx 
+                y = m * (x - p1.x) + p1.y
+                points_with_intersection.append(Vector(x,y))
 
+    if not closed and points:
+        points_with_intersection.append(points[-1])
+    
     clipped = []
 
     for point in points_with_intersection:
@@ -189,30 +189,31 @@ def cut_min_x(points, minx):
 
     return clipped
 
-def cut_max_x(points, maxx):
+def cut_max_x(points, maxx, closed):
     points_with_intersection = []
 
-    for p0, p1 in adjacents(points, True):
+    for p0, p1 in adjacents(points, closed):
+        points_with_intersection.append(p0)
+
         if p0.x > maxx > p1.x:
             delta = p1 - p0
-            if delta.x == 0:
-                continue
-            m = delta.y / delta.x
-            x = maxx 
-            y = m * (x - p0.x) + p0.y
-            points_with_intersection.append(Vector(x,y))
+            if delta.x != 0:
+                m = delta.y / delta.x
+                x = maxx 
+                y = m * (x - p0.x) + p0.y
+                points_with_intersection.append(Vector(x,y))
 
         elif p1.x > maxx > p0.x:
             delta = p0 - p1
-            if delta.x == 0:
-                continue
-            m = delta.y / delta.x
-            x = maxx 
-            y = m * (x - p1.x) + p1.y
+            if delta.x != 0:
+                m = delta.y / delta.x
+                x = maxx 
+                y = m * (x - p1.x) + p1.y
             points_with_intersection.append(Vector(x,y))
-        
-        points_with_intersection.append(p1)
-        
+
+    if not closed and points:
+        points_with_intersection.append(points[-1])
+
     clipped = []
 
     for point in points_with_intersection:
@@ -221,10 +222,12 @@ def cut_max_x(points, maxx):
 
     return clipped
 
-def cut_min_y(points, miny):
+def cut_min_y(points, miny, closed):
     points_with_intersection = []
 
-    for p0, p1 in adjacents(points, True):
+    for p0, p1 in adjacents(points, closed):
+        points_with_intersection.append(p0)
+
         if p0.y < miny < p1.y:
             delta = p1 - p0
             if delta.x == 0:
@@ -246,8 +249,9 @@ def cut_min_y(points, miny):
                 y = miny
                 x = p1.x + (y - p1.y) / m
             points_with_intersection.append(Vector(x,y))
-        
-        points_with_intersection.append(p1)
+
+    if not closed and points:
+        points_with_intersection.append(points[-1])
 
     clipped = []
 
@@ -257,10 +261,12 @@ def cut_min_y(points, miny):
 
     return clipped
 
-def cut_max_y(points, maxy):
+def cut_max_y(points, maxy, closed):
     points_with_intersection = []
 
-    for p0, p1 in adjacents(points, True):
+    for p0, p1 in adjacents(points, closed):
+        points_with_intersection.append(p0)
+
         if p0.y > maxy > p1.y:
             delta = p1 - p0
             if delta.x == 0:
@@ -282,8 +288,9 @@ def cut_max_y(points, maxy):
                 y = maxy
                 x = p1.x + (y - p1.y) / m
             points_with_intersection.append(Vector(x,y))
-        
-        points_with_intersection.append(p1)
+
+    if not closed and points:
+        points_with_intersection.append(points[-1])
 
     clipped = []
 
@@ -294,10 +301,10 @@ def cut_max_y(points, maxy):
     return clipped
 
 # POLYGON ALGORITHMS 
-def sutherland_hodgeman(points, window):
+def sutherland_hodgeman(points, window, closed=True):
     clipped = points
-    clipped = cut_min_x(clipped, window.min().x)
-    clipped = cut_max_x(clipped, window.max().x)
-    clipped = cut_min_y(clipped, window.min().y)
-    clipped = cut_max_y(clipped, window.max().y)
+    clipped = cut_min_x(clipped, window.min().x, closed)
+    clipped = cut_max_x(clipped, window.max().x, closed)
+    clipped = cut_min_y(clipped, window.min().y, closed)
+    clipped = cut_max_y(clipped, window.max().y, closed)
     return clipped

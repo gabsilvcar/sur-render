@@ -190,9 +190,10 @@ class PolygonWidget(GenericShapeWidget):
             name = self.name_line.text()
             digits = [get_digits(i) for i in between_brackets]
             fill = bool(self.fill_box.checkState())
+            style = Polygon.FILLED if fill else Polygon.CLOSED
 
             vectors = [Vector(p[0], p[1]) for p in digits]
-            shape = Polygon(name, vectors, self.color, fill)
+            shape = Polygon(name, vectors, self.color, style)
 
             if vectors:
                self.add_shape(shape)
@@ -246,10 +247,11 @@ class RectangleWidget(GenericShapeWidget):
             x1 = int(self.x1_line.text())
             y1 = int(self.y1_line.text())
             fill = bool(self.fill_box.checkState())
+            style = Polygon.FILLED if fill else Polygon.CLOSED
 
             s = Vector(x0, y0)
             e = Vector(x1, y1)
-            shape = Rectangle(name, s, e, self.color, fill)
+            shape = Rectangle(name, s, e, self.color, style)
             self.add_shape(shape)
         except ValueError:
             pass

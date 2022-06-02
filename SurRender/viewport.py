@@ -74,7 +74,7 @@ class Viewport(QWidget):
         if painter is None:
             painter = QPainter(self)
 
-        if polygon.fill:
+        if polygon.style == Polygon.FILLED:
             poly = QtGui.QPolygonF() 
             for p in polygon.points():
                 poly.append(QtCore.QPointF(p.x, p.y))
@@ -87,8 +87,8 @@ class Viewport(QWidget):
         if painter is None:
             painter = QPainter(self)
 
-        for line in curve.lines():
-            self.draw_line(line, painter)
+        p = curve.as_polygon()
+        self.draw_polygon(p, painter)
 
     def draw_shape(self, shape, painter=None):
         if painter is None:

@@ -20,7 +20,7 @@ class View(Polygon):
         self.p3 = p3
 
         points = [self.p0, self.p1, self.p2, self.p3]
-        super().__init__('', points)
+        super().__init__('', points, style=Polygon.CLOSED)
 
     def ppc(self):
         w = self.width()
