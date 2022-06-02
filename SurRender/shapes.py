@@ -191,12 +191,18 @@ class Bezier(GenericCurve):
         for start, end in adjacents(self.blended_points(), circular=False):
             yield Line('', start, end)
 
+    def packs_of_points(self, points):
+        last_point = None
+        for i in range(0, len(points)-1, 3):
+            yield points[i:(i+4)]
+
     def blended_points(self):
         points = []
-        p = self.points()[:4]
-        for i in range(self.resolution+1):
-            x, y, z = bezier(i/self.resolution, p)
-            points.append(Vector(x,y,z))
+
+        for p in self.packs_of_points(self.points()):
+            for i in range(self.resolution+1):
+                x, y, z = bezier(i/self.resolution, p)
+                points.append(Vector(x,y,z))
         return points
     
     def clipped(self, window):
