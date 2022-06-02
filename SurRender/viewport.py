@@ -83,6 +83,14 @@ class Viewport(QWidget):
             for line in polygon.lines():
                 self.draw_line(line, painter)
 
+        # pen = QPen()
+        # pen.setWidth(6)
+        # pen.setCapStyle(Qt.RoundCap)
+        # painter.setPen(pen)
+
+        # for p in polygon.points():
+        #     self.draw_point(Point('', p), painter)
+
     def draw_curve(self, curve, painter=None):
         if painter is None:
             painter = QPainter(self)

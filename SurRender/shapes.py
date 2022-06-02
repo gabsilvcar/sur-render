@@ -170,13 +170,13 @@ class Bezier(GenericCurve):
     def __init__(self, name, control_points, color=(0,0,0)):
         super().__init__(name, color, False)
         self.type = 'Bezier'
-        self.resolution = 50
+        self.resolution = 5
         self._control_points = control_points
         self._blended_points = self.set_resolution(self.resolution)
 
     def set_resolution(self, resolution):
         self.resolution = resolution
-        self._blended_points = self.blended_points(resolution)
+        self._blended_points = self.blended_points()
 
     def as_polygon(self):
         p = Polygon(self.name, self._blended_points, self.color, Polygon.OPEN)
@@ -191,18 +191,23 @@ class Bezier(GenericCurve):
         for start, end in adjacents(self.blended_points(), circular=False):
             yield Line('', start, end)
 
-    def blended_points(self, resolution=50):
+    def blended_points(self):
         points = []
         p = self.points()[:4]
-        for i in range(resolution+1):
-            x, y, z = bezier(i/resolution, p)
+        for i in range(self.resolution+1):
+            x, y, z = bezier(i/self.resolution, p)
             points.append(Vector(x,y,z))
         return points
     
     def clipped(self, window):
         clipped_points = []
 
-        size = min(window.width(), window.height())
+        size = 1
+        for start, end in adjacents(self.points(), circular=False):
+            delta = end - start
+            size = max(size, delta.x, delta.y, delta.z)
+        self.resolution = int(size) // 15 + 1
+
         closed = self.style & self.CLOSED
         clipped_points = sutherland_hodgeman(self.blended_points(), window, closed)
 
