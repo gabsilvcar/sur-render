@@ -31,17 +31,17 @@ class ViewportWidget(QGroupBox):
         layout.addWidget(self.viewport, 1, 0)
         self.setLayout(layout)
 
-    def mousePressEvent(self, event):
-        self.start_pos = event.pos()
+    # def mousePressEvent(self, event):
+    #     self.start_pos = event.pos()
         
-    def mouseMoveEvent(self, event):
-        delta = self.start_pos - event.pos() 
-        self.start_pos = event.pos()
-        self.viewport.move_xy(delta.x(), -delta.y())
+    # def mouseMoveEvent(self, event):
+    #     delta = self.start_pos - event.pos() 
+    #     self.start_pos = event.pos()
+    #     self.viewport.move_xy(delta.x(), -delta.y())
         
-    def wheelEvent(self,event):
-        x = event.angleDelta().y() / 120
-        if x > 0:
-            self.viewport.zoom_in(constants.ZOOM_FACTOR)
-        elif x < 0:
-            self.viewport.zoom_out(constants.ZOOM_FACTOR)
+    # def wheelEvent(self,event):
+    #     x = event.angleDelta().y() / 120
+    #     if x > 0:
+    #         self.viewport.zoom_in(constants.ZOOM_FACTOR)
+    #     elif x < 0:
+    #         self.viewport.zoom_out(constants.ZOOM_FACTOR)
