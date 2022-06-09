@@ -28,6 +28,7 @@ class AddObject(QWidget):
         self.tabs.addTab(LineWidget(self.viewport, self.objectview), "Line")
         self.tabs.addTab(PolygonWidget(self.viewport, self.objectview), "Polygon")
         self.tabs.addTab(BezierWidget(self.viewport, self.objectview), "Bezier")
+        self.tabs.addTab(BSplineWidget(self.viewport, self.objectview), "B-Spline")
         self.tabs.addTab(RectangleWidget(self.viewport, self.objectview), "Rectangle")
 
   
@@ -308,6 +309,47 @@ class BezierWidget(GenericShapeWidget):
 
             vectors = [Vector(p[0], p[1]) for p in digits]
             shape = Bezier(name, vectors, self.color)
+
+            if vectors:
+               self.add_shape(shape)
+               
+        except ValueError:
+            pass
+
+
+class BSplineWidget(GenericShapeWidget):
+    def __init__(self, viewport, object_list): 
+        super().__init__(viewport, object_list)
+
+        self.points_line = QLineEdit()
+
+        layout = QFormLayout()
+        layout.addRow('Name', self.name_line)
+        layout.addRow('Your Points', self.points_line)
+        layout.addRow('Color', self.color_button)
+        layout.addRow(self.random_button)
+        layout.addRow(self.apply_button)
+        self.setLayout(layout)
+
+    def random_callback(self):
+        self.color = [randint(0,255) for _ in range(3)]
+        self.paint_button(self.color_button, self.color)
+
+        n_points = randint(4, 10)
+        points = [(randint(0,400), randint(0,400)) for i in range(n_points)]
+        text =  ''.join(f'{i}, ' for i in points)
+        self.points_line.setText(text)
+    
+    def apply_callback(self):
+        try:
+            get_digits = lambda x: tuple(int(i) for i in re.findall(r'-?\d+', x))
+            between_brackets = re.findall(r'\((.*?)\)', self.points_line.text())
+            
+            name = self.name_line.text()
+            digits = [get_digits(i) for i in between_brackets]
+
+            vectors = [Vector(p[0], p[1]) for p in digits]
+            shape = BSpline(name, vectors, self.color)
 
             if vectors:
                self.add_shape(shape)
