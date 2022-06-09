@@ -10,12 +10,11 @@ class HandTool(Tool):
 
     def mousePressEvent(self, event):
         self.start_pos = event.pos()
-        QApplication.restoreOverrideCursor()
-        QApplication.setOverrideCursor(Qt.ClosedHandCursor)
+        self.viewport.setCursor(Qt.ClosedHandCursor)
     
     def mouseReleaseEvent(self, event):
         QApplication.restoreOverrideCursor()
-        QApplication.setOverrideCursor(Qt.OpenHandCursor)
+        self.viewport.setCursor(Qt.OpenHandCursor)
         
     def mouseMoveEvent(self, event):
         delta = self.start_pos - event.pos() 

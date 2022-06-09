@@ -1,4 +1,6 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication
+
 
 class Tool:
     cursor = None
@@ -7,10 +9,10 @@ class Tool:
         self.parent = parent
         self.viewport = parent.centralWidget.viewport
         self.override_viewport_functions()
-
-        QApplication.restoreOverrideCursor()
-        if self.cursor is not None:
-            QApplication.setOverrideCursor(self.cursor)
+        
+        if self.cursor is None:
+            self.cursor = Qt.ArrowCursor
+        self.viewport.setCursor(self.cursor)
 
     def override_viewport_functions(self):
         self.viewport.mousePressEvent = self.mousePressEvent
