@@ -11,7 +11,7 @@ from SurRender.menus.modify_view import ModifyView
 from SurRender.menus.tools_menu import ToolsMenu
 from SurRender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
 from SurRender.viewport_widget import ViewportWidget
-from SurRender.tools.selection_tool import SelectionTool
+from SurRender.tools.hand_tool import HandTool
 
 class MainWindow(QMainWindow):
     """Main Window."""
@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
         self.__createActions()
         self.__createMenuBar()
         self.__createToolBars()
-        self.current_tool = SelectionTool(self)
+        self.current_tool = HandTool(self)
         self.show()
         
     def init_ui(self):
@@ -77,16 +77,15 @@ class MainWindow(QMainWindow):
         objectListToolBar.addWidget(self.objectview)
         self.addToolBar(Qt.LeftToolBarArea, objectListToolBar)
 
-        # # ModifyView
-        # modifyViewToolBar = QToolBar("Mod View", self)
-        # modifyViewToolBar.addWidget(ModifyView(self.centralWidget.viewport))
-        # # modifyViewToolBar.hide()
-        # self.addToolBar(Qt.LeftToolBarArea, modifyViewToolBar)
+        # ModifyView
+        modifyViewToolBar = QToolBar("Mod View", self)
+        modifyViewToolBar.addWidget(ModifyView(self.centralWidget.viewport))
+        self.addToolBar(Qt.LeftToolBarArea, modifyViewToolBar)
 
         toolsToolBar = QToolBar("Tools", self)
         toolsToolBar.addWidget(ToolsMenu(self))
+        toolsToolBar.hide()
         self.addToolBar(Qt.LeftToolBarArea, toolsToolBar)
-
 
         # AddObject
         addObjToolBar = QToolBar("Add Object", self)
