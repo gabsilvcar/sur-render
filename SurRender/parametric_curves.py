@@ -54,8 +54,8 @@ def bspline(control_points):
 
     return x, y, z
 
-def fd_bspline(control_points, d):
-    E = delta_matrix(d)
+def fd_bspline(control_points, n):
+    E = delta_matrix(1/n)
     matrix = bspline_matrix()
 
     px = np.array([p.x for p in control_points])
@@ -70,7 +70,7 @@ def fd_bspline(control_points, d):
     y, dy, dy2, dy3 = E @ cy
     z, dz, dz2, dz3 = E @ cz
     
-    for x,y,z in foward_diff(int(1/d), x, y, z, dx, dy, dz, dx2, dy2, dz2, dx3, dy3, dz3):
+    for x,y,z in foward_diff(n, x, y, z, dx, dy, dz, dx2, dy2, dz2, dx3, dy3, dz3):
         yield x, y, z
 
 def foward_diff(n, x, y, z, dx, dy, dz, dx2, dy2, dz2, dx3, dy3, dz3):

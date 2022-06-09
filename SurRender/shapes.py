@@ -269,7 +269,7 @@ class BSpline(GenericCurve):
     def blended_points(self):
         points = []
         for p in self.packs_of_points(self.points()):
-            for x,y,z in fd_bspline(p, 0.01):
+            for x,y,z in fd_bspline(p, self.resolution):
                 points.append(Vector(x,y,z))
         return points
     
@@ -280,7 +280,7 @@ class BSpline(GenericCurve):
         for start, end in adjacents(self.points(), circular=False):
             delta = end - start
             size = max(size, delta.x, delta.y, delta.z)
-        self.set_resolution(int(size) // 15 + 1)
+        self.set_resolution(int(size) // 20 + 1)
 
         if self.CLIPPING_ALGORITHM == self.DO_NOT_CLIP:
             return self

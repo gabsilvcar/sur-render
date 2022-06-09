@@ -95,9 +95,17 @@ class Viewport(QWidget):
         if painter is None:
             painter = QPainter(self)
 
-        p = curve.as_polygon()
-        p.CLIPPING_ALGORITHM = curve.CLIPPING_ALGORITHM
-        self.draw_polygon(p, painter)
+        poly = curve.as_polygon()
+        poly.CLIPPING_ALGORITHM = curve.CLIPPING_ALGORITHM
+        self.draw_polygon(poly, painter)
+
+        # pen = QPen()
+        # pen.setWidth(6)
+        # pen.setCapStyle(Qt.RoundCap)
+        # painter.setPen(pen)
+
+        # for p in poly.points():
+        #     self.draw_point(Point('', p), painter)
 
     def draw_shape(self, shape, painter=None):
         if painter is None:
