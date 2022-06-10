@@ -11,7 +11,8 @@ from SurRender.menus.modify_view import ModifyView
 from SurRender.menus.tools_menu import ToolsMenu
 from SurRender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
 from SurRender.viewport_widget import ViewportWidget
-from SurRender.tools.hand_tool import HandTool
+# from SurRender.tools.hand_tool import HandTool
+from SurRender.tools import HandTool
 
 class MainWindow(QMainWindow):
     """Main Window."""

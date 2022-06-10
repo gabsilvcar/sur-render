@@ -7,7 +7,6 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
-from SurRender.shapes import *
 from SurRender.projection import world_to_ppc
 from SurRender.vector import Vector, angle
 from SurRender.io.obj_writer import OBJWriter

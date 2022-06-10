@@ -1,4 +1,4 @@
-from SurRender.shapes import Point, Line, Polygon
+from SurRender.shapes import *
 
 class OBJDescriptor:
     def __init__(self, shape):

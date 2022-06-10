@@ -8,6 +8,8 @@ from SurRender.constants import PIX_PER_MOVEMENT, ZOOM_FACTOR
 from SurRender.scene import Scene
 from SurRender.viewport import Viewport
 from SurRender.shapes import *
+from SurRender.shapes.generic_curve import GenericCurve
+
 
 class ModifyView(QWidget):
     def __init__(self, viewport):

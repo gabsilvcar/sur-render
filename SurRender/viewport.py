@@ -120,7 +120,7 @@ class Viewport(QWidget):
         elif isinstance(shape, Polygon):
             self.draw_polygon(shape, painter)
 
-        elif isinstance(shape, GenericCurve):
+        elif isinstance(shape, Bezier | BSpline):
             self.draw_curve(shape, painter)
 
     def resizeEvent(self, event):
