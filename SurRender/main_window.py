@@ -10,7 +10,7 @@ from SurRender.menus.modify_object import ModifyObject
 from SurRender.menus.modify_view import ModifyView
 from SurRender.menus.tools_menu import ToolsMenu
 from SurRender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
-from SurRender.viewport_widget import ViewportWidget
+from SurRender.viewport import Viewport
 # from SurRender.tools.hand_tool import HandTool
 from SurRender.tools import HandTool
 
@@ -20,25 +20,27 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         """Initializer."""
         super().__init__(parent)
+
+        self.viewport = Viewport()
+        self.current_tool = HandTool(self)
+        
         self.init_ui()
         self.__createActions()
         self.__createMenuBar()
         self.__createToolBars()
-        self.current_tool = HandTool(self)
         self.show()
         
     def init_ui(self):
         self.resize(WINDOW_HEIGHT, WINDOW_WIDTH)
         self.setWindowTitle(APPLICATION_NAME)
         self.setWindowIcon(QtGui.QIcon('resources/logo.jpg'))
-        self.centralWidget = ViewportWidget()
+        self.centralWidget = self.viewport
         self.setCentralWidget(self.centralWidget)
 
     def save_callback(self):
         path, _ = QFileDialog.getSaveFileName(self, 'Save File', '', 'Wavefront *.obj')
-        viewport = self.centralWidget.viewport
         if path:
-            viewport.scene.save(path)
+            self.viewport.scene.save(path)
 
     def __createActions(self):
         self.newAction = QAction(QtGui.QIcon(":logo"), "&New", self)
@@ -73,14 +75,14 @@ class MainWindow(QMainWindow):
         
     def __createToolBars(self):
         # Object List
-        self.objectview = ObjectList(self.centralWidget.viewport)
+        self.objectview = ObjectList(self.viewport)
         objectListToolBar = QToolBar("Object List", self)
         objectListToolBar.addWidget(self.objectview)
         self.addToolBar(Qt.LeftToolBarArea, objectListToolBar)
 
         # ModifyView
         modifyViewToolBar = QToolBar("Mod View", self)
-        modifyViewToolBar.addWidget(ModifyView(self.centralWidget.viewport))
+        modifyViewToolBar.addWidget(ModifyView(self.viewport))
         self.addToolBar(Qt.LeftToolBarArea, modifyViewToolBar)
 
         toolsToolBar = QToolBar("Tools", self)
@@ -90,17 +92,14 @@ class MainWindow(QMainWindow):
 
         # AddObject
         addObjToolBar = QToolBar("Add Object", self)
-        addObjToolBar.addWidget(AddObject(self.centralWidget.viewport, self.objectview))
+        addObjToolBar.addWidget(AddObject(self.viewport, self.objectview))
         self.addToolBar(Qt.RightToolBarArea, addObjToolBar)
 
         # ModifyObject
         modifyObjToolBar = QToolBar("Mod Object", self)
-        modifyObjToolBar.addWidget(ModifyObject(self.centralWidget.viewport, self.objectview))
+        modifyObjToolBar.addWidget(ModifyObject(self.viewport, self.objectview))
         self.addToolBar(Qt.RightToolBarArea, modifyObjToolBar)
 
-
-        
-        
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

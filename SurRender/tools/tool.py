@@ -7,7 +7,7 @@ class Tool:
 
     def __init__(self, parent):
         self.parent = parent
-        self.viewport = parent.centralWidget.viewport
+        self.viewport = parent.viewport
         self.override_viewport_functions()
         
         if self.cursor is None:
