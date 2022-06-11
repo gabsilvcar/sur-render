@@ -51,7 +51,8 @@ class Viewport(QWidget):
         self.repaint()
         
     def move_xy(self, x, y):
-        v = Vector(x, y)
+        scalar = self.win.width() / self.vp.width() 
+        v = Vector(x, y) * scalar
         self.win.move(v)
         self.repaint()
 
