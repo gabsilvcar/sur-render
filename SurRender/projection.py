@@ -1,7 +1,7 @@
 import numpy as np
 from copy import deepcopy
 
-from SurRender.vector import Vector, angle
+from SurRender.vector import Vector, vector_y_angle
 
 
 def viewport_transform(vector, source, target):
@@ -23,13 +23,12 @@ def world_to_ppc(shapes, window):
     uv = window.up_vector()
 
     transformed = []
-    y  = Vector(0,1,0)
-    a  = angle(uv, y)
+    angle  = vector_y_angle(uv)
 
     for shape in shapes:
         shape = deepcopy(shape)
         shape.move(-wc)
-        shape.rotate(a)
+        shape.rotate(angle)
         transformed.append(shape)
 
     return transformed

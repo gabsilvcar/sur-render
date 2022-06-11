@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from SurRender.vector import Vector, angle
+from SurRender.vector import Vector
 from SurRender.projection import viewport_transform
 
 

@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import *
 from SurRender.shapes import *
 from SurRender.view import View
 from SurRender.scene import Scene
-from SurRender.vector import Vector, angle
+from SurRender.vector import Vector
 
 
 class Viewport(QWidget):

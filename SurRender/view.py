@@ -1,7 +1,7 @@
 import numpy as np
 from copy import deepcopy
 
-from SurRender.vector import Vector, angle
+from SurRender.vector import Vector, vector_y_angle
 from SurRender.shapes import Polygon
 
 class View(Polygon):
@@ -47,14 +47,14 @@ class View(Polygon):
         return self.p0 - self.p3
 
     def width(self):
-        return (self.p1 - self.p0).size()
+        return (self.p1 - self.p0).length()
 
     def height(self):
-        return (self.p0 - self.p3).size()
+        return (self.p0 - self.p3).length()
     
     def move(self, vector):
-        a = angle(self.up_vector(), Vector(0,1,0))
-        vector.rotate(-a)
+        angle = vector_y_angle(self.up_vector())
+        vector.rotate(-angle)
         super().move(vector)
 
     def zoom(self, amount, around=None):
