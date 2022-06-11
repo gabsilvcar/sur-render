@@ -2,11 +2,11 @@ import numpy as np
 
 from SurRender.math_transforms import (translation_matrix, 
                                        scale_matrix,
-                                       rotation_matrix,)
+                                       rotation_matrix_z,)
 
 def angle(v0, v1):
-    uv0 = v0.data / np.linalg.norm(v0.data)
-    uv1 = v1.data / np.linalg.norm(v1.data)
+    uv0 = v0.data[:3] / np.linalg.norm(v0.data[:3])
+    uv1 = v1.data[:3] / np.linalg.norm(v1.data[:3])
     cos = np.dot(uv0, uv1)
     a = np.arccos(cos)
     if v0.x < 0:
@@ -17,14 +17,14 @@ def angle(v0, v1):
 
 
 class Vector:
-    def __init__(self, x, y, z=1):
+    def __init__(self, x, y, z=0):
         self.x = x
         self.y = y
         self.z = z
     
     @property
     def data(self):
-        return np.array([self.x, self.y, self.z], dtype=float)
+        return np.array([self.x, self.y, self.z, 1], dtype=float)
 
     @data.setter
     def data(self, sequence):
@@ -56,7 +56,7 @@ class Vector:
 
         t0 = translation_matrix(-around)
         t1 = translation_matrix(around)
-        r = rotation_matrix(angle)
+        r = rotation_matrix_z(angle)
 
         matrix = t0 @ r @ t1
         self.apply_transform(matrix)
@@ -66,12 +66,12 @@ class Vector:
         return 
 
     def size(self):
-        return np.sqrt(self.x*self.x + self.y*self.y)
+        return np.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
     
     def __add__(self, other):
         if isinstance(other, Vector):
             other = other.data  
-        v = self.data + other
+        v = (self.data + other)[:3]
         return Vector(*v)
 
     def __iadd__(self, other):
@@ -81,7 +81,7 @@ class Vector:
     def __sub__(self, other):
         if isinstance(other, Vector):
             other = other.data  
-        v = self.data - other
+        v = (self.data - other)[:3]
         return Vector(*v)
 
     def __isub__(self, other):
@@ -89,7 +89,7 @@ class Vector:
         return self
 
     def __mul__(self, other):
-        v = self.data * other
+        v = (self.data * other)[:3]
         return Vector(*v)
     
     def __imul__(self, other):
@@ -97,7 +97,7 @@ class Vector:
         return self
     
     def __truediv__(self, other):
-        v = self.data / other
+        v = (self.data / other)[:3]
         return Vector(*v)
 
     def __itruediv__(self, other):
@@ -105,7 +105,7 @@ class Vector:
         return self
 
     def __matmul__(self, other):
-        v = self.data @ other
+        v = (self.data @ other)[:3]
         return Vector(*v)
     
     def __imatmul__(self, other):
