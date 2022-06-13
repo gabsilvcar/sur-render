@@ -108,6 +108,14 @@ class Viewport(QWidget):
         # for p in poly.points():
         #     self.draw_point(Point('', p), painter)
 
+    def draw_3d(self, shape, painter=None):
+        if painter is None:
+            painter = QPainter(self)
+
+        lines = shape.as_lines()
+        for line in lines:
+            self.draw_line(line, painter)
+
     def draw_shape(self, shape, painter=None):
         if painter is None:
             painter = QPainter(self)
@@ -123,6 +131,12 @@ class Viewport(QWidget):
 
         elif isinstance(shape, Bezier | BSpline):
             self.draw_curve(shape, painter)
+
+        elif isinstance(shape, Object3D):
+            self.draw_3d(shape, painter)
+        
+        else:
+            print('Não sei desenhar', shape)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

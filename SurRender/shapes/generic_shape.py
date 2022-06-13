@@ -17,7 +17,7 @@ class GenericShape:
         return []
     
     def clip(self, view):
-        return None
+        return self
 
     def apply_transform(self, matrix):
         for p in self.points():
@@ -47,7 +47,21 @@ class GenericShape:
     def scale(self, vector, around=None):
         for p in self.points():
             p.scale(vector, around)
+
+    def rotate_x(self, angle, around=None):
+        for p in self.points():
+            p.rotate_x(angle, around)
+
+    def rotate_y(self, angle, around=None):
+        for p in self.points():
+            p.rotate_y(angle, around)
+
+    def rotate_z(self, angle, around=None):
+        for p in self.points():
+            p.rotate_z(angle, around)
     
     def rotate(self, angle, around=None):
         for p in self.points():
-            p.rotate(angle, around)
+            p.rotate_x(-angle, around)
+            p.rotate_y(-angle, around)
+            # p.rotate_z(-angle, around)

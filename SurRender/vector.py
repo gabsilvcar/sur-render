@@ -1,17 +1,13 @@
 import numpy as np
 from numbers import Number
 
-from SurRender.math_transforms import (translation_matrix, 
-                                       scale_matrix,
-                                       rotation_matrix_z,)
+from SurRender.math_transforms import *
                                        
 
 def vector_angle(v0, v1):
-    v0 = v0 / v0.length()
-    v1 = v1 / v1.length()
-    cos = v0 @ v1
+    cos = v0.normalized() @ v1.normalized()
     angle = np.arccos(cos)
-    return angle if (v0.x >= 0) else -angle
+    return angle
 
 def vector_x_angle(v):
     x = Vector(1,0,0)
@@ -25,9 +21,20 @@ def vector_z_angle(v):
     z = Vector(0,0,1)
     return vector_angle(z, v)
 
+def cross_product(v0, v1):
+    a = [v0.x, v0.y, v0.z]
+    b = [v1.x, v1.y, v1.z]
+    c = np.cross(a, b)
+    return Vector(*c)
+
+def dot_product(v0, v1):
+    a = [v0.x, v0.y, v0.z]
+    b = [v1.x, v1.y, v1.z]
+    return np.dot(a, b)
+
 
 class Vector:
-    def __init__(self, x, y, z=0):
+    def __init__(self, x, y, z=5):
         self.x = x
         self.y = y
         self.z = z
@@ -44,6 +51,9 @@ class Vector:
 
     def length(self):
         return np.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
+
+    def normalized(self):
+        return self / self.length()
 
     def apply_transform(self, matrix):
         self @= matrix
@@ -64,15 +74,28 @@ class Vector:
         self.apply_transform(matrix)
     
     def rotate_x(self, angle, around=None):
-        pass 
+        if around is None:
+            around = Vector(0,0)
+
+        t0 = translation_matrix(-around)
+        t1 = translation_matrix(around)
+        r = rotation_matrix_x(angle)
+
+        matrix = t0 @ r @ t1
+        self.apply_transform(matrix)
     
     def rotate_y(self, angle, around=None):
-        pass
+        if around is None:
+            around = Vector(0,0)
+
+        t0 = translation_matrix(-around)
+        t1 = translation_matrix(around)
+        r = rotation_matrix_y(angle)
+
+        matrix = t0 @ r @ t1
+        self.apply_transform(matrix)
     
     def rotate_z(self, angle, around=None):
-        pass
-
-    def rotate(self, angle, around=None):
         if around is None:
             around = Vector(0,0)
 
@@ -82,6 +105,9 @@ class Vector:
 
         matrix = t0 @ r @ t1
         self.apply_transform(matrix)
+
+    def rotate(self, angle, around=None):
+        self.rotate_z(-angle, around)
 
     def __add__(self, other):
         if isinstance(other, Vector):
@@ -139,8 +165,7 @@ class Vector:
 
     def __matmul__(self, other):
         if isinstance(other, Vector):
-            v = self.data[:3] @ other.data[:3]
-            return v
+            return dot_product(self, other)
 
         if isinstance(other, np.ndarray):
             v = (self.data @ other)[:3]
