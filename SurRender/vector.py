@@ -5,6 +5,10 @@ from SurRender.math_transforms import *
                                        
 
 def vector_angle(v0, v1):
+    if v0.length() == 0 or v1.length() == 0:
+        print('iih deu merda')
+        return 0
+
     cos = v0.normalized() @ v1.normalized()
     angle = np.arccos(cos)
     return angle
@@ -12,17 +16,20 @@ def vector_angle(v0, v1):
 def vector_x_angle(v):
     z = Vector(0,0,1)
     v_yz = Vector(0, v.y, v.z)
-    return vector_angle(z, v_yz)
+    angle = vector_angle(z, v_yz)
+    return (angle if v.y >= 0 else -angle)
 
 def vector_y_angle(v):
     x = Vector(1,0,0)
     v_zx = Vector(v.x, 0, v.z)
-    return vector_angle(x, v_zx)
+    angle = vector_angle(x, v_zx)
+    return (angle if v.z >= 0 else -angle)
 
 def vector_z_angle(v):
     y = Vector(0,1,0)
     v_xy = Vector(v.x, v.y, 0)
-    return vector_angle(y, v_xy)
+    angle = vector_angle(y, v_xy)
+    return (angle if v.x >= 0 else -angle)
 
 def cross_product(v0, v1):
     a = [v0.x, v0.y, v0.z]
@@ -110,9 +117,9 @@ class Vector:
         self.apply_transform(matrix)
 
     def rotate(self, x, y, z, around=None):
-        self.rotate_x(x, around)
-        self.rotate_y(y, around)
         self.rotate_z(z, around)
+        self.rotate_y(y, around)
+        self.rotate_x(x, around)
 
     def __add__(self, other):
         if isinstance(other, Vector):

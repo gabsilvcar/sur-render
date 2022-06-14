@@ -18,22 +18,6 @@ def viewport_transform(vector, source, target):
     vector.y = y
     return vector
 
-# def world_to_ppc(shapes, window):
-#     wc = window.center()
-#     uv = window.up_vector()
-
-#     transformed = []
-#     angle  = vector_z_angle(uv)
-
-#     for shape in shapes:
-#         shape = deepcopy(shape)
-#         shape.move(-wc)
-#         shape.rotate(angle)
-#         yield shape
-#         transformed.append(shape)
-
-#     return transformed
-
 def align_shapes_to_window(shapes, window):
     wc = window.center()
     uv = window.up_vector()
@@ -41,6 +25,7 @@ def align_shapes_to_window(shapes, window):
 
     x_angle = vector_x_angle(nv)
     y_angle = vector_y_angle(nv) - np.pi / 2
+    x_angle = 0
     z_angle = vector_z_angle(uv)
 
     print(f'{uv = }')
@@ -57,8 +42,3 @@ def align_shapes_to_window(shapes, window):
         shape.rotate_y(y_angle)
         shape.rotate_z(z_angle)
         yield shape
-
-    # print(uv)
-    # print(nv)
-    # print()
-    # return shapes

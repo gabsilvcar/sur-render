@@ -64,14 +64,11 @@ class View(Polygon):
         uv = self.up_vector()
         nv = self.normal_vector()
 
-        x_angle = vector_x_angle(nv)
-        y_angle = vector_y_angle(nv) - np.pi / 2
-        z_angle = vector_z_angle(uv)
+        x = vector_x_angle(nv)
+        y = vector_y_angle(nv) - np.pi / 2
+        z = -vector_z_angle(uv)
 
-        vector.rotate_x(x_angle)
-        vector.rotate_y(y_angle)
-        vector.rotate_z(z_angle)
-
+        vector.rotate(x,y,z)
         super().move(vector)
 
     def zoom(self, amount, around=None):

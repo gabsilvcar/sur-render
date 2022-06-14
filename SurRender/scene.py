@@ -28,17 +28,16 @@ class Scene:
             (v0, v1),
             (v0, v2),
             (v0, v4),
-            (v1, v3),
-            (v1, v5),
-            (v2, v3),
-            (v2, v6),
-            (v3, v7),
-            (v4, v5),
-            (v4, v6),
-            (v5, v7),
-            (v6, v7),
+            # (v1, v3),
+            # (v1, v5),
+            # (v2, v3),
+            # (v2, v6),
+            # (v3, v7),
+            # (v4, v5),
+            # (v4, v6),
+            # (v5, v7),
+            # (v6, v7),
         ]
-
         
         self.shapes = [Object3D('aa', pairs, (255,0,0))]
         self.gliphs = []

@@ -1,5 +1,4 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication
 
 from SurRender.tools.tool import Tool
 from SurRender import constants
@@ -13,7 +12,6 @@ class HandTool(Tool):
         self.viewport.setCursor(Qt.ClosedHandCursor)
     
     def mouseReleaseEvent(self, event):
-        QApplication.restoreOverrideCursor()
         self.viewport.setCursor(Qt.OpenHandCursor)
         
     def mouseMoveEvent(self, event):

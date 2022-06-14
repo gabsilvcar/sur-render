@@ -159,7 +159,7 @@ class Viewport(QWidget):
             Vector(0,0), 
         )
 
-        self.scene.gliphs = [self.vp]
+        self.scene.gliphs = [self.vp, Point('Center', self.vp.center())]
 
     def paintEvent(self, event):
         super().paintEvent(event)
