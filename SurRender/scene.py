@@ -49,9 +49,9 @@ class Scene:
         ow.write(path)
 
     def projected_shapes(self, origin, target):
-        # shapes = self.shapes
-        shapes = world_to_ppc(self.shapes, origin)
-        # shapes = align_shapes_to_window(shapes, origin)
+        shapes = self.shapes
+        # shapes = world_to_ppc(self.shapes, origin)
+        shapes = align_shapes_to_window(shapes, origin)
         shapes = [shape.change_viewport(origin.ppc(), target) for shape in shapes]
         shapes = [shape.clipped(target) for shape in shapes if shape.clipped(target) is not None]
         return shapes

@@ -46,8 +46,8 @@ class Viewport(QWidget):
         self.win.move(v)
         self.repaint()
     
-    def rotate(self, angle):
-        self.win.rotate(angle, self.win.center())
+    def rotate(self, x, y, z):
+        self.win.rotate(x, y, z, self.win.center())
         self.repaint()
         
     def move_xy(self, x, y):

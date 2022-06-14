@@ -44,15 +44,15 @@ class View(Polygon):
         return self.p1
 
     def up_vector(self):
-        return (self.p0 - self.p3)
+        return (self.p0 - self.p3).normalized()
 
     def right_vector(self):
-        return (self.p1 - self.p0)
+        return (self.p1 - self.p0).normalized()
     
     def normal_vector(self):
         uv = self.up_vector()
         rv = self.right_vector()
-        return -cross_product(uv, rv)
+        return -cross_product(uv, rv).normalized()
 
     def width(self):
         return (self.p1 - self.p0).length()
@@ -62,8 +62,16 @@ class View(Polygon):
     
     def move(self, vector):
         uv = self.up_vector()
-        angle = vector_y_angle(uv)
-        vector.rotate(-angle)
+        nv = self.normal_vector()
+
+        x_angle = vector_x_angle(nv)
+        y_angle = vector_y_angle(nv) - np.pi / 2
+        z_angle = vector_z_angle(uv)
+
+        vector.rotate_x(x_angle)
+        vector.rotate_y(y_angle)
+        vector.rotate_z(z_angle)
+
         super().move(vector)
 
     def zoom(self, amount, around=None):

@@ -60,8 +60,6 @@ class GenericShape:
         for p in self.points():
             p.rotate_z(angle, around)
     
-    def rotate(self, angle, around=None):
+    def rotate(self, x, y, z, around=None):
         for p in self.points():
-            p.rotate_x(-angle, around)
-            p.rotate_y(-angle, around)
-            # p.rotate_z(-angle, around)
+            p.rotate(x, y, z, around)

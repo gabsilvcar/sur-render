@@ -10,16 +10,19 @@ def vector_angle(v0, v1):
     return angle
 
 def vector_x_angle(v):
-    x = Vector(1,0,0)
-    return vector_angle(x, v)
+    z = Vector(0,0,1)
+    v_yz = Vector(0, v.y, v.z)
+    return vector_angle(z, v_yz)
 
 def vector_y_angle(v):
-    y = Vector(0,1,0)
-    return vector_angle(y, v)
+    x = Vector(1,0,0)
+    v_zx = Vector(v.x, 0, v.z)
+    return vector_angle(x, v_zx)
 
 def vector_z_angle(v):
-    z = Vector(0,0,1)
-    return vector_angle(z, v)
+    y = Vector(0,1,0)
+    v_xy = Vector(v.x, v.y, 0)
+    return vector_angle(y, v_xy)
 
 def cross_product(v0, v1):
     a = [v0.x, v0.y, v0.z]
@@ -106,8 +109,10 @@ class Vector:
         matrix = t0 @ r @ t1
         self.apply_transform(matrix)
 
-    def rotate(self, angle, around=None):
-        self.rotate_z(-angle, around)
+    def rotate(self, x, y, z, around=None):
+        self.rotate_x(x, around)
+        self.rotate_y(y, around)
+        self.rotate_z(z, around)
 
     def __add__(self, other):
         if isinstance(other, Vector):
