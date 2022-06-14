@@ -1,8 +1,8 @@
 import numpy as np
 from copy import deepcopy
 
-from SurRender.vector import *
-from SurRender.shapes import Polygon
+from surrender.vector import *
+from surrender.shapes import Polygon
 
 class View(Polygon):
     def __init__(self, p0, p1, p2, p3, border=0):

@@ -12,4 +12,4 @@ Este repositório gerencia dependências via poetry. Saiba mais em https://pytho
 
 <b>Execute:</b>
 
-        poetry run python SurRender.py
+        poetry run python surrender

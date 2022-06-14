@@ -1,5 +1,5 @@
-from SurRender.shapes import Polygon
-from SurRender.vector import Vector
+from surrender.shapes import Polygon
+from surrender.vector import Vector
 
 
 class Rectangle(Polygon):

@@ -1,5 +1,5 @@
-from SurRender.vector import Vector
-from SurRender.utils import adjacents
+from surrender.vector import Vector
+from surrender.utils import adjacents
 
 LEFT   = int('0001', 2)
 RIGHT  = int('0010', 2)

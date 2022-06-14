@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt
 
-from SurRender.tools.tool import Tool
-from SurRender import constants
+from surrender.tools.tool import Tool
+from surrender import constants
 
 
 class HandTool(Tool):    

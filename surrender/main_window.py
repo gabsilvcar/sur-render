@@ -4,15 +4,14 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
-from SurRender.menus.add_object import AddObject
-from SurRender.menus.object_list import ObjectList
-from SurRender.menus.modify_object import ModifyObject
-from SurRender.menus.modify_view import ModifyView
-from SurRender.menus.tools_menu import ToolsMenu
-from SurRender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
-from SurRender.viewport import Viewport
-# from SurRender.tools.hand_tool import HandTool
-from SurRender.tools import HandTool
+from surrender.menus.add_object import AddObject
+from surrender.menus.object_list import ObjectList
+from surrender.menus.modify_object import ModifyObject
+from surrender.menus.modify_view import ModifyView
+from surrender.menus.tools_menu import ToolsMenu
+from surrender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
+from surrender.viewport import Viewport
+from surrender.tools import HandTool
 
 class MainWindow(QMainWindow):
     """Main Window."""

@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from SurRender.shapes.generic_shape import GenericShape
+from surrender.shapes.generic_shape import GenericShape
 
 
 class Point(GenericShape):

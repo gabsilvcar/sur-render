@@ -1,7 +1,7 @@
 import numpy as np
 from copy import deepcopy
 
-from SurRender.vector import *
+from surrender.vector import *
 
 
 def viewport_transform(vector, source, target):

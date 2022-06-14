@@ -1,7 +1,7 @@
 import numpy as np
 from PyQt5.QtCore import Qt
 
-from SurRender.tools.tool import Tool
+from surrender.tools.tool import Tool
 
 
 class CameraPanTool(Tool):

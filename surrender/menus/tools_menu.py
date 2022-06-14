@@ -1,7 +1,7 @@
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import * 
 
-from SurRender.tools import *
+from surrender.tools import *
 
 
 class ToolsMenu(QWidget):

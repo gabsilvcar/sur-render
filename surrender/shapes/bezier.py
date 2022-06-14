@@ -1,11 +1,11 @@
 from copy import deepcopy
 
-from SurRender.shapes import Polygon
-from SurRender.shapes.generic_curve import GenericCurve
-from SurRender.parametric_curves import bezier
-from SurRender.vector import Vector
-from SurRender.utils import adjacents
-from SurRender.clipping import cohen_sutherland, liang_barsky, sutherland_hodgeman
+from surrender.shapes import Polygon
+from surrender.shapes.generic_curve import GenericCurve
+from surrender.parametric_curves import bezier
+from surrender.vector import Vector
+from surrender.utils import adjacents
+from surrender.clipping import cohen_sutherland, liang_barsky, sutherland_hodgeman
 
 
 class Bezier(GenericCurve):

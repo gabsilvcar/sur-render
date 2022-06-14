@@ -6,8 +6,8 @@ from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import * 
 
-from SurRender.shapes import *
-from SurRender.vector import Vector
+from surrender.shapes import *
+from surrender.vector import Vector
   
 
 class AddObject(QWidget):

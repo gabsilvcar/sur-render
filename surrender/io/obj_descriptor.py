@@ -1,4 +1,4 @@
-from SurRender.shapes import *
+from surrender.shapes import *
 
 class OBJDescriptor:
     def __init__(self, shape):

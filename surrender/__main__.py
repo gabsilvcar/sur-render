@@ -2,7 +2,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from SurRender.main_window  import MainWindow
+from surrender.main_window  import MainWindow
 
 app = QApplication(sys.argv)
 

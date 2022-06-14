@@ -1,4 +1,4 @@
-from SurRender.io.obj_descriptor import OBJDescriptor
+from surrender.io.obj_descriptor import OBJDescriptor
 
 
 class OBJWriter:

@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QBrush, QColor
 from PyQt5.QtCore import Qt, QSize
 
-from SurRender.viewport import Viewport
+from surrender.viewport import Viewport
 
 
 class ObjectList(QWidget):

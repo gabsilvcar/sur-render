@@ -1,4 +1,4 @@
-from SurRender.shapes.generic_shape import GenericShape
+from surrender.shapes.generic_shape import GenericShape
 
 class GenericCurve(GenericShape):
     DO_NOT_CLIP = 0

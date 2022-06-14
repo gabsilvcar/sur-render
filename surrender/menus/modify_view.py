@@ -4,11 +4,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5 import QtGui
 
-from SurRender.constants import PIX_PER_MOVEMENT, ZOOM_FACTOR
-from SurRender.scene import Scene
-from SurRender.viewport import Viewport
-from SurRender.shapes import *
-from SurRender.shapes.generic_curve import GenericCurve
+from surrender.constants import PIX_PER_MOVEMENT, ZOOM_FACTOR
+from surrender.scene import Scene
+from surrender.viewport import Viewport
+from surrender.shapes import *
+from surrender.shapes.generic_curve import GenericCurve
 
 
 class ModifyView(QWidget):

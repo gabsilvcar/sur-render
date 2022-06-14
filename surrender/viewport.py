@@ -7,10 +7,10 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
-from SurRender.shapes import *
-from SurRender.view import View
-from SurRender.scene import Scene
-from SurRender.vector import Vector
+from surrender.shapes import *
+from surrender.view import View
+from surrender.scene import Scene
+from surrender.vector import Vector
 
 
 class Viewport(QWidget):

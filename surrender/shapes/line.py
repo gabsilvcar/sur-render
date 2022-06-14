@@ -1,7 +1,7 @@
 from copy import deepcopy
 
-from SurRender.shapes.generic_shape import GenericShape
-from SurRender.clipping import cohen_sutherland, liang_barsky, sutherland_hodgeman
+from surrender.shapes.generic_shape import GenericShape
+from surrender.clipping import cohen_sutherland, liang_barsky, sutherland_hodgeman
 
 class Line(GenericShape):
     DO_NOT_CLIP = 0

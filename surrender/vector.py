@@ -1,7 +1,7 @@
 import numpy as np
 from numbers import Number
 
-from SurRender.math_transforms import *
+from surrender.math_transforms import *
                                        
 
 def vector_angle(v0, v1):

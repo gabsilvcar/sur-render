@@ -1,9 +1,9 @@
 from copy import deepcopy
 
-from SurRender.shapes.generic_shape import GenericShape
-from SurRender.shapes import Line
-from SurRender.clipping import cohen_sutherland, liang_barsky, sutherland_hodgeman
-from SurRender.utils import adjacents
+from surrender.shapes.generic_shape import GenericShape
+from surrender.shapes import Line
+from surrender.clipping import cohen_sutherland, liang_barsky, sutherland_hodgeman
+from surrender.utils import adjacents
 
 
 class Polygon(GenericShape):

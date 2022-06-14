@@ -6,8 +6,8 @@ from PyQt5.QtCore import Qt, QSize
 
 import numpy as np
 
-from SurRender.vector import Vector
-from SurRender.viewport import Viewport
+from surrender.vector import Vector
+from surrender.viewport import Viewport
 
 
 class ModifyObject(QWidget):

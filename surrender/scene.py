@@ -7,10 +7,10 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
-from SurRender.projection import *
-from SurRender.vector import Vector
-from SurRender.io.obj_writer import OBJWriter
-from SurRender.shapes import Object3D
+from surrender.projection import *
+from surrender.vector import Vector
+from surrender.io.obj_writer import OBJWriter
+from surrender.shapes import Object3D
 
 
 class Scene:
