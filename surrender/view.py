@@ -62,9 +62,21 @@ class View(Polygon):
         return (self.p0 - self.p3).length()
     
     def move(self, vector):
+        '''
+        The user don't want to move the window according to 
+        global coordinates, but according to the window local
+        coordinates.
+
+        The equivalent to local Y is the up vector, and the equivalent
+        to the local X is the right vector. As these are unit vectors, 
+        we can multiply each of them by the magnitude of X and Y then 
+        combine both in a single vector instead of calculating a matrix
+        and stuff like that.
+        '''
+
         uv = self.up_vector()
-        nv = self.normal_vector()
-        vector.rotate_z(-vector_z_angle(uv))
+        rv = self.right_vector()        
+        vector = (rv * vector.x) + (uv * vector.y)
         super().move(vector)
 
     def zoom(self, amount, around=None):
