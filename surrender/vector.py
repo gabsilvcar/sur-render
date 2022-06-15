@@ -44,7 +44,7 @@ def dot_product(v0, v1):
 
 
 class Vector:
-    def __init__(self, x, y, z=5):
+    def __init__(self, x, y, z=0):
         self.x = x
         self.y = y
         self.z = z
@@ -67,10 +67,12 @@ class Vector:
 
     def apply_transform(self, matrix):
         self @= matrix
+        return self
 
     def move(self, vector):
         matrix = translation_matrix(vector)
         self.apply_transform(matrix)
+        return self
 
     def scale(self, vector, around=None):
         if around is None:
@@ -82,6 +84,7 @@ class Vector:
 
         matrix = t0 @ s @ t1
         self.apply_transform(matrix)
+        return self
     
     def rotate_x(self, angle, around=None):
         if around is None:
@@ -93,6 +96,7 @@ class Vector:
 
         matrix = t0 @ r @ t1
         self.apply_transform(matrix)
+        return self
     
     def rotate_y(self, angle, around=None):
         if around is None:
@@ -104,6 +108,7 @@ class Vector:
 
         matrix = t0 @ r @ t1
         self.apply_transform(matrix)
+        return self
     
     def rotate_z(self, angle, around=None):
         if around is None:
@@ -115,11 +120,13 @@ class Vector:
 
         matrix = t0 @ r @ t1
         self.apply_transform(matrix)
+        return self
 
     def rotate(self, x, y, z, around=None):
-        self.rotate_z(z, around)
-        self.rotate_y(y, around)
         self.rotate_x(x, around)
+        self.rotate_y(y, around)
+        self.rotate_z(z, around)
+        return self
 
     def __add__(self, other):
         if isinstance(other, Vector):
@@ -210,7 +217,7 @@ class Vector:
         return self
 
     def __str__(self):
-        return f'Vector({self.x}, {self.y}, {self.z})'
+        return f'Vector({self.x :.2f}, {self.y :.2f}, {self.z :.2f})'
     
     def __repr__(self):
         return str(self)

@@ -1,8 +1,31 @@
 import numpy as np
 from copy import deepcopy
+from numbers import Number
 
 from surrender.vector import *
+from surrender.math_transforms import *
 
+
+def align_to_x(vector):
+    vector = vector.normalized()
+    mz = rotation_matrix_z(-np.arctan(vector.y / vector.x))
+    vector.apply_transform(mz)
+    my = rotation_matrix_y(np.arctan(vector.z / vector.x))
+    return mz @ my
+
+def align_to_y(vector):
+    vector = vector.normalized()
+    mx = rotation_matrix_x(-np.arctan(vector.z / vector.y))
+    vector.apply_transform(mx)
+    mz = rotation_matrix_z(np.arctan(vector.x / vector.y))
+    return mx @ mz
+
+def align_to_z(vector):
+    vector = vector.normalized()
+    my = rotation_matrix_y(-np.arctan(vector.x / vector.z))
+    vector.apply_transform(my)
+    mx = rotation_matrix_x(np.arctan(vector.y / vector.z))
+    return my @ mx
 
 def viewport_transform(vector, source, target):
     x = vector.x - source.min().x
@@ -20,25 +43,15 @@ def viewport_transform(vector, source, target):
 
 def align_shapes_to_window(shapes, window):
     wc = window.center()
-    uv = window.up_vector()
     nv = window.normal_vector()
+    uv = window.up_vector()
 
-    x_angle = vector_x_angle(nv)
-    y_angle = vector_y_angle(nv) - np.pi / 2
-    x_angle = 0
+    align_normal = align_to_z(nv)
     z_angle = vector_z_angle(uv)
-
-    print(f'{uv = }')
-    print(f'{nv = }')
-    print(f'{x_angle = }')
-    print(f'{y_angle = }')
-    print(f'{z_angle = }')
-    print()
 
     for shape in shapes:
         shape = deepcopy(shape)
         shape.move(-wc)
-        shape.rotate_x(x_angle)
-        shape.rotate_y(y_angle)
+        shape.apply_transform(align_normal)
         shape.rotate_z(z_angle)
         yield shape
