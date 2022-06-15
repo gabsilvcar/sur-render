@@ -4,6 +4,7 @@ from copy import deepcopy
 from surrender.vector import *
 from surrender.shapes import Polygon
 
+
 class View(Polygon):
     def __init__(self, p0, p1, p2, p3, border=0):
         '''
@@ -63,12 +64,7 @@ class View(Polygon):
     def move(self, vector):
         uv = self.up_vector()
         nv = self.normal_vector()
-
-        x = vector_x_angle(nv)
-        y = vector_y_angle(nv) - np.pi / 2
-        z = -vector_z_angle(uv)
-
-        vector.rotate(x,y,z)
+        vector.rotate_z(-vector_z_angle(uv))
         super().move(vector)
 
     def zoom(self, amount, around=None):

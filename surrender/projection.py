@@ -6,26 +6,22 @@ from surrender.vector import *
 from surrender.math_transforms import *
 
 
-def align_to_x(vector):
-    vector = vector.normalized()
-    mz = rotation_matrix_z(-np.arctan(vector.y / vector.x))
-    vector.apply_transform(mz)
-    my = rotation_matrix_y(np.arctan(vector.z / vector.x))
-    return mz @ my
+def _alignment_matrix(uv, nv):
+    rx = vector_x_angle(nv)
+    nv.rotate_x(rx)
+    uv.rotate_x(rx)
 
-def align_to_y(vector):
-    vector = vector.normalized()
-    mx = rotation_matrix_x(-np.arctan(vector.z / vector.y))
-    vector.apply_transform(mx)
-    mz = rotation_matrix_z(np.arctan(vector.x / vector.y))
-    return mx @ mz
+    ry = vector_y_angle(nv) - np.pi / 2
+    nv.rotate_y(ry)
+    uv.rotate_y(ry)
 
-def align_to_z(vector):
-    vector = vector.normalized()
-    my = rotation_matrix_y(-np.arctan(vector.x / vector.z))
-    vector.apply_transform(my)
-    mx = rotation_matrix_x(np.arctan(vector.y / vector.z))
-    return my @ mx
+    rz = vector_z_angle(uv)
+
+    mx = rotation_matrix_x(rx)
+    my = rotation_matrix_y(ry)
+    mz = rotation_matrix_z(rz)
+
+    return mx @ my @ mz
 
 def viewport_transform(vector, source, target):
     x = vector.x - source.min().x
@@ -43,15 +39,10 @@ def viewport_transform(vector, source, target):
 
 def align_shapes_to_window(shapes, window):
     wc = window.center()
-    nv = window.normal_vector()
-    uv = window.up_vector()
-
-    align_normal = align_to_z(nv)
-    z_angle = vector_z_angle(uv)
+    alignment_matrix = _alignment_matrix(window.up_vector(), window.normal_vector())
 
     for shape in shapes:
         shape = deepcopy(shape)
         shape.move(-wc)
-        shape.apply_transform(align_normal)
-        shape.rotate_z(z_angle)
+        shape.apply_transform(alignment_matrix)
         yield shape

@@ -6,7 +6,6 @@ from surrender.math_transforms import *
 
 def vector_angle(v0, v1):
     if v0.length() == 0 or v1.length() == 0:
-        print('iih deu merda')
         return 0
 
     cos = v0.normalized() @ v1.normalized()
