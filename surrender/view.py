@@ -80,7 +80,7 @@ class View(Polygon):
         super().move(vector)
 
     def zoom(self, amount, around=None):
-        v = Vector(amount, amount)
+        v = Vector(amount, amount, amount)
         around = self.center()
         super().scale(v, around)
         
