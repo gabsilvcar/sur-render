@@ -53,7 +53,7 @@ class View(Polygon):
     def normal_vector(self):
         uv = self.up_vector()
         rv = self.right_vector()
-        return -cross_product(uv, rv).normalized()
+        return -uv.cross_product(rv).normalized()
 
     def width(self):
         return (self.p1 - self.p0).length()

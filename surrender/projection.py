@@ -6,15 +6,15 @@ from surrender.math_transforms import *
 
 
 def _alignment_matrix(uv, nv):
-    rx = vector_x_angle(nv)
+    rx = nv.x_angle()
     nv.rotate_x(rx)
     uv.rotate_x(rx)
 
-    ry = vector_y_angle(nv) - np.pi / 2
+    ry = nv.y_angle() - np.pi / 2
     nv.rotate_y(ry)
     uv.rotate_y(ry)
 
-    rz = vector_z_angle(uv)
+    rz = uv.z_angle()
 
     mx = rotation_matrix_x(rx)
     my = rotation_matrix_y(ry)

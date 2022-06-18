@@ -2,42 +2,42 @@ import numpy as np
 from numbers import Number
 from surrender.math_transforms import *                              
 
-def vector_angle(v0, v1):
-    if v0.length() == 0 or v1.length() == 0:
-        return 0
+# def vector_angle(v0, v1):
+#     if v0.length() == 0 or v1.length() == 0:
+#         return 0
 
-    cos = v0.normalized() @ v1.normalized()
-    angle = np.arccos(cos)
-    return angle
+#     cos = v0.normalized() @ v1.normalized()
+#     angle = np.arccos(cos)
+#     return angle
 
-def vector_x_angle(v):
-    z = Vector(0,0,1)
-    v_yz = Vector(0, v.y, v.z)
-    angle = vector_angle(z, v_yz)
-    return (angle if v.y >= 0 else -angle)
+# def vector_x_angle(v):
+#     z = Vector(0,0,1)
+#     v_yz = Vector(0, v.y, v.z)
+#     angle = vector_angle(z, v_yz)
+#     return (angle if v.y >= 0 else -angle)
 
-def vector_y_angle(v):
-    x = Vector(1,0,0)
-    v_zx = Vector(v.x, 0, v.z)
-    angle = vector_angle(x, v_zx)
-    return (angle if v.z >= 0 else -angle)
+# def vector_y_angle(v):
+#     x = Vector(1,0,0)
+#     v_zx = Vector(v.x, 0, v.z)
+#     angle = vector_angle(x, v_zx)
+#     return (angle if v.z >= 0 else -angle)
 
-def vector_z_angle(v):
-    y = Vector(0,1,0)
-    v_xy = Vector(v.x, v.y, 0)
-    angle = vector_angle(y, v_xy)
-    return (angle if v.x >= 0 else -angle)
+# def vector_z_angle(v):
+#     y = Vector(0,1,0)
+#     v_xy = Vector(v.x, v.y, 0)
+#     angle = vector_angle(y, v_xy)
+#     return (angle if v.x >= 0 else -angle)
 
-def cross_product(v0, v1):
-    a = [v0.x, v0.y, v0.z]
-    b = [v1.x, v1.y, v1.z]
-    c = np.cross(a, b)
-    return Vector(*c)
+# def cross_product(v0, v1):
+#     a = [v0.x, v0.y, v0.z]
+#     b = [v1.x, v1.y, v1.z]
+#     c = np.cross(a, b)
+#     return Vector(*c)
 
-def dot_product(v0, v1):
-    a = [v0.x, v0.y, v0.z]
-    b = [v1.x, v1.y, v1.z]
-    return np.dot(a, b)
+# def dot_product(v0, v1):
+#     a = [v0.x, v0.y, v0.z]
+#     b = [v1.x, v1.y, v1.z]
+#     return np.dot(a, b)
 
 
 class Vector:
@@ -125,6 +125,43 @@ class Vector:
         self.rotate_z(delta.z, around)
         return self
 
+    def cross_product(self, other):
+        a = [self.x, self.y, self.z]
+        b = [other.x, other.y, other.z]
+        c = np.cross(a, b)
+        return Vector(*c)
+    
+    def dot_product(self, other):
+        a = [self.x, self.y, self.z]
+        b = [other.x, other.y, other.z]
+        return np.dot(a, b)
+
+    def angle_with(self, other):
+        if self.length() == 0 or other.length() == 0:
+            return 0
+
+        cos = self.normalized() @ other.normalized()
+        angle = np.arccos(cos)
+        return angle
+    
+    def x_angle(self):
+        z = Vector(0,0,1)
+        v_yz = Vector(0, self.y, self.z)
+        angle = v_yz.angle_with(z)
+        return (angle if self.y >= 0 else -angle)
+
+    def y_angle(self):
+        x = Vector(1,0,0)
+        v_zx = Vector(self.x, 0, self.z)
+        angle = v_zx.angle_with(x)
+        return (angle if self.z >= 0 else -angle)
+
+    def z_angle(self):
+        y = Vector(0,1,0)
+        v_xy = Vector(self.x, self.y, 0)
+        angle = v_xy.angle_with(y)
+        return (angle if self.x >= 0 else -angle)
+
     def __add__(self, other):
         if isinstance(other, Vector):
             x = self.x + other.x
@@ -181,7 +218,7 @@ class Vector:
 
     def __matmul__(self, other):
         if isinstance(other, Vector):
-            return dot_product(self, other)
+            return self.dot_product(other)
 
         if isinstance(other, np.ndarray):
             v = (self.data @ other)[:3]

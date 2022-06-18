@@ -1,12 +1,10 @@
 import sys, random
 import numpy as np 
 from copy import deepcopy
-
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform        
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
-
 from surrender.shapes import *
 from surrender.view import View
 from surrender.scene import Scene
@@ -46,8 +44,8 @@ class Viewport(QWidget):
         self.win.move(v)
         self.repaint()
     
-    def rotate(self, x, y, z):
-        self.win.rotate(x, y, z, self.win.center())
+    def rotate(self, delta):
+        self.win.rotate(delta, self.win.center())
         self.repaint()
         
     def move_xy(self, x, y):
@@ -136,7 +134,7 @@ class Viewport(QWidget):
             self.draw_3d(shape, painter)
         
         else:
-            print('Não sei desenhar', shape)
+            raise ValueError(f"The object {shape} is not supported.")
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
