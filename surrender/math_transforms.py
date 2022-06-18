@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def translation_matrix(delta):
     matrix = np.identity(4)
     matrix[3, 0] = delta.x

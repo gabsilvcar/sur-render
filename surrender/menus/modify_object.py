@@ -1,11 +1,9 @@
+import numpy as np
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QBrush, QColor
 from PyQt5.QtCore import Qt, QSize
-
-import numpy as np
-
 from surrender.vector import Vector
 from surrender.viewport import Viewport
 

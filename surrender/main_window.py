@@ -1,9 +1,7 @@
 import sys
-
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
-
 from surrender.menus.add_object import AddObject
 from surrender.menus.object_list import ObjectList
 from surrender.menus.modify_object import ModifyObject
@@ -13,16 +11,15 @@ from surrender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
 from surrender.viewport import Viewport
 from surrender.tools import HandTool
 
+
 class MainWindow(QMainWindow):
     """Main Window."""
 
     def __init__(self, parent=None):
         """Initializer."""
         super().__init__(parent)
-
         self.viewport = Viewport()
         self.current_tool = HandTool(self)
-        
         self.init_ui()
         self.__createActions()
         self.__createMenuBar()
@@ -33,8 +30,7 @@ class MainWindow(QMainWindow):
         self.resize(WINDOW_HEIGHT, WINDOW_WIDTH)
         self.setWindowTitle(APPLICATION_NAME)
         self.setWindowIcon(QtGui.QIcon('resources/logo.jpg'))
-        self.centralWidget = self.viewport
-        self.setCentralWidget(self.centralWidget)
+        self.setCentralWidget(self.viewport)
 
     def save_callback(self):
         path, _ = QFileDialog.getSaveFileName(self, 'Save File', '', 'Wavefront *.obj')

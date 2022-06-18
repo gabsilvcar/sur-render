@@ -1,5 +1,4 @@
 from copy import deepcopy
-
 from surrender.vector import Vector
 from surrender.projection import viewport_transform
 
@@ -15,9 +14,6 @@ class GenericShape:
 
     def points(self):
         return []
-    
-    def clip(self, view):
-        return self
 
     def apply_transform(self, matrix):
         for p in self.points():

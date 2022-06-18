@@ -1,7 +1,6 @@
 import numpy as np
 from copy import deepcopy
 from numbers import Number
-
 from surrender.vector import *
 from surrender.math_transforms import *
 

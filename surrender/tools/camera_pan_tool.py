@@ -1,6 +1,5 @@
 import numpy as np
 from PyQt5.QtCore import Qt
-
 from surrender.tools.tool import Tool
 
 
@@ -16,5 +15,3 @@ class CameraPanTool(Tool):
         y = delta.y() / 100 * np.pi
         self.viewport.rotate(y, x, 0)
         self.start_pos = event.pos()    
-
-    

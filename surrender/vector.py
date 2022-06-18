@@ -1,8 +1,6 @@
 import numpy as np
 from numbers import Number
-
-from surrender.math_transforms import *
-                                       
+from surrender.math_transforms import *                              
 
 def vector_angle(v0, v1):
     if v0.length() == 0 or v1.length() == 0:

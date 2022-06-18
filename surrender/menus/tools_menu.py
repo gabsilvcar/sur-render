@@ -1,6 +1,5 @@
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import * 
-
 from surrender.tools import *
 
 
@@ -37,4 +36,3 @@ class ToolsMenu(QWidget):
 
     def camera_pan_callback(self):
         self.parent.current_tool = CameraPanTool(self.parent)
-
