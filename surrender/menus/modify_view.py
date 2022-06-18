@@ -158,7 +158,8 @@ class RotationWidget(QWidget):
         x = np.radians(self.x_angle_box.value())
         y = np.radians(self.y_angle_box.value())
         z = np.radians(self.z_angle_box.value())
-        self.viewport.rotate(x, y, z)
+        delta = Vector(x, y, z)
+        self.viewport.rotate(delta)
 
 
 class ClippingWidget(QWidget):

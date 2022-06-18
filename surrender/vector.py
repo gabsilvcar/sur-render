@@ -119,10 +119,10 @@ class Vector:
         self.apply_transform(matrix)
         return self
 
-    def rotate(self, x, y, z, around=None):
-        self.rotate_x(x, around)
-        self.rotate_y(y, around)
-        self.rotate_z(z, around)
+    def rotate(self, delta, around=None):
+        self.rotate_x(delta.x, around)
+        self.rotate_y(delta.y, around)
+        self.rotate_z(delta.z, around)
         return self
 
     def __add__(self, other):
