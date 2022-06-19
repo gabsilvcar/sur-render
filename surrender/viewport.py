@@ -1,16 +1,14 @@
 import sys, random
 import numpy as np 
 from copy import deepcopy
-
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform        
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
-
 from surrender.shapes import *
 from surrender.view import View
 from surrender.scene import Scene
-from surrender.vector import Vector, angle
+from surrender.vector import Vector
 
 
 class Viewport(QWidget):
@@ -46,12 +44,13 @@ class Viewport(QWidget):
         self.win.move(v)
         self.repaint()
     
-    def rotate(self, angle):
-        self.win.rotate(angle, self.win.center())
+    def rotate(self, delta):
+        self.win.rotate(delta, self.win.center())
         self.repaint()
         
     def move_xy(self, x, y):
-        v = Vector(x, y)
+        scalar = self.win.width() / self.vp.width() 
+        v = Vector(x, y) * scalar
         self.win.move(v)
         self.repaint()
 
@@ -107,6 +106,14 @@ class Viewport(QWidget):
         # for p in poly.points():
         #     self.draw_point(Point('', p), painter)
 
+    def draw_3d(self, shape, painter=None):
+        if painter is None:
+            painter = QPainter(self)
+
+        lines = shape.as_lines()
+        for line in lines:
+            self.draw_line(line, painter)
+
     def draw_shape(self, shape, painter=None):
         if painter is None:
             painter = QPainter(self)
@@ -122,6 +129,12 @@ class Viewport(QWidget):
 
         elif isinstance(shape, Bezier | BSpline):
             self.draw_curve(shape, painter)
+
+        elif isinstance(shape, Object3D):
+            self.draw_3d(shape, painter)
+        
+        else:
+            raise ValueError(f"The object {shape} is not supported.")
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -144,7 +157,7 @@ class Viewport(QWidget):
             Vector(0,0), 
         )
 
-        self.scene.gliphs = [self.vp]
+        self.scene.gliphs = [self.vp, Point('Center', self.vp.center())]
 
     def paintEvent(self, event):
         super().paintEvent(event)

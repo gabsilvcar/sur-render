@@ -1,8 +1,26 @@
 import numpy as np
 from copy import deepcopy
+from numbers import Number
+from surrender.vector import *
+from surrender.math_transforms import *
 
-from surrender.vector import Vector, angle
 
+def _alignment_matrix(uv, nv):
+    rx = nv.x_angle()
+    nv.rotate_x(rx)
+    uv.rotate_x(rx)
+
+    ry = nv.y_angle() - np.pi / 2
+    nv.rotate_y(ry)
+    uv.rotate_y(ry)
+
+    rz = uv.z_angle()
+
+    mx = rotation_matrix_x(rx)
+    my = rotation_matrix_y(ry)
+    mz = rotation_matrix_z(rz)
+
+    return mx @ my @ mz
 
 def viewport_transform(vector, source, target):
     x = vector.x - source.min().x
@@ -18,18 +36,12 @@ def viewport_transform(vector, source, target):
     vector.y = y
     return vector
 
-def world_to_ppc(shapes, window):
+def align_shapes_to_window(shapes, window):
     wc = window.center()
-    uv = window.up_vector()
-
-    transformed = []
-    y  = Vector(0,1,0)
-    a  = angle(uv, y) 
+    alignment_matrix = _alignment_matrix(window.up_vector(), window.normal_vector())
 
     for shape in shapes:
         shape = deepcopy(shape)
         shape.move(-wc)
-        shape.rotate(a)
-        transformed.append(shape)
-
-    return transformed
+        shape.apply_transform(alignment_matrix)
+        yield shape

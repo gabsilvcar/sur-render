@@ -30,6 +30,7 @@ class AddObject(QWidget):
         self.tabs.addTab(BezierWidget(self.viewport, self.objectview), "Bezier")
         self.tabs.addTab(BSplineWidget(self.viewport, self.objectview), "B-Spline")
         self.tabs.addTab(RectangleWidget(self.viewport, self.objectview), "Rectangle")
+        self.tabs.addTab(CubeWidget(self.viewport, self.objectview), "Cube")
 
   
 class GenericShapeWidget(QWidget):
@@ -354,5 +355,54 @@ class BSplineWidget(GenericShapeWidget):
             if vectors:
                self.add_shape(shape)
                
+        except ValueError:
+            pass
+
+
+class CubeWidget(GenericShapeWidget):
+    def __init__(self, viewport, object_list):
+        super().__init__(viewport, object_list)
+        self.x_line = QLineEdit()
+        self.y_line = QLineEdit()
+        self.z_line = QLineEdit()
+        self.s_line = QLineEdit()
+        
+        layout = QFormLayout()
+        layout.addRow('Name', self.name_line)
+        layout.addRow('X', self.x_line)
+        layout.addRow('Y', self.y_line)
+        layout.addRow('Z', self.z_line)
+        layout.addRow('L', self.s_line)
+        layout.addRow('Color', self.color_button)
+        layout.addRow(self.random_button)
+        layout.addRow(self.apply_button)
+        self.setLayout(layout)
+
+    def random_callback(self):
+        self.color = [randint(0,255) for _ in range(3)]
+        self.paint_button(self.color_button, self.color)
+
+        lines = [
+            self.x_line,
+            self.y_line,
+            self.z_line,
+        ]
+
+        for line in lines:
+            n = randint(0, 400)
+            line.setText(str(n))
+
+        n = randint(100, 400)
+        self.s_line.setText(str(n))
+
+    def apply_callback(self):
+        try:
+            name = self.name_line.text()
+            x = int(self.x_line.text())
+            y = int(self.y_line.text())
+            z = int(self.z_line.text())
+            s = int(self.s_line.text())
+            shape = Cube(name, Vector(x,y,z), s, self.color)
+            self.add_shape(shape)
         except ValueError:
             pass

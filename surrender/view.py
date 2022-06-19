@@ -1,8 +1,9 @@
 import numpy as np
 from copy import deepcopy
 
-from surrender.vector import Vector, angle
+from surrender.vector import *
 from surrender.shapes import Polygon
+
 
 class View(Polygon):
     def __init__(self, p0, p1, p2, p3, border=0):
@@ -44,21 +45,42 @@ class View(Polygon):
         return self.p1
 
     def up_vector(self):
-        return self.p0 - self.p3
+        return (self.p0 - self.p3).normalized()
+
+    def right_vector(self):
+        return (self.p1 - self.p0).normalized()
+    
+    def normal_vector(self):
+        uv = self.up_vector()
+        rv = self.right_vector()
+        return -uv.cross_product(rv).normalized()
 
     def width(self):
-        return (self.p1 - self.p0).size()
+        return (self.p1 - self.p0).length()
 
     def height(self):
-        return (self.p0 - self.p3).size()
+        return (self.p0 - self.p3).length()
     
     def move(self, vector):
-        a = angle(self.up_vector(), Vector(0,1,0))
-        vector.rotate(-a)
+        '''
+        The user don't want to move the window according to 
+        global coordinates, but according to the window local
+        coordinates.
+
+        The equivalent to local Y is the up vector, and the equivalent
+        to the local X is the right vector. As these are unit vectors, 
+        we can multiply each of them by the magnitude of X and Y then 
+        combine both in a single vector instead of calculating a matrix
+        and stuff like that.
+        '''
+
+        uv = self.up_vector()
+        rv = self.right_vector()        
+        vector = (rv * vector.x) + (uv * vector.y)
         super().move(vector)
 
     def zoom(self, amount, around=None):
-        v = Vector(amount, amount)
+        v = Vector(amount, amount, amount)
         around = self.center()
         super().scale(v, around)
         

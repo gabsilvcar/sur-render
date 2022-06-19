@@ -1,6 +1,5 @@
 from copy import deepcopy
-
-from surrender.vector import Vector, angle
+from surrender.vector import Vector
 from surrender.projection import viewport_transform
 
 
@@ -15,9 +14,6 @@ class GenericShape:
 
     def points(self):
         return []
-    
-    def clip(self, view):
-        return None
 
     def apply_transform(self, matrix):
         for p in self.points():
@@ -47,7 +43,19 @@ class GenericShape:
     def scale(self, vector, around=None):
         for p in self.points():
             p.scale(vector, around)
-    
-    def rotate(self, angle, around=None):
+
+    def rotate_x(self, angle, around=None):
         for p in self.points():
-            p.rotate(angle, around)
+            p.rotate_x(angle, around)
+
+    def rotate_y(self, angle, around=None):
+        for p in self.points():
+            p.rotate_y(angle, around)
+
+    def rotate_z(self, angle, around=None):
+        for p in self.points():
+            p.rotate_z(angle, around)
+    
+    def rotate(self, delta, around=None):
+        for p in self.points():
+            p.rotate(delta, around)

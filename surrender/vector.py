@@ -1,30 +1,54 @@
 import numpy as np
+from numbers import Number
+from surrender.math_transforms import *                              
 
-from surrender.math_transforms import (translation_matrix, 
-                                       scale_matrix,
-                                       rotation_matrix,)
+# def vector_angle(v0, v1):
+#     if v0.length() == 0 or v1.length() == 0:
+#         return 0
 
-def angle(v0, v1):
-    uv0 = v0.data / np.linalg.norm(v0.data)
-    uv1 = v1.data / np.linalg.norm(v1.data)
-    cos = np.dot(uv0, uv1)
-    a = np.arccos(cos)
-    if v0.x < 0:
-        return -a
-    else:
-        return a 
+#     cos = v0.normalized() @ v1.normalized()
+#     angle = np.arccos(cos)
+#     return angle
 
+# def vector_x_angle(v):
+#     z = Vector(0,0,1)
+#     v_yz = Vector(0, v.y, v.z)
+#     angle = vector_angle(z, v_yz)
+#     return (angle if v.y >= 0 else -angle)
+
+# def vector_y_angle(v):
+#     x = Vector(1,0,0)
+#     v_zx = Vector(v.x, 0, v.z)
+#     angle = vector_angle(x, v_zx)
+#     return (angle if v.z >= 0 else -angle)
+
+# def vector_z_angle(v):
+#     y = Vector(0,1,0)
+#     v_xy = Vector(v.x, v.y, 0)
+#     angle = vector_angle(y, v_xy)
+#     return (angle if v.x >= 0 else -angle)
+
+# def cross_product(v0, v1):
+#     a = [v0.x, v0.y, v0.z]
+#     b = [v1.x, v1.y, v1.z]
+#     c = np.cross(a, b)
+#     return Vector(*c)
+
+# def dot_product(v0, v1):
+#     a = [v0.x, v0.y, v0.z]
+#     b = [v1.x, v1.y, v1.z]
+#     return np.dot(a, b)
 
 
 class Vector:
-    def __init__(self, x, y, z=1):
+    def __init__(self, x, y, z=0):
         self.x = x
         self.y = y
         self.z = z
     
     @property
     def data(self):
-        return np.array([self.x, self.y, self.z], dtype=float)
+        return np.array([self.x, self.y, self.z, 1], dtype=float)
 
     @data.setter
     def data(self, sequence):
@@ -32,12 +56,20 @@ class Vector:
         self.y = sequence[1]
         self.z = sequence[2]
 
+    def length(self):
+        return np.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
+
+    def normalized(self):
+        return self / self.length()
+
     def apply_transform(self, matrix):
         self @= matrix
+        return self
 
     def move(self, vector):
         matrix = translation_matrix(vector)
         self.apply_transform(matrix)
+        return self
 
     def scale(self, vector, around=None):
         if around is None:
@@ -49,74 +81,177 @@ class Vector:
 
         matrix = t0 @ s @ t1
         self.apply_transform(matrix)
-
-    def rotate(self, angle, around=None):
+        return self
+    
+    def rotate_x(self, angle, around=None):
         if around is None:
             around = Vector(0,0)
 
         t0 = translation_matrix(-around)
         t1 = translation_matrix(around)
-        r = rotation_matrix(angle)
+        r = rotation_matrix_x(angle)
 
         matrix = t0 @ r @ t1
         self.apply_transform(matrix)
-
-
-    def angle_between(self):
-        return 
-
-    def size(self):
-        return np.sqrt(self.x*self.x + self.y*self.y)
+        return self
     
+    def rotate_y(self, angle, around=None):
+        if around is None:
+            around = Vector(0,0)
+
+        t0 = translation_matrix(-around)
+        t1 = translation_matrix(around)
+        r = rotation_matrix_y(angle)
+
+        matrix = t0 @ r @ t1
+        self.apply_transform(matrix)
+        return self
+    
+    def rotate_z(self, angle, around=None):
+        if around is None:
+            around = Vector(0,0)
+
+        t0 = translation_matrix(-around)
+        t1 = translation_matrix(around)
+        r = rotation_matrix_z(angle)
+
+        matrix = t0 @ r @ t1
+        self.apply_transform(matrix)
+        return self
+
+    def rotate(self, delta, around=None):
+        self.rotate_x(delta.x, around)
+        self.rotate_y(delta.y, around)
+        self.rotate_z(delta.z, around)
+        return self
+
+    def cross_product(self, other):
+        a = [self.x, self.y, self.z]
+        b = [other.x, other.y, other.z]
+        c = np.cross(a, b)
+        return Vector(*c)
+    
+    def dot_product(self, other):
+        a = [self.x, self.y, self.z]
+        b = [other.x, other.y, other.z]
+        return np.dot(a, b)
+
+    def angle_with(self, other):
+        if self.length() == 0 or other.length() == 0:
+            return 0
+
+        cos = self.normalized() @ other.normalized()
+        angle = np.arccos(cos)
+        return angle
+    
+    def x_angle(self):
+        z = Vector(0,0,1)
+        v_yz = Vector(0, self.y, self.z)
+        angle = v_yz.angle_with(z)
+        return (angle if self.y >= 0 else -angle)
+
+    def y_angle(self):
+        x = Vector(1,0,0)
+        v_zx = Vector(self.x, 0, self.z)
+        angle = v_zx.angle_with(x)
+        return (angle if self.z >= 0 else -angle)
+
+    def z_angle(self):
+        y = Vector(0,1,0)
+        v_xy = Vector(self.x, self.y, 0)
+        angle = v_xy.angle_with(y)
+        return (angle if self.x >= 0 else -angle)
+
     def __add__(self, other):
         if isinstance(other, Vector):
-            other = other.data  
-        v = self.data + other
-        return Vector(*v)
+            x = self.x + other.x
+            y = self.y + other.y 
+            z = self.z + other.z
+            return Vector(x,y,z)
+        
+        if isinstance(other, Number):
+            x = self.x + other
+            y = self.y + other 
+            z = self.z + other
+            return Vector(x,y,z)
+        
+        raise ValueError('Vector only supports additions with other Vectors or Scalars')
+
+    def __sub__(self, other):
+        if isinstance(other, Vector):
+            x = self.x - other.x
+            y = self.y - other.y 
+            z = self.z - other.z
+            return Vector(x,y,z)
+        
+        if isinstance(other, Number):
+            x = self.x - other
+            y = self.y - other 
+            z = self.z - other
+            return Vector(x,y,z)
+        
+        raise ValueError('Vector only supports subtraction with other Vectors or Scalars')
+
+    def __mul__(self, other):
+        if isinstance(other, Number):
+            x = self.x * other
+            y = self.y * other 
+            z = self.z * other
+            return Vector(x,y,z)
+        
+        message = 'Vector only supports multiplications against scalars.' \
+                  'Try using the operator @ for dot product'
+
+        raise ValueError(message)
+
+    def __truediv__(self, other):
+        if isinstance(other, Number):
+            x = self.x / other
+            y = self.y / other 
+            z = self.z / other
+            return Vector(x,y,z)
+        
+        message = 'Vector only supports division against scalars.' \
+                  'Try using the operator @ for dot product'
+
+        raise ValueError(message)
+
+    def __matmul__(self, other):
+        if isinstance(other, Vector):
+            return self.dot_product(other)
+
+        if isinstance(other, np.ndarray):
+            v = (self.data @ other)[:3]
+            return Vector(*v)
+
+        raise ValueError('Vector only supports dot product between instances of Vector and numpy.ndarray')
+
+
+    def __neg__(self):
+        return Vector(-self.x, -self.y, -self.z)
 
     def __iadd__(self, other):
         self.data = (self + other).data
         return self
-    
-    def __sub__(self, other):
-        if isinstance(other, Vector):
-            other = other.data  
-        v = self.data - other
-        return Vector(*v)
 
     def __isub__(self, other):
         self.data = (self - other).data
         return self
-
-    def __mul__(self, other):
-        v = self.data * other
-        return Vector(*v)
     
     def __imul__(self, other):
         self.data = (self * other).data
         return self
-    
-    def __truediv__(self, other):
-        v = self.data / other
-        return Vector(*v)
 
     def __itruediv__(self, other):
         self.data = (self / other).data
         return self
-
-    def __matmul__(self, other):
-        v = self.data @ other
-        return Vector(*v)
     
     def __imatmul__(self, other):
         self.data = (self @ other).data
         return self
 
-    def __neg__(self):
-        return Vector(-self.x, -self.y)
-
     def __str__(self):
-        return f'Vector({self.x}, {self.y}, {self.z})'
+        return f'Vector({self.x :.2f}, {self.y :.2f}, {self.z :.2f})'
     
     def __repr__(self):
         return str(self)

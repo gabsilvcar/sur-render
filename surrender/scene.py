@@ -1,14 +1,12 @@
 import sys, random
 import numpy as np
 from copy import deepcopy
-
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
-
-from surrender.projection import world_to_ppc
-from surrender.vector import Vector, angle
+from surrender.projection import *
+from surrender.vector import Vector
 from surrender.io.obj_writer import OBJWriter
 
 
@@ -23,7 +21,8 @@ class Scene:
         ow.write(path)
 
     def projected_shapes(self, origin, target):
-        shapes = world_to_ppc(self.shapes, origin)
+        shapes = self.shapes
+        shapes = align_shapes_to_window(shapes, origin)
         shapes = [shape.change_viewport(origin.ppc(), target) for shape in shapes]
         shapes = [shape.clipped(target) for shape in shapes if shape.clipped(target) is not None]
         return shapes

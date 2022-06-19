@@ -132,22 +132,34 @@ class RotationWidget(QWidget):
         super().__init__()
         self.viewport = viewport
 
-        self.angle_box = QSpinBox()
+        self.x_angle_box = QSpinBox()
+        self.y_angle_box = QSpinBox()
+        self.z_angle_box = QSpinBox()
         self.apply_button = QPushButton("Apply")
 
-        self.angle_box.setRange(-360, 360)
-        self.angle_box.setSingleStep(10)
+        self.x_angle_box.setRange(-360, 360)
+        self.y_angle_box.setRange(-360, 360)
+        self.z_angle_box.setRange(-360, 360)
+
+        self.x_angle_box.setSingleStep(10)
+        self.y_angle_box.setSingleStep(10)
+        self.z_angle_box.setSingleStep(10)
+
         self.apply_button.clicked.connect(self.apply_callback)
 
         layout = QFormLayout()
-        layout.addRow('Angle', self.angle_box)
+        layout.addRow('Angle X', self.x_angle_box)
+        layout.addRow('Angle Y', self.y_angle_box)
+        layout.addRow('Angle Z', self.z_angle_box)
         layout.addRow('', self.apply_button)
         self.setLayout(layout)
     
     def apply_callback(self):
-        angle = self.angle_box.value()
-        angle = np.radians(angle)
-        self.viewport.rotate(angle)
+        x = np.radians(self.x_angle_box.value())
+        y = np.radians(self.y_angle_box.value())
+        z = np.radians(self.z_angle_box.value())
+        delta = Vector(x, y, z)
+        self.viewport.rotate(delta)
 
 
 class ClippingWidget(QWidget):
