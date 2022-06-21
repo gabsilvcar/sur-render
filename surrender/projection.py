@@ -36,7 +36,7 @@ def viewport_transform(vector, source, target):
     vector.y = y
     return vector
 
-def align_shapes_to_window(shapes, window):
+def parallel_projection(shapes, window):
     wc = window.center()
     alignment_matrix = _alignment_matrix(window.up_vector(), window.normal_vector())
 
@@ -44,4 +44,24 @@ def align_shapes_to_window(shapes, window):
         shape = deepcopy(shape)
         shape.move(-wc)
         shape.apply_transform(alignment_matrix)
+        yield shape
+
+def perspective_projection(shapes, window):
+    cop = window.center_of_projection()
+    d = window.projection_distance
+    alignment_matrix = _alignment_matrix(window.up_vector(), window.normal_vector())
+
+    for shape in shapes:
+        shape = deepcopy(shape)
+        shape.move(-cop)
+        shape.apply_transform(alignment_matrix)
+
+        for p in shape.points():
+            x = (d * p.x) / p.z
+            y = (d * p.y) / p.z
+
+            p.x = x 
+            p.y = y
+            p.z = 0 
+
         yield shape

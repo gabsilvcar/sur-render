@@ -8,6 +8,7 @@ from surrender.constants import PIX_PER_MOVEMENT, ZOOM_FACTOR
 from surrender.scene import Scene
 from surrender.viewport import Viewport
 from surrender.shapes import *
+from surrender.vector import Vector
 from surrender.shapes.generic_curve import GenericCurve
 
 
