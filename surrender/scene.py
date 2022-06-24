@@ -6,8 +6,10 @@ from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 from surrender.projection import *
+from surrender.shapes import *
 from surrender.vector import Vector
 from surrender.io.obj_writer import OBJWriter
+from surrender.io.obj_io import OBJIO
 
 
 class Scene:
@@ -16,9 +18,15 @@ class Scene:
         self.gliphs = []
         self.window = None
 
+    def open(self, path):
+        new_shapes = OBJIO.read(path)
+        for shape in new_shapes:
+            self.shapes.append(shape)
+
     def save(self, path):
-        ow = OBJWriter(self.shapes)
-        ow.write(path)
+        OBJIO.write(self.shapes, path)
+        # ow = OBJWriter(self.shapes)
+        # ow.write(path)
 
     def projected_shapes(self, origin, target):
         shapes = self.shapes

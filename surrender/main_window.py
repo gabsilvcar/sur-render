@@ -32,6 +32,11 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QtGui.QIcon('resources/logo.jpg'))
         self.setCentralWidget(self.viewport)
 
+    def open_callback(self):
+        path, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'Wavefront *.obj')
+        if path:
+            self.viewport.scene.open(path)
+
     def save_callback(self):
         path, _ = QFileDialog.getSaveFileName(self, 'Save File', '', 'Wavefront *.obj')
         if path:
@@ -48,7 +53,11 @@ class MainWindow(QMainWindow):
         self.helpContentAction = QAction("&Help Content", self)
         self.aboutAction = QAction("&About", self)
 
+        self.openAction.triggered.connect(self.open_callback)
         self.saveAction.triggered.connect(self.save_callback)
+
+        self.openAction.setShortcut('ctrl+o')
+        self.saveAction.setShortcut('ctrl+s')
 
 
     def __createMenuBar(self):
