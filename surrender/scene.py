@@ -1,10 +1,6 @@
 import sys, random
 import numpy as np
 from copy import deepcopy
-from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import *
 from surrender.projection import *
 from surrender.shapes import *
 from surrender.vector import Vector
@@ -25,8 +21,6 @@ class Scene:
 
     def save(self, path):
         OBJIO.write(self.shapes, path)
-        # ow = OBJWriter(self.shapes)
-        # ow.write(path)
 
     def projected_shapes(self, origin, target):
         shapes = self.shapes

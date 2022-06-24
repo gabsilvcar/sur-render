@@ -7,10 +7,15 @@ class PolygonDescriptor:
     @classmethod
     def encode_shape(cls, shape, index=1):
         string = ''
-        # string  = f'v {shape.end.x} {shape.end.y} {shape.end.z} \n'
-        # string += f'v {shape.start.x} {shape.start.y} {shape.start.z} \n'
-        # string += f'o {shape.name} \n'
-        # string += f'l {index} {index+1} \n'
+        for p in shape.points():
+            string += f'v {p.x} {p.y} {p.z} \n'
+        
+        if shape.name:
+            string += f'o {shape.name} \n'
+
+        n = len(shape.points())
+        indexes = ' '.join(str(i + index) for i in range(n))
+        string += f'f {indexes} \n'
         return string
 
     @classmethod
@@ -20,8 +25,6 @@ class PolygonDescriptor:
         for p in params:
             splitted = [s.strip() for s in p.split('/')]
             indexes.append(int(splitted[0]))
-
-        # indexes = [int(i) for i in string.split()]
-        factor = 100
+        factor = 1
         vertices_used = [vertices[i-1] * factor for i in indexes]
-        return Polygon(name, vertices_used, (0,100,255))
+        return Polygon(name, vertices_used)

@@ -20,6 +20,9 @@ class OBJParser:
         index = 1
         for shape in shapes:
             descriptor = cls._get_descriptor(shape)
+            if descriptor is None:
+                print(f'Warning: Falha ao encontrar o descritor de {shape}')
+                continue
             string += descriptor.encode_shape(shape, index)
             num_points = len(shape.points())
             index += num_points
@@ -27,7 +30,7 @@ class OBJParser:
     
     @classmethod
     def parse_string(cls, string):
-        tokens = list(cls._create_tokens(string))
+        tokens = cls._create_tokens(string)
         vertices = cls._read_vertices(tokens)
 
         name = ''
@@ -48,13 +51,20 @@ class OBJParser:
             elif token.type == 'end':
                 if is_grouping and current_group:
                     pass
-                name = ''
                 is_grouping = False
                 current_group = []
             
             elif token.type == 'f':
                 yield PolygonDescriptor.parse_string(name, token.args, vertices)
-                name = '' 
+
+            elif token.type == 'p':
+                yield PointDescriptor.parse_string(name, token.args, vertices)
+            
+            elif token.type == 'l':
+                yield LineDescriptor.parse_string(name, token.args, vertices)
+
+            if not is_grouping:
+                name = ''
     
     @classmethod
     def _get_descriptor(cls, shape):
