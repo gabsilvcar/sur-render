@@ -79,8 +79,9 @@ class View(Polygon):
         '''
 
         uv = self.up_vector()
-        rv = self.right_vector()        
-        vector = (rv * vector.x) + (uv * vector.y)
+        rv = self.right_vector()   
+        nv = self.normal_vector()     
+        vector = (rv * vector.x) + (uv * vector.y) + (nv * vector.z)
         super().move(vector)
 
     def zoom(self, amount, around=None):

@@ -12,46 +12,36 @@ from surrender.vector import Vector
 
 
 class Viewport(QWidget):
+    moved = QtCore.pyqtSignal()
+    shapeModified = QtCore.pyqtSignal()
+    shapeSelected = QtCore.pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.scene = Scene()
+        self.selected_shape = None
+        self.current_tool = None
+    
+    def add_shape(self, shape):
+        if shape is not None:
+            self.scene.shapes.append(shape)
+    
+    def remove_shape(self, shape):
+        if shape in self.scene.shapes:
+            self.scene.shapes.remove(shape)
 
-    def zoom_in(self, factor):
-        self.win.zoom(1/factor)
-        self.repaint()
-
-    def zoom_out(self, factor):
+    def zoom(self, factor):
         self.win.zoom(factor)
         self.repaint()
-    
-    def move_up(self, amount):
-        v = Vector(0, -amount)
-        self.win.move(v)
-        self.repaint()
-    
-    def move_down(self, amount):
-        v = Vector(0, amount)
-        self.win.move(v)
-        self.repaint()
-
-    def move_left(self, amount):
-        v = Vector(amount, 0)
-        self.win.move(v)
-        self.repaint()
-
-    def move_right(self, amount):
-        v = Vector(-amount, 0)
-        self.win.move(v)
-        self.repaint()
-    
+        
     def rotate(self, delta):
         self.win.rotate(delta, self.win.center())
         self.repaint()
-        
-    def move_xy(self, x, y):
+    
+    def move(self, vector):
+        self.moved.emit()
         scalar = self.win.width() / self.vp.width() 
-        v = Vector(x, y) * scalar
-        self.win.move(v)
+        self.win.move(vector * scalar)
         self.repaint()
 
     def draw_point(self, point, painter=None):
