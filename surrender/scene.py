@@ -4,8 +4,6 @@ from copy import deepcopy
 from surrender.projection import *
 from surrender.shapes import *
 from surrender.vector import Vector
-from surrender.io.obj_writer import OBJWriter
-from surrender.io.obj_io import OBJIO
 
 
 class Scene:
@@ -13,14 +11,6 @@ class Scene:
         self.shapes = []
         self.gliphs = []
         self.window = None
-
-    def open(self, path):
-        new_shapes = OBJIO.read(path)
-        for shape in new_shapes:
-            self.shapes.append(shape)
-
-    def save(self, path):
-        OBJIO.write(self.shapes, path)
 
     def projected_shapes(self, origin, target):
         shapes = self.shapes

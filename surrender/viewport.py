@@ -3,46 +3,68 @@ import numpy as np
 from copy import deepcopy
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform        
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import *
 from surrender.shapes import *
 from surrender.view import View
 from surrender.scene import Scene
 from surrender.vector import Vector
+from surrender.io.obj_io import OBJIO
 
 
 class Viewport(QWidget):
-    moved = QtCore.pyqtSignal()
-    shapeModified = QtCore.pyqtSignal()
-    shapeSelected = QtCore.pyqtSignal()
+    moved = pyqtSignal()
+    shapeModified = pyqtSignal()
+    shapeSelected = pyqtSignal()
 
     def __init__(self):
         super().__init__()
         self.scene = Scene()
         self.selected_shape = None
         self.current_tool = None
+
+
+    def open(self, path):
+        new_shapes = OBJIO.read(path)
+        for shape in new_shapes:
+            self.scene.shapes.append(shape)
+        self.shapeModified.emit()
+
+    def save(self, path):
+        OBJIO.write(self.scene.shapes, path)
+    
+    def get_shape_by_index(self, index):
+        if index not in range(len(self.scene.shapes)):
+            return None
+        return self.scene.shapes[index]
     
     def add_shape(self, shape):
         if shape is not None:
             self.scene.shapes.append(shape)
+        self.shapeModified.emit()
+        self.repaint()
     
     def remove_shape(self, shape):
         if shape in self.scene.shapes:
             self.scene.shapes.remove(shape)
+        self.shapeModified.emit()
+        self.repaint()
 
     def zoom(self, factor):
         self.win.zoom(factor)
         self.repaint()
+        self.moved.emit()
         
     def rotate(self, delta):
         self.win.rotate(delta, self.win.center())
         self.repaint()
-    
-    def move(self, vector):
         self.moved.emit()
+
+    def move(self, vector):
         scalar = self.win.width() / self.vp.width() 
         self.win.move(vector * scalar)
         self.repaint()
+        self.moved.emit()
 
     def draw_point(self, point, painter=None):
         if painter is None:

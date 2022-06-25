@@ -11,11 +11,10 @@ from surrender.vector import Vector
   
 
 class AddObject(QWidget):
-    def __init__(self, viewport, objectview):
+    def __init__(self, viewport):
         super(AddObject, self).__init__()
 
         self.viewport = viewport
-        self.objectview = objectview
         self.create_tabs()
 
         layout = QVBoxLayout()
@@ -24,22 +23,20 @@ class AddObject(QWidget):
 
     def create_tabs(self):
         self.tabs = QTabWidget()
-        self.tabs.addTab(PointWidget(self.viewport, self.objectview), "Point")
-        self.tabs.addTab(LineWidget(self.viewport, self.objectview), "Line")
-        self.tabs.addTab(PolygonWidget(self.viewport, self.objectview), "Polygon")
-        self.tabs.addTab(BezierWidget(self.viewport, self.objectview), "Bezier")
-        self.tabs.addTab(BSplineWidget(self.viewport, self.objectview), "B-Spline")
-        self.tabs.addTab(RectangleWidget(self.viewport, self.objectview), "Rectangle")
-        self.tabs.addTab(CubeWidget(self.viewport, self.objectview), "Cube")
+        self.tabs.addTab(PointWidget(self.viewport), "Point")
+        self.tabs.addTab(LineWidget(self.viewport), "Line")
+        self.tabs.addTab(PolygonWidget(self.viewport), "Polygon")
+        self.tabs.addTab(BezierWidget(self.viewport), "Bezier")
+        self.tabs.addTab(BSplineWidget(self.viewport), "B-Spline")
+        self.tabs.addTab(RectangleWidget(self.viewport), "Rectangle")
+        self.tabs.addTab(CubeWidget(self.viewport), "Cube")
 
   
 class GenericShapeWidget(QWidget):
-    def __init__(self, viewport, object_list):
+    def __init__(self, viewport):
         super().__init__()
 
         self.viewport = viewport
-        self.object_list = object_list
-
         self.name_line = QLineEdit()
         self.random_button = QPushButton('Generate Random')
         self.apply_button = QPushButton('Apply')
@@ -52,9 +49,7 @@ class GenericShapeWidget(QWidget):
         self.apply_button.pressed.connect(self.apply_callback)
 
     def add_shape(self, shape):
-        self.viewport.scene.add_shape(shape)
-        self.object_list.update()
-        self.viewport.repaint()
+        self.viewport.add_shape(shape)
 
     def color_callback(self):
         c = QColorDialog.getColor()
@@ -72,8 +67,8 @@ class GenericShapeWidget(QWidget):
 
 
 class PointWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.x_line = QLineEdit()
         self.y_line = QLineEdit()
@@ -109,8 +104,8 @@ class PointWidget(GenericShapeWidget):
             pass
 
 class LineWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.x0_line = QLineEdit()
         self.y0_line = QLineEdit()
@@ -160,8 +155,8 @@ class LineWidget(GenericShapeWidget):
 
 
 class PolygonWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.points_line = QLineEdit()
         self.fill_box = QCheckBox()
@@ -223,8 +218,8 @@ class PolygonWidget(GenericShapeWidget):
 
 
 class RectangleWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.x0_line = QLineEdit()
         self.y0_line = QLineEdit()
@@ -278,8 +273,8 @@ class RectangleWidget(GenericShapeWidget):
 
 
 class BezierWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.points_line = QLineEdit()
 
@@ -319,8 +314,8 @@ class BezierWidget(GenericShapeWidget):
 
 
 class BSplineWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.points_line = QLineEdit()
 
@@ -360,8 +355,8 @@ class BSplineWidget(GenericShapeWidget):
 
 
 class CubeWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list):
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport):
+        super().__init__(viewport)
         self.x_line = QLineEdit()
         self.y_line = QLineEdit()
         self.z_line = QLineEdit()

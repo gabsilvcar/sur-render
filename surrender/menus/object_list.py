@@ -3,9 +3,31 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QBrush, QColor
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, pyqtSignal
 
 from surrender.viewport import Viewport
+
+
+class CustomTable(QTreeView):
+    itemSelected = pyqtSignal()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.model = QStandardItemModel(0, 3)
+        self.setModel(self.model)
+    
+    def setHorizontalHeaderLabels(self, *args, **kwargs):
+        self.model.setHorizontalHeaderLabels(*args, **kwargs)
+    
+    def appendRow(self, *args, **kwargs):
+        self.model.appendRow(*args, **kwargs)
+
+    def clearRows(self):
+        self.model.removeRows(0, self.model.rowCount())
+
+    def selectionChanged(self, selected, deselected):
+        super().selectionChanged(selected, deselected)
+        self.itemSelected.emit()
 
 
 class ObjectList(QWidget):
@@ -13,49 +35,45 @@ class ObjectList(QWidget):
         super().__init__()
 
         self.viewport = viewport
-        self.scene = viewport.scene
+        self.viewport.shapeModified.connect(self.update)
         
-        self.tree = QTreeView()
-        self.model = QStandardItemModel(0, 3)
-        self.model.setHorizontalHeaderLabels(['NAME', 'SHAPE', 'COLOR'])
-        self.tree.setModel(self.model)
+        self.table = CustomTable()
+        self.table.setHorizontalHeaderLabels(['NAME', 'SHAPE', 'COLOR'])
+        self.table.itemSelected.connect(self.selection_callback)
 
         self.delete_button = QPushButton("Delete Item")
         self.delete_button.clicked.connect(self.delete_callback)
         self.delete_button.setShortcut(Qt.Key_Delete)
 
-        # self.move = MoveWidget(viewport)
-        # self.scale = ScaleWidget(viewport)
-        # self.rotate = RotateWidget(viewport)
-
         layout = QVBoxLayout()
-        layout.addWidget(self.tree)
+        layout.addWidget(self.table)
         layout.addWidget(self.delete_button)
+        
         self.setLayout(layout)
+        self.update()
     
     def selected_index(self):
-        return self.tree.currentIndex().row()
+        return self.table.currentIndex().row()
+
+    def selection_callback(self):
+        i = self.table.currentIndex().row()
+        self.viewport.selected_shape = self.viewport.get_shape_by_index(i)
 
     def delete_callback(self):
-        try:
-            i = self.tree.currentIndex().row()
-            self.scene.shapes.pop(i)
-            self.update()
-            self.viewport.update()
-        except IndexError:
-            pass
+        selected = self.viewport.selected_shape
+        self.viewport.remove_shape(selected)
     
     def populate_tree(self):
-        self.model.removeRows(0, self.model.rowCount())
+        self.table.clearRows()
 
-        for i, shape in enumerate(self.scene.shapes):
+        for shape in self.viewport.scene.shapes:
             name = QStandardItem(str(shape.name))
             types = QStandardItem(str(shape.type))
             color = QStandardItem()
             color.setBackground(QBrush(QColor(*shape.color)))
-            self.model.appendRow([name, types, color])
+            self.table.appendRow([name, types, color])
 
     def update(self):
-        super().update()
         self.populate_tree()
+        super().update()
 
