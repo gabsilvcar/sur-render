@@ -11,6 +11,6 @@ class ZoomTool(Tool):
     def mouseMoveEvent(self, event):
         delta = event.pos() - self.start_pos
         factor = 1 + delta.x() / 100
-        self.viewport.zoom_in(factor)
+        self.viewport.zoom(factor)
         self.start_pos = event.pos()    
     

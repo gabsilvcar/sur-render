@@ -10,8 +10,7 @@ class PolygonDescriptor:
         for p in shape.points():
             string += f'v {p.x} {p.y} {p.z} \n'
         
-        if shape.name:
-            string += f'o {shape.name} \n'
+        string += f'o {shape.name} \n'
 
         n = len(shape.points())
         indexes = ' '.join(str(i + index) for i in range(n))
@@ -25,6 +24,6 @@ class PolygonDescriptor:
         for p in params:
             splitted = [s.strip() for s in p.split('/')]
             indexes.append(int(splitted[0]))
-        factor = 1
+        factor = 100
         vertices_used = [vertices[i-1] * factor for i in indexes]
         return Polygon(name, vertices_used)

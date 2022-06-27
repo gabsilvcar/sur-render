@@ -34,38 +34,40 @@ class OBJParser:
         vertices = cls._read_vertices(tokens)
 
         name = ''
-        is_grouping = False
         current_group = []
 
         for token in tokens:
-            if token.type == 'v':
-                continue
-
-            elif token.type == 'g':
-                if is_grouping and current_group:
-                    pass
+            if token.type == 'o' or token.type == 'g':
+                if current_group:
+                    yield cls._create_shape(name, current_group, vertices)
+                    name = ''
+                    current_group = []
                 name = token.args
-                is_grouping = True
-                current_group = []
+            else:
+                current_group.append(token)
 
-            elif token.type == 'end':
-                if is_grouping and current_group:
-                    pass
-                is_grouping = False
-                current_group = []
-            
-            elif token.type == 'f':
-                yield PolygonDescriptor.parse_string(name, token.args, vertices)
+        if current_group:
+            yield cls._create_shape(name, current_group, vertices)
 
-            elif token.type == 'p':
-                yield PointDescriptor.parse_string(name, token.args, vertices)
-            
-            elif token.type == 'l':
-                yield LineDescriptor.parse_string(name, token.args, vertices)
+    @classmethod
+    def _create_shape(cls, name, tokens, vertices):
+        if len(tokens) <= 0:
+            return None
 
-            if not is_grouping:
-                name = ''
-    
+        if len(tokens) > 1:
+            return OBJ3DDescriptor.parse_string(name, tokens, vertices)
+
+        token = tokens[0]
+
+        if token.type == 'f':
+            return PolygonDescriptor.parse_string(name, token.args, vertices)
+
+        elif token.type == 'p':
+            return PointDescriptor.parse_string(name, token.args, vertices)
+        
+        elif token.type == 'l':
+            return LineDescriptor.parse_string(name, token.args, vertices)
+        
     @classmethod
     def _get_descriptor(cls, shape):
         if isinstance(shape, Point):
