@@ -12,6 +12,9 @@ class GenericShape:
     def clipped(self, window):
         return self
 
+    def copy(self):
+        return deepcopy(self)
+
     def points(self):
         return []
 

@@ -25,7 +25,7 @@ class Vector(np.lib.mixins.NDArrayOperatorsMixin):
         return self / self.length()
 
     def apply_transform(self, matrix):
-        array = np.append(np.asarray(self), 1)
+        array = np.array([self.x, self.y, self.z, 1])
         x,y,z,_ = array @ matrix
         self.x = x
         self.y = y
@@ -127,6 +127,14 @@ class Vector(np.lib.mixins.NDArrayOperatorsMixin):
         a = np.asarray(a)
         b = np.asarray(b)
         return np.dot(a, b, **kwargs)
+    
+    @implements(np.append)
+    def append(array, values, axis=None):
+        a = np.asarray(array)
+        return np.append(a, values, axis=axis)
+
+    def copy(self):
+        return self.__class__(self.x, self.y, self.z)
 
     def __hash__(self):
         return id(self)

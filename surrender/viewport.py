@@ -23,7 +23,6 @@ class Viewport(QWidget):
         self.selected_shape = None
         self.current_tool = None
 
-
     def open(self, path):
         new_shapes = OBJIO.read(path)
         for shape in new_shapes:

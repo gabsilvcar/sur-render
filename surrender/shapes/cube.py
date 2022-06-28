@@ -33,3 +33,6 @@ class Cube(Object3D):
 
         super().__init__(name, segments, color)
         self.type = 'Cube'
+
+    def copy(self):
+        return self.__class__(self.name, self.pos, self.size, self.color)
