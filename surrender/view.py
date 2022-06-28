@@ -6,7 +6,7 @@ from surrender.shapes import Polygon
 
 
 class View(Polygon):
-    def __init__(self, p0, p1, p2, p3, projection_distance=300):
+    def __init__(self, p0, p1, p2, p3, projection_distance=1000):
         '''
         p0 ------ p1 
         |          |

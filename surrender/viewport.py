@@ -174,7 +174,7 @@ class Viewport(QWidget):
         super().paintEvent(event)
  
         pen = QPen()
-        pen.setWidth(4)
+        pen.setWidth(2)
         pen.setCapStyle(Qt.RoundCap)
 
         brush = QBrush()
