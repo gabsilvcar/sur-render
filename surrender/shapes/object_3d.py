@@ -8,7 +8,7 @@ class Object3D(GenericShape):
     def __init__(self, name, segments, color=(0,0,0)):
         super().__init__(name, 'Object3D', color)
         self.segments = list()
-        self.pts = list()
+        self.visual_points = list()
         self.set_segments(segments)
 
     def copy(self):
@@ -16,12 +16,12 @@ class Object3D(GenericShape):
         return self.__class__(self.name, new_segments, self.color)
 
     def set_segments(self, segments):
-        self.pts.clear()
+        self.visual_points.clear()
         self.segments = list(segments)
 
         for a,b in segments:
-            self.pts.append(a)
-            self.pts.append(b)
+            self.visual_points.append(a)
+            self.visual_points.append(b)
 
     def clipped(self, window):
         new_segments = []
@@ -34,7 +34,7 @@ class Object3D(GenericShape):
         return c
 
     def points(self):
-        return self.pts
+        return self.visual_points
 
     def as_lines(self):
         for a, b in self.segments:

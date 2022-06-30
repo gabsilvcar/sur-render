@@ -26,6 +26,30 @@ def bspline_matrix():
         [ 1,  4,  1, 0]]) / 6
     return matrix
 
+def bicubic_bezier(t, s, control_points):
+    t = np.array([t*t*t, t*t, t, 1])
+    s = np.array([s*s*s, s*s, s, 1])
+    matrix = bezier_matrix()
+    matrix_t = np.transpose(matrix)
+
+    gx = []
+    gy = []
+    gz = []
+
+    for line in control_points:
+        px = [p.x for p in line]
+        py = [p.y for p in line]
+        pz = [p.z for p in line]
+        gx.append(px)
+        gy.append(py)
+        gz.append(pz)
+
+    x = s @ matrix @ gx @ matrix_t @ t
+    y = s @ matrix @ gy @ matrix_t @ t
+    z = s @ matrix @ gz @ matrix_t @ t
+
+    return x, y, z
+
 def bezier(t, control_points):
     t = np.array([t*t*t, t*t, t, 1])
     matrix = bezier_matrix()

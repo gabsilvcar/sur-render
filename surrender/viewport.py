@@ -144,6 +144,9 @@ class Viewport(QWidget):
         elif isinstance(shape, Object3D):
             self.draw_3d(shape, painter)
         
+        elif isinstance(shape, BicubicBezier):
+            self.draw_3d(shape.as_object_3d(), painter)
+
         else:
             raise ValueError(f"The object {shape} is not supported.")
 

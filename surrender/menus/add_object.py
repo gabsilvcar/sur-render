@@ -23,6 +23,7 @@ class AddObject(QWidget):
 
     def create_tabs(self):
         self.tabs = QTabWidget()
+        self.tabs.addTab(BicubicBezierWidget(self.viewport), "Bicubic Bezier")
         self.tabs.addTab(PointWidget(self.viewport), "Point")
         self.tabs.addTab(LineWidget(self.viewport), "Line")
         self.tabs.addTab(PolygonWidget(self.viewport), "Polygon")
@@ -401,3 +402,62 @@ class CubeWidget(GenericShapeWidget):
             self.add_shape(shape)
         except ValueError:
             pass
+
+            y0 = int(self.y0_line.text())
+            x1 = int(self.x1_line.text())
+            y1 = int(self.y1_line.text())
+            fill = bool(self.fill_box.checkState())
+            style = Polygon.FILLED if fill else Polygon.CLOSED
+
+            s = Vector(x0, y0)
+            e = Vector(x1, y1)
+            shape = Rectangle(name, s, e, self.color, style)
+            self.add_shape(shape)
+        except ValueError:
+            pass
+
+
+class BicubicBezierWidget(GenericShapeWidget):
+    def __init__(self, viewport): 
+        super().__init__(viewport)
+
+        self.points_line = QLineEdit()
+
+        layout = QFormLayout()
+        layout.addRow('Name', self.name_line)
+        layout.addRow('Your Points', self.points_line)
+        layout.addRow('Color', self.color_button)
+        layout.addRow(self.random_button)
+        layout.addRow(self.apply_button)
+        self.setLayout(layout)
+
+    def random_callback(self):
+        self.color = [randint(0,255) for _ in range(3)]
+        self.paint_button(self.color_button, self.color)
+
+        width = randint(1,5)
+        height = randint(1,5)
+
+        text = ''
+        for i in range(width):
+            points = []
+            for j in range(height):
+                x = randint(0,400)
+                y = randint(0,400)
+                z = randint(0,400)
+                points.append((x,y,z))
+            text += ', '.join(f'({x}, {y}, {z})' for x,y,z in points)
+            text += '; '
+        self.points_line.setText(text)
+    
+    def apply_callback(self):
+        segments = [
+            [Vector(0,   0, 0), Vector(100, 0,   0), Vector(200, 0,   0), Vector(300, 0,   0)],
+            [Vector(0, 100, 0), Vector(100, 100, 0), Vector(200, 100, 0), Vector(300, 100, 0)],
+            [Vector(0, 200, 0), Vector(100, 200, 0), Vector(200, 200, 0), Vector(300, 200, 0)],
+            [Vector(0, 300, 0), Vector(100, 300, 0), Vector(200, 300, 0), Vector(300, 300, 0)],
+        ]
+
+        name = self.name_line.text()
+        shape = BicubicBezier(name, segments, (255,0,0))
+        self.add_shape(shape)
