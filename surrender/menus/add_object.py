@@ -403,19 +403,6 @@ class CubeWidget(GenericShapeWidget):
         except ValueError:
             pass
 
-            y0 = int(self.y0_line.text())
-            x1 = int(self.x1_line.text())
-            y1 = int(self.y1_line.text())
-            fill = bool(self.fill_box.checkState())
-            style = Polygon.FILLED if fill else Polygon.CLOSED
-
-            s = Vector(x0, y0)
-            e = Vector(x1, y1)
-            shape = Rectangle(name, s, e, self.color, style)
-            self.add_shape(shape)
-        except ValueError:
-            pass
-
 
 class BicubicBezierWidget(GenericShapeWidget):
     def __init__(self, viewport): 
@@ -435,29 +422,42 @@ class BicubicBezierWidget(GenericShapeWidget):
         self.color = [randint(0,255) for _ in range(3)]
         self.paint_button(self.color_button, self.color)
 
-        width = randint(1,5)
-        height = randint(1,5)
+        width = randint(4,8)
+        height = randint(4,8)
 
         text = ''
+        lower_row = (0,0,0)
+        lower_col = (0,0,0)
         for i in range(width):
             points = []
             for j in range(height):
-                x = randint(0,400)
-                y = randint(0,400)
-                z = randint(0,400)
+                x = i * randint(1,100)
+                y = j * randint(1,100)
+                z = randint(-100,100)
                 points.append((x,y,z))
             text += ', '.join(f'({x}, {y}, {z})' for x,y,z in points)
             text += '; '
         self.points_line.setText(text)
     
     def apply_callback(self):
-        segments = [
-            [Vector(0,   0, 0), Vector(100, 0,   0), Vector(200, 0,   0), Vector(300, 0,   0)],
-            [Vector(0, 100, 0), Vector(100, 100, 0), Vector(200, 100, 0), Vector(300, 100, 0)],
-            [Vector(0, 200, 0), Vector(100, 200, 0), Vector(200, 200, 0), Vector(300, 200, 0)],
-            [Vector(0, 300, 0), Vector(100, 300, 0), Vector(200, 300, 0), Vector(300, 300, 0)],
-        ]
+        try:
+            get_digits = lambda x: tuple(int(i) for i in re.findall(r'-?\d+', x))
+            find_points = re.compile(r'\((.*?)\)')
+            find_lines = re.compile(r'[^;]*;')
 
-        name = self.name_line.text()
-        shape = BicubicBezier(name, segments, (255,0,0))
-        self.add_shape(shape)
+            name = self.name_line.text()
+            lines = find_lines.findall(self.points_line.text())
+
+            control_points = []
+            for line in lines:
+                points = find_points.findall(line)
+                digits = [get_digits(i) for i in points]
+                vectors = [Vector(p[0], p[1], p[2]) for p in digits]
+                control_points.append(vectors)
+
+            if control_points:
+                shape = BicubicBezier(name, control_points, self.color)
+                self.add_shape(shape)
+
+        except ValueError:
+            pass
