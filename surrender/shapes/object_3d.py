@@ -1,16 +1,35 @@
+from copy import deepcopy
 from surrender.shapes.generic_shape import GenericShape
 from surrender.shapes import Line
+from surrender.clipping import cohen_sutherland
 
 
 class Object3D(GenericShape):
     def __init__(self, name, segments, color=(0,0,0)):
         super().__init__(name, 'Object3D', color)
-        self.segments = segments
+        self.segments = list()
         self.pts = set()
+        self.set_segments(segments)
+
+    def set_segments(self, segments):
+        self.pts.clear()
+        self.segments = list(segments)
 
         for a,b in segments:
             self.pts.add(a)
             self.pts.add(b)
+
+    def clipped(self, window):
+        new_segments = []
+
+        for a, b in self.segments:
+            l = cohen_sutherland(a, b, window)
+            if l is not None:
+                new_segments.append(l)            
+        
+        obj = deepcopy(self)
+        obj.set_segments(new_segments)
+        return obj
 
     def points(self):
         return list(self.pts)

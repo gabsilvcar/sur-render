@@ -22,7 +22,7 @@ class Scene:
 
     def projected_shapes(self, origin, target):
         shapes = self.shapes
-        shapes = align_shapes_to_window(shapes, origin)
+        shapes = perspective_projection(shapes, origin)
         shapes = [shape.change_viewport(origin.ppc(), target) for shape in shapes]
         shapes = [shape.clipped(target) for shape in shapes if shape.clipped(target) is not None]
         return shapes

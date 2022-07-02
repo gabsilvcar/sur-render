@@ -6,7 +6,7 @@ from surrender.shapes import Polygon
 
 
 class View(Polygon):
-    def __init__(self, p0, p1, p2, p3, border=0):
+    def __init__(self, p0, p1, p2, p3, projection_distance=300):
         '''
         p0 ------ p1 
         |          |
@@ -19,9 +19,13 @@ class View(Polygon):
         self.p1 = p1
         self.p2 = p2
         self.p3 = p3
+        self.projection_distance = projection_distance
 
         points = [self.p0, self.p1, self.p2, self.p3]
         super().__init__('', points, style=Polygon.CLOSED)
+
+    def center_of_projection(self):
+        return self.center() - self.normal_vector() * self.projection_distance
 
     def ppc(self):
         w = self.width()
