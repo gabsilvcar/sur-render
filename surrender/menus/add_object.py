@@ -23,6 +23,7 @@ class AddObject(QWidget):
 
     def create_tabs(self):
         self.tabs = QTabWidget()
+        self.tabs.addTab(BicubicBsplineWidget(self.viewport), "Bicubic Bspline")
         self.tabs.addTab(BicubicBezierWidget(self.viewport), "Bicubic Bezier")
         self.tabs.addTab(PointWidget(self.viewport), "Point")
         self.tabs.addTab(LineWidget(self.viewport), "Line")
@@ -426,14 +427,12 @@ class BicubicBezierWidget(GenericShapeWidget):
         height = randint(4,8)
 
         text = ''
-        lower_row = (0,0,0)
-        lower_col = (0,0,0)
         for i in range(width):
             points = []
             for j in range(height):
-                x = i * randint(1,100)
-                y = j * randint(1,100)
-                z = randint(-100,100)
+                x = i * randint(60,100)
+                y = j * randint(60,100)
+                z = randint(-50,50)
                 points.append((x,y,z))
             text += ', '.join(f'({x}, {y}, {z})' for x,y,z in points)
             text += '; '
@@ -457,6 +456,63 @@ class BicubicBezierWidget(GenericShapeWidget):
 
             if control_points:
                 shape = BicubicBezier(name, control_points, self.color)
+                self.add_shape(shape)
+
+        except ValueError:
+            pass
+
+
+class BicubicBsplineWidget(GenericShapeWidget):
+    def __init__(self, viewport): 
+        super().__init__(viewport)
+
+        self.points_line = QLineEdit()
+
+        layout = QFormLayout()
+        layout.addRow('Name', self.name_line)
+        layout.addRow('Your Points', self.points_line)
+        layout.addRow('Color', self.color_button)
+        layout.addRow(self.random_button)
+        layout.addRow(self.apply_button)
+        self.setLayout(layout)
+
+    def random_callback(self):
+        self.color = [randint(0,255) for _ in range(3)]
+        self.paint_button(self.color_button, self.color)
+
+        width = randint(4,8)
+        height = randint(4,8)
+
+        text = ''
+        for i in range(width):
+            points = []
+            for j in range(height):
+                x = i * randint(60,100)
+                y = j * randint(60,100)
+                z = randint(-50,50)
+                points.append((x,y,z))
+            text += ', '.join(f'({x}, {y}, {z})' for x,y,z in points)
+            text += '; '
+        self.points_line.setText(text)
+    
+    def apply_callback(self):
+        try:
+            get_digits = lambda x: tuple(int(i) for i in re.findall(r'-?\d+', x))
+            find_points = re.compile(r'\((.*?)\)')
+            find_lines = re.compile(r'[^;]*;')
+
+            name = self.name_line.text()
+            lines = find_lines.findall(self.points_line.text())
+
+            control_points = []
+            for line in lines:
+                points = find_points.findall(line)
+                digits = [get_digits(i) for i in points]
+                vectors = [Vector(p[0], p[1], p[2]) for p in digits]
+                control_points.append(vectors)
+
+            if control_points:
+                shape = BicubicBspline(name, control_points, self.color)
                 self.add_shape(shape)
 
         except ValueError:
