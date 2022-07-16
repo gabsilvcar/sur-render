@@ -1,5 +1,4 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication
 
 
 class Tool:
@@ -9,7 +8,7 @@ class Tool:
         self.parent = parent
         self.viewport = parent.viewport
         self.override_viewport_functions()
-        
+
         if self.cursor is None:
             self.cursor = Qt.ArrowCursor
         self.viewport.setCursor(self.cursor)
@@ -21,15 +20,13 @@ class Tool:
         self.viewport.wheelEvent = self.wheelEvent
 
     def mousePressEvent(self, event):
-        pass 
-    
-    def mouseReleaseEvent(self, event):
-        pass 
-    
-    def mouseMoveEvent(self, event):
-        pass 
-    
-    def wheelEvent(self, event):
-        pass 
+        pass
 
-    
+    def mouseReleaseEvent(self, event):
+        pass
+
+    def mouseMoveEvent(self, event):
+        pass
+
+    def wheelEvent(self, event):
+        pass

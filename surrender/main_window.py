@@ -1,7 +1,14 @@
 import sys
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import (
+    QAction,
+    QToolBar,
+    QApplication,
+    QMenu,
+    QMainWindow,
+    QFileDialog,
+)
 from surrender.menus.add_object import AddObject
 from surrender.menus.object_list import ObjectList
 from surrender.menus.modify_object import ModifyObject
@@ -25,20 +32,20 @@ class MainWindow(QMainWindow):
         self.__createMenuBar()
         self.__createToolBars()
         self.show()
-        
+
     def init_ui(self):
         self.resize(WINDOW_HEIGHT, WINDOW_WIDTH)
         self.setWindowTitle(APPLICATION_NAME)
-        self.setWindowIcon(QtGui.QIcon('resources/logo.jpg'))
+        self.setWindowIcon(QtGui.QIcon("resources/logo.jpg"))
         self.setCentralWidget(self.viewport)
 
     def open_callback(self):
-        path, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'Wavefront *.obj')
+        path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Wavefront *.obj")
         if path:
             self.viewport.open(path)
 
     def save_callback(self):
-        path, _ = QFileDialog.getSaveFileName(self, 'Save File', '', 'Wavefront *.obj')
+        path, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Wavefront *.obj")
         if path:
             self.viewport.save(path)
 
@@ -56,9 +63,8 @@ class MainWindow(QMainWindow):
         self.openAction.triggered.connect(self.open_callback)
         self.saveAction.triggered.connect(self.save_callback)
 
-        self.openAction.setShortcut('ctrl+o')
-        self.saveAction.setShortcut('ctrl+s')
-
+        self.openAction.setShortcut("ctrl+o")
+        self.saveAction.setShortcut("ctrl+s")
 
     def __createMenuBar(self):
         menuBar = self.menuBar()
@@ -76,7 +82,7 @@ class MainWindow(QMainWindow):
         editMenu.addAction(self.copyAction)
         editMenu.addAction(self.pasteAction)
         editMenu.addAction(self.cutAction)
-        
+
     def __createToolBars(self):
         # Object List
         objectListToolBar = QToolBar("Object List", self)

@@ -16,4 +16,4 @@ class CameraPanTool(Tool):
         ry = delta.x() / 100 * np.pi
         delta = Vector(rx, ry, 0)
         self.viewport.rotate(delta)
-        self.start_pos = event.pos()    
+        self.start_pos = event.pos()

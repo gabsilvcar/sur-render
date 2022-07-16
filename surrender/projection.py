@@ -1,8 +1,11 @@
 import numpy as np
 from copy import deepcopy
-from numbers import Number
-from surrender.vector import *
-from surrender.math_transforms import *
+from surrender.math_transforms import (
+    rotation_matrix_x,
+    rotation_matrix_y,
+    rotation_matrix_z,
+    translation_matrix,
+)
 
 
 def _alignment_matrix(uv, nv):
@@ -22,6 +25,7 @@ def _alignment_matrix(uv, nv):
 
     return mx @ my @ mz
 
+
 def viewport_transform(vector, source, target):
     x = vector.x - source.min().x
     x /= source.max().x - source.min().x
@@ -36,6 +40,7 @@ def viewport_transform(vector, source, target):
     vector.y = y
     return vector
 
+
 def parallel_projection(shapes, window):
     wc = window.center()
     alignment_matrix = _alignment_matrix(window.up_vector(), window.normal_vector())
@@ -45,6 +50,7 @@ def parallel_projection(shapes, window):
         shape.move(-wc)
         shape.apply_transform(alignment_matrix)
         yield shape
+
 
 def perspective_projection(shapes, window):
     cop = window.center_of_projection()
@@ -61,13 +67,14 @@ def perspective_projection(shapes, window):
             x = (d * p.x) / p.z
             y = (d * p.y) / p.z
 
-            p.x = x 
+            p.x = x
             p.y = y
-            p.z = 0 
+            p.z = 0
 
         projected_shapes.append(shape)
 
     return projected_shapes
+
 
 def faster_transform_viewport(shapes, source, target):
     source_delta = source.max() - source.min()
@@ -80,6 +87,7 @@ def faster_transform_viewport(shapes, source, target):
         for vector in shape.points():
             vector.x = (vector.x - source.min().x) * x_factor
             vector.y = (source.max().y - vector.y) * y_factor
+
 
 def faster_perspective_projection(shapes, window):
     cop = window.center_of_projection()
@@ -97,18 +105,18 @@ def faster_perspective_projection(shapes, window):
             vectors.append(point)
 
     if len(vectors) == 0:
-        return 
+        return
 
     size = (len(vectors), 4)
     positions = np.zeros(size)
 
     for pos, vec in zip(positions, vectors):
         pos[:] = vec.x, vec.y, vec.z, 1
-    
+
     result = positions @ perspective_matrix
 
     for pos, vec in zip(result, vectors):
-        x,y,z = pos[:3]
+        x, y, z = pos[:3]
         vec.x = x * d / z
         vec.y = y * d / z
         vec.z = 0
