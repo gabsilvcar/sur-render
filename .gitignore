@@ -5,6 +5,7 @@ __pycache__/
 
 # Data Files
 *.obj
+!resources/*
 
 # C extensions
 *.so

@@ -62,10 +62,10 @@ class ZoomWidget(QWidget):
         self.addAction(self.zoom_out_action)
         
     def zoom_in_callback(self):
-        self.viewport.zoom_in(ZOOM_FACTOR)
+        self.viewport.zoom(ZOOM_FACTOR)
 
     def zoom_out_callback(self):
-        self.viewport.zoom_out(ZOOM_FACTOR)
+        self.viewport.zoom(1/ZOOM_FACTOR)
 
 
 class MovementWidget(QWidget):
@@ -78,10 +78,10 @@ class MovementWidget(QWidget):
         self.left = QPushButton("Left")
         self.right = QPushButton("Right")
         
-        self.up.clicked.connect(self.moveUp)
-        self.down.clicked.connect(self.moveDown)
-        self.left.clicked.connect(self.moveLeft)
-        self.right.clicked.connect(self.moveRight) 
+        self.up.clicked.connect(self.move_up_callback)
+        self.down.clicked.connect(self.move_down_callback)
+        self.left.clicked.connect(self.move_left_callback)
+        self.right.clicked.connect(self.move_right_callback) 
         
         layout = QGridLayout()
         
@@ -99,34 +99,51 @@ class MovementWidget(QWidget):
         self.move_down_action = QAction('Down')
         self.move_left_action = QAction('Left')
         self.move_right_action = QAction('Right')
+        self.move_front_action = QAction('Front')
+        self.move_back_action = QAction('Back')
 
-        self.move_up_action.setShortcuts([Qt.Key_Up, 'W'])
-        self.move_down_action.setShortcuts([Qt.Key_Down, 'S'])
+        self.move_front_action.setShortcuts([Qt.Key_Up, 'W'])
+        self.move_back_action.setShortcuts([Qt.Key_Down, 'S'])
         self.move_left_action.setShortcuts([Qt.Key_Left, 'A'])
         self.move_right_action.setShortcuts([Qt.Key_Right, 'D'])
 
-        self.move_up_action.triggered.connect(self.moveUp)
-        self.move_down_action.triggered.connect(self.moveDown)
-        self.move_left_action.triggered.connect(self.moveLeft)
-        self.move_right_action.triggered.connect(self.moveRight)
+        self.move_up_action.triggered.connect(self.move_up_callback)
+        self.move_down_action.triggered.connect(self.move_down_callback)
+        self.move_left_action.triggered.connect(self.move_left_callback)
+        self.move_right_action.triggered.connect(self.move_right_callback)
+        self.move_front_action.triggered.connect(self.move_front_callback)
+        self.move_back_action.triggered.connect(self.move_back_callback)
 
         self.addAction(self.move_up_action)
         self.addAction(self.move_down_action)
         self.addAction(self.move_left_action)
         self.addAction(self.move_right_action)
+        self.addAction(self.move_front_action)
+        self.addAction(self.move_back_action)
 
-    def moveUp(self):
-        self.viewport.move_up(PIX_PER_MOVEMENT)
+    def move_up_callback(self):
+        v = Vector(0, 1, 0) * PIX_PER_MOVEMENT
+        self.viewport.move(v)
 
-    def moveLeft(self):
-        self.viewport.move_left(PIX_PER_MOVEMENT)
+    def move_down_callback(self):
+        v = Vector(0, -1, 0) * PIX_PER_MOVEMENT
+        self.viewport.move(v)
 
-    def moveRight(self):
-        self.viewport.move_right(PIX_PER_MOVEMENT)
+    def move_left_callback(self):
+        v = Vector(-1, 0, 0) * PIX_PER_MOVEMENT
+        self.viewport.move(v)
 
-    def moveDown(self):
-        self.viewport.move_down(PIX_PER_MOVEMENT)
+    def move_right_callback(self):
+        v = Vector(1, 0, 0) * PIX_PER_MOVEMENT
+        self.viewport.move(v)
     
+    def move_front_callback(self):
+        v = Vector(0, 0, 1) * PIX_PER_MOVEMENT
+        self.viewport.move(v)
+
+    def move_back_callback(self):
+        v = Vector(0, 0, -1) * PIX_PER_MOVEMENT
+        self.viewport.move(v)
 
 class RotationWidget(QWidget):
     def __init__(self, parent, viewport):

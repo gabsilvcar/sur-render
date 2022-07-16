@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from surrender.shapes import Polygon
 from surrender.shapes.generic_curve import GenericCurve
 from surrender.parametric_curves import bezier
@@ -63,7 +61,7 @@ class Bezier(GenericCurve):
         closed = self.style & self.CLOSED
         clipped_points = sutherland_hodgeman(self.blended_points(), window, closed)
 
-        c = deepcopy(self)
+        c = self.copy()
         c._blended_points = clipped_points
         return c 
 

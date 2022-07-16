@@ -11,11 +11,10 @@ from surrender.vector import Vector
   
 
 class AddObject(QWidget):
-    def __init__(self, viewport, objectview):
+    def __init__(self, viewport):
         super(AddObject, self).__init__()
 
         self.viewport = viewport
-        self.objectview = objectview
         self.create_tabs()
 
         layout = QVBoxLayout()
@@ -24,22 +23,22 @@ class AddObject(QWidget):
 
     def create_tabs(self):
         self.tabs = QTabWidget()
-        self.tabs.addTab(PointWidget(self.viewport, self.objectview), "Point")
-        self.tabs.addTab(LineWidget(self.viewport, self.objectview), "Line")
-        self.tabs.addTab(PolygonWidget(self.viewport, self.objectview), "Polygon")
-        self.tabs.addTab(BezierWidget(self.viewport, self.objectview), "Bezier")
-        self.tabs.addTab(BSplineWidget(self.viewport, self.objectview), "B-Spline")
-        self.tabs.addTab(RectangleWidget(self.viewport, self.objectview), "Rectangle")
-        self.tabs.addTab(CubeWidget(self.viewport, self.objectview), "Cube")
+        self.tabs.addTab(BicubicBsplineWidget(self.viewport), "Bicubic Bspline")
+        self.tabs.addTab(BicubicBezierWidget(self.viewport), "Bicubic Bezier")
+        self.tabs.addTab(PointWidget(self.viewport), "Point")
+        self.tabs.addTab(LineWidget(self.viewport), "Line")
+        self.tabs.addTab(PolygonWidget(self.viewport), "Polygon")
+        self.tabs.addTab(BezierWidget(self.viewport), "Bezier")
+        self.tabs.addTab(BSplineWidget(self.viewport), "B-Spline")
+        self.tabs.addTab(RectangleWidget(self.viewport), "Rectangle")
+        self.tabs.addTab(CubeWidget(self.viewport), "Cube")
 
   
 class GenericShapeWidget(QWidget):
-    def __init__(self, viewport, object_list):
+    def __init__(self, viewport):
         super().__init__()
 
         self.viewport = viewport
-        self.object_list = object_list
-
         self.name_line = QLineEdit()
         self.random_button = QPushButton('Generate Random')
         self.apply_button = QPushButton('Apply')
@@ -52,9 +51,7 @@ class GenericShapeWidget(QWidget):
         self.apply_button.pressed.connect(self.apply_callback)
 
     def add_shape(self, shape):
-        self.viewport.scene.add_shape(shape)
-        self.object_list.update()
-        self.viewport.repaint()
+        self.viewport.add_shape(shape)
 
     def color_callback(self):
         c = QColorDialog.getColor()
@@ -72,8 +69,8 @@ class GenericShapeWidget(QWidget):
 
 
 class PointWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.x_line = QLineEdit()
         self.y_line = QLineEdit()
@@ -109,8 +106,8 @@ class PointWidget(GenericShapeWidget):
             pass
 
 class LineWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.x0_line = QLineEdit()
         self.y0_line = QLineEdit()
@@ -160,8 +157,8 @@ class LineWidget(GenericShapeWidget):
 
 
 class PolygonWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.points_line = QLineEdit()
         self.fill_box = QCheckBox()
@@ -223,8 +220,8 @@ class PolygonWidget(GenericShapeWidget):
 
 
 class RectangleWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.x0_line = QLineEdit()
         self.y0_line = QLineEdit()
@@ -278,8 +275,8 @@ class RectangleWidget(GenericShapeWidget):
 
 
 class BezierWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.points_line = QLineEdit()
 
@@ -319,8 +316,8 @@ class BezierWidget(GenericShapeWidget):
 
 
 class BSplineWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list): 
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport): 
+        super().__init__(viewport)
 
         self.points_line = QLineEdit()
 
@@ -360,8 +357,8 @@ class BSplineWidget(GenericShapeWidget):
 
 
 class CubeWidget(GenericShapeWidget):
-    def __init__(self, viewport, object_list):
-        super().__init__(viewport, object_list)
+    def __init__(self, viewport):
+        super().__init__(viewport)
         self.x_line = QLineEdit()
         self.y_line = QLineEdit()
         self.z_line = QLineEdit()
@@ -404,5 +401,119 @@ class CubeWidget(GenericShapeWidget):
             s = int(self.s_line.text())
             shape = Cube(name, Vector(x,y,z), s, self.color)
             self.add_shape(shape)
+        except ValueError:
+            pass
+
+
+class BicubicBezierWidget(GenericShapeWidget):
+    def __init__(self, viewport): 
+        super().__init__(viewport)
+
+        self.points_line = QLineEdit()
+
+        layout = QFormLayout()
+        layout.addRow('Name', self.name_line)
+        layout.addRow('Your Points', self.points_line)
+        layout.addRow('Color', self.color_button)
+        layout.addRow(self.random_button)
+        layout.addRow(self.apply_button)
+        self.setLayout(layout)
+
+    def random_callback(self):
+        self.color = [randint(0,255) for _ in range(3)]
+        self.paint_button(self.color_button, self.color)
+
+        width = randint(4,8)
+        height = randint(4,8)
+
+        text = ''
+        for i in range(width):
+            points = []
+            for j in range(height):
+                x = i * randint(60,100)
+                y = j * randint(60,100)
+                z = randint(-50,50)
+                points.append((x,y,z))
+            text += ', '.join(f'({x}, {y}, {z})' for x,y,z in points)
+            text += '; '
+        self.points_line.setText(text)
+    
+    def apply_callback(self):
+        try:
+            get_digits = lambda x: tuple(int(i) for i in re.findall(r'-?\d+', x))
+            find_points = re.compile(r'\((.*?)\)')
+            find_lines = re.compile(r'[^;]*;')
+
+            name = self.name_line.text()
+            lines = find_lines.findall(self.points_line.text())
+
+            control_points = []
+            for line in lines:
+                points = find_points.findall(line)
+                digits = [get_digits(i) for i in points]
+                vectors = [Vector(p[0], p[1], p[2]) for p in digits]
+                control_points.append(vectors)
+
+            if control_points:
+                shape = BicubicBezier(name, control_points, self.color)
+                self.add_shape(shape)
+
+        except ValueError:
+            pass
+
+
+class BicubicBsplineWidget(GenericShapeWidget):
+    def __init__(self, viewport): 
+        super().__init__(viewport)
+
+        self.points_line = QLineEdit()
+
+        layout = QFormLayout()
+        layout.addRow('Name', self.name_line)
+        layout.addRow('Your Points', self.points_line)
+        layout.addRow('Color', self.color_button)
+        layout.addRow(self.random_button)
+        layout.addRow(self.apply_button)
+        self.setLayout(layout)
+
+    def random_callback(self):
+        self.color = [randint(0,255) for _ in range(3)]
+        self.paint_button(self.color_button, self.color)
+
+        width = randint(4,8)
+        height = randint(4,8)
+
+        text = ''
+        for i in range(width):
+            points = []
+            for j in range(height):
+                x = i * randint(60,100)
+                y = j * randint(60,100)
+                z = randint(-50,50)
+                points.append((x,y,z))
+            text += ', '.join(f'({x}, {y}, {z})' for x,y,z in points)
+            text += '; '
+        self.points_line.setText(text)
+    
+    def apply_callback(self):
+        try:
+            get_digits = lambda x: tuple(int(i) for i in re.findall(r'-?\d+', x))
+            find_points = re.compile(r'\((.*?)\)')
+            find_lines = re.compile(r'[^;]*;')
+
+            name = self.name_line.text()
+            lines = find_lines.findall(self.points_line.text())
+
+            control_points = []
+            for line in lines:
+                points = find_points.findall(line)
+                digits = [get_digits(i) for i in points]
+                vectors = [Vector(p[0], p[1], p[2]) for p in digits]
+                control_points.append(vectors)
+
+            if control_points:
+                shape = BicubicBspline(name, control_points, self.color)
+                self.add_shape(shape)
+
         except ValueError:
             pass

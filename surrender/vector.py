@@ -2,75 +2,40 @@ import numpy as np
 from numbers import Number
 from surrender.math_transforms import *                              
 
-# def vector_angle(v0, v1):
-#     if v0.length() == 0 or v1.length() == 0:
-#         return 0
 
-#     cos = v0.normalized() @ v1.normalized()
-#     angle = np.arccos(cos)
-#     return angle
+HANDLED_FUNCTIONS = {}
 
-# def vector_x_angle(v):
-#     z = Vector(0,0,1)
-#     v_yz = Vector(0, v.y, v.z)
-#     angle = vector_angle(z, v_yz)
-#     return (angle if v.y >= 0 else -angle)
-
-# def vector_y_angle(v):
-#     x = Vector(1,0,0)
-#     v_zx = Vector(v.x, 0, v.z)
-#     angle = vector_angle(x, v_zx)
-#     return (angle if v.z >= 0 else -angle)
-
-# def vector_z_angle(v):
-#     y = Vector(0,1,0)
-#     v_xy = Vector(v.x, v.y, 0)
-#     angle = vector_angle(y, v_xy)
-#     return (angle if v.x >= 0 else -angle)
-
-# def cross_product(v0, v1):
-#     a = [v0.x, v0.y, v0.z]
-#     b = [v1.x, v1.y, v1.z]
-#     c = np.cross(a, b)
-#     return Vector(*c)
-
-# def dot_product(v0, v1):
-#     a = [v0.x, v0.y, v0.z]
-#     b = [v1.x, v1.y, v1.z]
-#     return np.dot(a, b)
+def implements(np_function):
+    def decorator(func):
+        HANDLED_FUNCTIONS[np_function] = func
+        return func
+    return decorator
 
 
-class Vector:
-    def __init__(self, x, y, z=0):
+class Vector(np.lib.mixins.NDArrayOperatorsMixin):
+    def __init__(self, x=0, y=0, z=0):
         self.x = x
         self.y = y
         self.z = z
     
-    @property
-    def data(self):
-        return np.array([self.x, self.y, self.z, 1], dtype=float)
-
-    @data.setter
-    def data(self, sequence):
-        self.x = sequence[0]
-        self.y = sequence[1]
-        self.z = sequence[2]
-
     def length(self):
-        return np.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
+        return np.linalg.norm(np.asarray(self))
 
     def normalized(self):
         return self / self.length()
 
     def apply_transform(self, matrix):
-        self @= matrix
-        return self
-
+        array = np.array([self.x, self.y, self.z, 1])
+        x,y,z,_ = array @ matrix
+        self.x = x
+        self.y = y
+        self.z = z
+    
     def move(self, vector):
         matrix = translation_matrix(vector)
         self.apply_transform(matrix)
         return self
-
+    
     def scale(self, vector, around=None):
         if around is None:
             around = Vector(0,0)
@@ -82,7 +47,7 @@ class Vector:
         matrix = t0 @ s @ t1
         self.apply_transform(matrix)
         return self
-    
+
     def rotate_x(self, angle, around=None):
         if around is None:
             around = Vector(0,0)
@@ -124,26 +89,14 @@ class Vector:
         self.rotate_y(delta.y, around)
         self.rotate_z(delta.z, around)
         return self
-
-    def cross_product(self, other):
-        a = [self.x, self.y, self.z]
-        b = [other.x, other.y, other.z]
-        c = np.cross(a, b)
-        return Vector(*c)
     
-    def dot_product(self, other):
-        a = [self.x, self.y, self.z]
-        b = [other.x, other.y, other.z]
-        return np.dot(a, b)
-
     def angle_with(self, other):
         if self.length() == 0 or other.length() == 0:
             return 0
-
-        cos = self.normalized() @ other.normalized()
+        cos = np.dot(self.normalized(), other.normalized())
         angle = np.arccos(cos)
         return angle
-    
+
     def x_angle(self):
         z = Vector(0,0,1)
         v_yz = Vector(0, self.y, self.z)
@@ -162,97 +115,65 @@ class Vector:
         angle = v_xy.angle_with(y)
         return (angle if self.x >= 0 else -angle)
 
-    def __add__(self, other):
-        if isinstance(other, Vector):
-            x = self.x + other.x
-            y = self.y + other.y 
-            z = self.z + other.z
-            return Vector(x,y,z)
-        
-        if isinstance(other, Number):
-            x = self.x + other
-            y = self.y + other 
-            z = self.z + other
-            return Vector(x,y,z)
-        
-        raise ValueError('Vector only supports additions with other Vectors or Scalars')
+    @implements(np.cross)
+    def cross(a, b, **kwargs):
+        a = np.asarray(a)
+        b = np.asarray(b)
+        x,y,z = np.cross(a, b, **kwargs)
+        return Vector(x,y,z)
 
-    def __sub__(self, other):
-        if isinstance(other, Vector):
-            x = self.x - other.x
-            y = self.y - other.y 
-            z = self.z - other.z
-            return Vector(x,y,z)
-        
-        if isinstance(other, Number):
-            x = self.x - other
-            y = self.y - other 
-            z = self.z - other
-            return Vector(x,y,z)
-        
-        raise ValueError('Vector only supports subtraction with other Vectors or Scalars')
-
-    def __mul__(self, other):
-        if isinstance(other, Number):
-            x = self.x * other
-            y = self.y * other 
-            z = self.z * other
-            return Vector(x,y,z)
-        
-        message = 'Vector only supports multiplications against scalars.' \
-                  'Try using the operator @ for dot product'
-
-        raise ValueError(message)
-
-    def __truediv__(self, other):
-        if isinstance(other, Number):
-            x = self.x / other
-            y = self.y / other 
-            z = self.z / other
-            return Vector(x,y,z)
-        
-        message = 'Vector only supports division against scalars.' \
-                  'Try using the operator @ for dot product'
-
-        raise ValueError(message)
-
-    def __matmul__(self, other):
-        if isinstance(other, Vector):
-            return self.dot_product(other)
-
-        if isinstance(other, np.ndarray):
-            v = (self.data @ other)[:3]
-            return Vector(*v)
-
-        raise ValueError('Vector only supports dot product between instances of Vector and numpy.ndarray')
-
-
-    def __neg__(self):
-        return Vector(-self.x, -self.y, -self.z)
-
-    def __iadd__(self, other):
-        self.data = (self + other).data
-        return self
-
-    def __isub__(self, other):
-        self.data = (self - other).data
-        return self
+    @implements(np.dot)
+    def dot(a, b, **kwargs):
+        a = np.asarray(a)
+        b = np.asarray(b)
+        return np.dot(a, b, **kwargs)
     
-    def __imul__(self, other):
-        self.data = (self * other).data
-        return self
+    @implements(np.append)
+    def append(array, values, axis=None):
+        a = np.asarray(array)
+        return np.append(a, values, axis=axis)
 
-    def __itruediv__(self, other):
-        self.data = (self / other).data
-        return self
-    
-    def __imatmul__(self, other):
-        self.data = (self @ other).data
-        return self
+    def copy(self):
+        return self.__class__(self.x, self.y, self.z)
 
-    def __str__(self):
-        return f'Vector({self.x :.2f}, {self.y :.2f}, {self.z :.2f})'
-    
+    def __hash__(self):
+        return id(self)
+
     def __repr__(self):
-        return str(self)
+        return f'Vector({self.x :.2f}, {self.y :.2f}, {self.z :.2f})'
 
+    def __array__(self, dtype=None):
+        return np.array([self.x, self.y, self.z], dtype=dtype)
+
+    def __array_ufunc__(self, ufunc, method, *args, **kwargs):
+        out = kwargs.get('out', None)
+        kwargs['out'] = None
+
+        if method == '__call__':
+            inputs = [np.asarray(i) for i in args]
+            x,y,z = ufunc(*inputs, **kwargs)
+            result = self.__class__(x,y,z)
+
+            if out is None:
+                return result
+           
+            for i in out:
+                if isinstance(i, np.ndarray):
+                    i[:3] = x, y, z
+                elif isinstance(i, __class__):
+                    i.x, i.y, i.z = x, y, z
+                else:
+                    return NotImplemented
+            return result
+
+        else:
+            return NotImplemented
+
+    def __array_function__(self, func, types, args, kwargs):
+        if func not in HANDLED_FUNCTIONS:
+            return NotImplemented
+
+        if not all(issubclass(t, self.__class__) for t in types):
+            return NotImplemented
+
+        return HANDLED_FUNCTIONS[func](*args, **kwargs)

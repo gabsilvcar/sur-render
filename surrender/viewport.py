@@ -3,56 +3,67 @@ import numpy as np
 from copy import deepcopy
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform        
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import *
 from surrender.shapes import *
 from surrender.view import View
 from surrender.scene import Scene
 from surrender.vector import Vector
+from surrender.io.obj_io import OBJIO
 
 
 class Viewport(QWidget):
+    moved = pyqtSignal()
+    shapeModified = pyqtSignal()
+    shapeSelected = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.scene = Scene()
+        self.selected_shape = None
+        self.current_tool = None
 
-    def zoom_in(self, factor):
-        self.win.zoom(1/factor)
+    def open(self, path):
+        new_shapes = OBJIO.read(path)
+        for shape in new_shapes:
+            self.scene.shapes.append(shape)
+        self.shapeModified.emit()
+
+    def save(self, path):
+        OBJIO.write(self.scene.shapes, path)
+    
+    def get_shape_by_index(self, index):
+        if index not in range(len(self.scene.shapes)):
+            return None
+        return self.scene.shapes[index]
+    
+    def add_shape(self, shape):
+        if shape is not None:
+            self.scene.shapes.append(shape)
+        self.shapeModified.emit()
+        self.repaint()
+    
+    def remove_shape(self, shape):
+        if shape in self.scene.shapes:
+            self.scene.shapes.remove(shape)
+        self.shapeModified.emit()
         self.repaint()
 
-    def zoom_out(self, factor):
+    def zoom(self, factor):
         self.win.zoom(factor)
         self.repaint()
-    
-    def move_up(self, amount):
-        v = Vector(0, -amount)
-        self.win.move(v)
-        self.repaint()
-    
-    def move_down(self, amount):
-        v = Vector(0, amount)
-        self.win.move(v)
-        self.repaint()
-
-    def move_left(self, amount):
-        v = Vector(amount, 0)
-        self.win.move(v)
-        self.repaint()
-
-    def move_right(self, amount):
-        v = Vector(-amount, 0)
-        self.win.move(v)
-        self.repaint()
-    
+        self.moved.emit()
+        
     def rotate(self, delta):
         self.win.rotate(delta, self.win.center())
         self.repaint()
-        
-    def move_xy(self, x, y):
+        self.moved.emit()
+
+    def move(self, vector):
         scalar = self.win.width() / self.vp.width() 
-        v = Vector(x, y) * scalar
-        self.win.move(v)
+        self.win.move(vector * scalar)
         self.repaint()
+        self.moved.emit()
 
     def draw_point(self, point, painter=None):
         if painter is None:
@@ -133,6 +144,9 @@ class Viewport(QWidget):
         elif isinstance(shape, Object3D):
             self.draw_3d(shape, painter)
         
+        elif isinstance(shape, BicubicBezier):
+            self.draw_3d(shape.as_object_3d(), painter)
+
         else:
             raise ValueError(f"The object {shape} is not supported.")
 
@@ -163,7 +177,7 @@ class Viewport(QWidget):
         super().paintEvent(event)
  
         pen = QPen()
-        pen.setWidth(4)
+        pen.setWidth(2)
         pen.setCapStyle(Qt.RoundCap)
 
         brush = QBrush()

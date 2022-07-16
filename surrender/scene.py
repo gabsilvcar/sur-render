@@ -1,13 +1,7 @@
-import sys, random
 import numpy as np
-from copy import deepcopy
-from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import *
 from surrender.projection import *
+from surrender.shapes import *
 from surrender.vector import Vector
-from surrender.io.obj_writer import OBJWriter
 
 
 class Scene:
@@ -16,15 +10,19 @@ class Scene:
         self.gliphs = []
         self.window = None
 
-    def save(self, path):
-        ow = OBJWriter(self.shapes)
-        ow.write(path)
-
     def projected_shapes(self, origin, target):
-        shapes = self.shapes
-        shapes = perspective_projection(shapes, origin)
-        shapes = [shape.change_viewport(origin.ppc(), target) for shape in shapes]
-        shapes = [shape.clipped(target) for shape in shapes if shape.clipped(target) is not None]
+        shapes = [shape.copy() for shape in self.shapes]
+
+        faster_perspective_projection(shapes, origin)
+        faster_transform_viewport(shapes, origin.ppc(), target)
+        
+        clipped_shapes = []
+        for shape in shapes:
+            clipped = shape.clipped(target)
+            if clipped is not None:
+                clipped_shapes.append(clipped)
+        shapes = clipped_shapes
+        
         return shapes
 
     def get_gliphs(self, target):

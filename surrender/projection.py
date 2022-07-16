@@ -51,6 +51,7 @@ def perspective_projection(shapes, window):
     d = window.projection_distance
     alignment_matrix = _alignment_matrix(window.up_vector(), window.normal_vector())
 
+    projected_shapes = []
     for shape in shapes:
         shape = deepcopy(shape)
         shape.move(-cop)
@@ -64,4 +65,50 @@ def perspective_projection(shapes, window):
             p.y = y
             p.z = 0 
 
-        yield shape
+        projected_shapes.append(shape)
+
+    return projected_shapes
+
+def faster_transform_viewport(shapes, source, target):
+    source_delta = source.max() - source.min()
+    target_delta = target.max() - target.min()
+
+    x_factor = target_delta.x / source_delta.x
+    y_factor = target_delta.y / source_delta.y
+
+    for shape in shapes:
+        for vector in shape.points():
+            vector.x = (vector.x - source.min().x) * x_factor
+            vector.y = (source.max().y - vector.y) * y_factor
+
+def faster_perspective_projection(shapes, window):
+    cop = window.center_of_projection()
+    uv = window.up_vector()
+    nv = window.normal_vector()
+    d = window.projection_distance
+
+    translation = translation_matrix(-cop)
+    rotation = _alignment_matrix(uv, nv)
+    perspective_matrix = translation @ rotation
+
+    vectors = []
+    for shape in shapes:
+        for point in shape.points():
+            vectors.append(point)
+
+    if len(vectors) == 0:
+        return 
+
+    size = (len(vectors), 4)
+    positions = np.zeros(size)
+
+    for pos, vec in zip(positions, vectors):
+        pos[:] = vec.x, vec.y, vec.z, 1
+    
+    result = positions @ perspective_matrix
+
+    for pos, vec in zip(result, vectors):
+        x,y,z = pos[:3]
+        vec.x = x * d / z
+        vec.y = y * d / z
+        vec.z = 0

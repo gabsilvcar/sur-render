@@ -6,7 +6,7 @@ from surrender.shapes import Polygon
 
 
 class View(Polygon):
-    def __init__(self, p0, p1, p2, p3, projection_distance=300):
+    def __init__(self, p0, p1, p2, p3, projection_distance=1000):
         '''
         p0 ------ p1 
         |          |
@@ -57,7 +57,7 @@ class View(Polygon):
     def normal_vector(self):
         uv = self.up_vector()
         rv = self.right_vector()
-        return -uv.cross_product(rv).normalized()
+        return -np.cross(uv, rv).normalized()
 
     def width(self):
         return (self.p1 - self.p0).length()
@@ -79,8 +79,9 @@ class View(Polygon):
         '''
 
         uv = self.up_vector()
-        rv = self.right_vector()        
-        vector = (rv * vector.x) + (uv * vector.y)
+        rv = self.right_vector()   
+        nv = self.normal_vector()     
+        vector = (rv * vector.x) + (uv * vector.y) + (nv * vector.z)
         super().move(vector)
 
     def zoom(self, amount, around=None):

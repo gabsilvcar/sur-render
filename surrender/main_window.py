@@ -32,10 +32,15 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QtGui.QIcon('resources/logo.jpg'))
         self.setCentralWidget(self.viewport)
 
+    def open_callback(self):
+        path, _ = QFileDialog.getOpenFileName(self, 'Open File', '', 'Wavefront *.obj')
+        if path:
+            self.viewport.open(path)
+
     def save_callback(self):
         path, _ = QFileDialog.getSaveFileName(self, 'Save File', '', 'Wavefront *.obj')
         if path:
-            self.viewport.scene.save(path)
+            self.viewport.save(path)
 
     def __createActions(self):
         self.newAction = QAction(QtGui.QIcon(":logo"), "&New", self)
@@ -48,7 +53,11 @@ class MainWindow(QMainWindow):
         self.helpContentAction = QAction("&Help Content", self)
         self.aboutAction = QAction("&About", self)
 
+        self.openAction.triggered.connect(self.open_callback)
         self.saveAction.triggered.connect(self.save_callback)
+
+        self.openAction.setShortcut('ctrl+o')
+        self.saveAction.setShortcut('ctrl+s')
 
 
     def __createMenuBar(self):
@@ -70,9 +79,8 @@ class MainWindow(QMainWindow):
         
     def __createToolBars(self):
         # Object List
-        self.objectview = ObjectList(self.viewport)
         objectListToolBar = QToolBar("Object List", self)
-        objectListToolBar.addWidget(self.objectview)
+        objectListToolBar.addWidget(ObjectList(self.viewport))
         self.addToolBar(Qt.LeftToolBarArea, objectListToolBar)
 
         # ModifyView
@@ -87,12 +95,12 @@ class MainWindow(QMainWindow):
 
         # AddObject
         addObjToolBar = QToolBar("Add Object", self)
-        addObjToolBar.addWidget(AddObject(self.viewport, self.objectview))
+        addObjToolBar.addWidget(AddObject(self.viewport))
         self.addToolBar(Qt.RightToolBarArea, addObjToolBar)
 
         # ModifyObject
         modifyObjToolBar = QToolBar("Mod Object", self)
-        modifyObjToolBar.addWidget(ModifyObject(self.viewport, self.objectview))
+        modifyObjToolBar.addWidget(ModifyObject(self.viewport))
         self.addToolBar(Qt.RightToolBarArea, modifyObjToolBar)
 
 

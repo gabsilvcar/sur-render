@@ -12,8 +12,8 @@ class CameraPanTool(Tool):
 
     def mouseMoveEvent(self, event):
         delta = event.pos() - self.start_pos
-        x = delta.x() / 100 * np.pi
-        y = delta.y() / 100 * np.pi
-        delta = Vector(x, y, 0)
+        rx = delta.y() / 100 * np.pi
+        ry = delta.x() / 100 * np.pi
+        delta = Vector(rx, ry, 0)
         self.viewport.rotate(delta)
         self.start_pos = event.pos()    

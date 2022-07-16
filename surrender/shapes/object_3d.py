@@ -8,16 +8,30 @@ class Object3D(GenericShape):
     def __init__(self, name, segments, color=(0,0,0)):
         super().__init__(name, 'Object3D', color)
         self.segments = list()
-        self.pts = set()
+        self.visual_points = list()
         self.set_segments(segments)
 
+    def copy(self):
+        new_segments = [(a.copy(), b.copy()) for a,b in self.segments]
+        return self.__class__(self.name, new_segments, self.color)
+
     def set_segments(self, segments):
-        self.pts.clear()
+        self.visual_points.clear()
         self.segments = list(segments)
 
         for a,b in segments:
-            self.pts.add(a)
-            self.pts.add(b)
+            self.visual_points.append(a)
+            self.visual_points.append(b)
+
+    def clipped(self, window):
+        new_segments = []
+        for a, b in self.segments:
+            l = cohen_sutherland(a, b, window)
+            if l is not None:
+                new_segments.append(l)   
+        c = self.copy()         
+        c.set_segments(new_segments)
+        return c
 
     def clipped(self, window):
         new_segments = []
@@ -32,7 +46,7 @@ class Object3D(GenericShape):
         return obj
 
     def points(self):
-        return list(self.pts)
+        return self.visual_points
 
     def as_lines(self):
         for a, b in self.segments:
