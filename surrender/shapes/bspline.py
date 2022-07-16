@@ -1,26 +1,26 @@
 from copy import deepcopy
 
-from surrender.shapes import Polygon
+from surrender.shapes import Polygon, Line
 from surrender.shapes.generic_curve import GenericCurve
 from surrender.parametric_curves import fd_bspline
 from surrender.vector import Vector
 from surrender.utils import adjacents
-from surrender.clipping import cohen_sutherland, liang_barsky, sutherland_hodgeman
+from surrender.clipping import sutherland_hodgeman
 
 
 class BSpline(GenericCurve):
-    def __init__(self, name, control_points, color=(0,0,0)):
+    def __init__(self, name, control_points, color=(0, 0, 0)):
         super().__init__(name, color, False)
-        self.type = 'B-Spline'
+        self.type = "B-Spline"
         self.resolution = 5
         self._control_points = control_points
         self._blended_points = control_points
         self.set_resolution(self.resolution)
-    
+
     def set_resolution(self, resolution):
         self.resolution = resolution
         self._blended_points = self.blended_points()
-    
+
     def as_polygon(self):
         p = Polygon(self.name, self._blended_points, self.color, Polygon.OPEN)
         p.CLIPPING_ALGORITHM = self.CLIPPING_ALGORITHM
@@ -28,24 +28,22 @@ class BSpline(GenericCurve):
 
     def points(self):
         return self._control_points
-    
+
     def lines(self):
-        circular = self.style != self.OPEN
         for start, end in adjacents(self.blended_points(), circular=False):
-            yield Line('', start, end)
+            yield Line("", start, end)
 
     def packs_of_points(self, points):
-        last_point = None 
         for i in range(len(points) - 3):
-            yield points[i:(i+4)]
+            yield points[i : (i + 4)]
 
     def blended_points(self):
         points = []
         for p in self.packs_of_points(self.points()):
-            for x,y,z in fd_bspline(p, self.resolution):
-                points.append(Vector(x,y,z))
+            for x, y, z in fd_bspline(p, self.resolution):
+                points.append(Vector(x, y, z))
         return points
-    
+
     def clipped(self, window):
         clipped_points = []
 
@@ -63,4 +61,4 @@ class BSpline(GenericCurve):
 
         c = deepcopy(self)
         c._blended_points = clipped_points
-        return c 
+        return c

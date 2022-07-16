@@ -1,11 +1,7 @@
-from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QVBoxLayout, QPushButton, QTreeView, QWidget
 
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QBrush, QColor
-from PyQt5.QtCore import Qt, QSize, pyqtSignal
-
-from surrender.viewport import Viewport
+from PyQt5.QtCore import Qt, pyqtSignal
 
 
 class CustomTable(QTreeView):
@@ -15,10 +11,10 @@ class CustomTable(QTreeView):
         super().__init__(*args, **kwargs)
         self.model = QStandardItemModel(0, 3)
         self.setModel(self.model)
-    
+
     def setHorizontalHeaderLabels(self, *args, **kwargs):
         self.model.setHorizontalHeaderLabels(*args, **kwargs)
-    
+
     def appendRow(self, *args, **kwargs):
         self.model.appendRow(*args, **kwargs)
 
@@ -36,9 +32,9 @@ class ObjectList(QWidget):
 
         self.viewport = viewport
         self.viewport.shapeModified.connect(self.update)
-        
+
         self.table = CustomTable()
-        self.table.setHorizontalHeaderLabels(['NAME', 'SHAPE', 'COLOR'])
+        self.table.setHorizontalHeaderLabels(["NAME", "SHAPE", "COLOR"])
         self.table.itemSelected.connect(self.selection_callback)
 
         self.delete_button = QPushButton("Delete Item")
@@ -48,10 +44,10 @@ class ObjectList(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(self.table)
         layout.addWidget(self.delete_button)
-        
+
         self.setLayout(layout)
         self.update()
-    
+
     def selected_index(self):
         return self.table.currentIndex().row()
 
@@ -62,7 +58,7 @@ class ObjectList(QWidget):
     def delete_callback(self):
         selected = self.viewport.selected_shape
         self.viewport.remove_shape(selected)
-    
+
     def populate_tree(self):
         self.table.clearRows()
 
@@ -76,4 +72,3 @@ class ObjectList(QWidget):
     def update(self):
         self.populate_tree()
         super().update()
-

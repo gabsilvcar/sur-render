@@ -1,15 +1,20 @@
-import sys, random
-import numpy as np 
-from copy import deepcopy
-from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtGui import QPainter, QPainterPath, QBrush, QPen, QColor, QTransform        
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QPainter, QBrush, QPen, QColor
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtWidgets import *
-from surrender.shapes import *
+from PyQt5.QtWidgets import QWidget
 from surrender.view import View
 from surrender.scene import Scene
 from surrender.vector import Vector
 from surrender.io.obj_io import OBJIO
+from surrender.shapes import (
+    Point,
+    Line,
+    Polygon,
+    Object3D,
+    BSpline,
+    BicubicBezier,
+    Bezier,
+)
 
 
 class Viewport(QWidget):
@@ -31,18 +36,18 @@ class Viewport(QWidget):
 
     def save(self, path):
         OBJIO.write(self.scene.shapes, path)
-    
+
     def get_shape_by_index(self, index):
         if index not in range(len(self.scene.shapes)):
             return None
         return self.scene.shapes[index]
-    
+
     def add_shape(self, shape):
         if shape is not None:
             self.scene.shapes.append(shape)
         self.shapeModified.emit()
         self.repaint()
-    
+
     def remove_shape(self, shape):
         if shape in self.scene.shapes:
             self.scene.shapes.remove(shape)
@@ -53,14 +58,14 @@ class Viewport(QWidget):
         self.win.zoom(factor)
         self.repaint()
         self.moved.emit()
-        
+
     def rotate(self, delta):
         self.win.rotate(delta, self.win.center())
         self.repaint()
         self.moved.emit()
 
     def move(self, vector):
-        scalar = self.win.width() / self.vp.width() 
+        scalar = self.win.width() / self.vp.width()
         self.win.move(vector * scalar)
         self.repaint()
         self.moved.emit()
@@ -69,37 +74,28 @@ class Viewport(QWidget):
         if painter is None:
             painter = QPainter(self)
 
-        painter.drawPoint(int(point.pos.x), int(point.pos.y)) 
-    
+        painter.drawPoint(int(point.pos.x), int(point.pos.y))
+
     def draw_line(self, line, painter=None):
         if painter is None:
             painter = QPainter(self)
 
-        painter.drawLine(int(line.start.x), 
-                         int(line.start.y), 
-                         int(line.end.x), 
-                         int(line.end.y))
-    
+        painter.drawLine(
+            int(line.start.x), int(line.start.y), int(line.end.x), int(line.end.y)
+        )
+
     def draw_polygon(self, polygon, painter=None):
         if painter is None:
             painter = QPainter(self)
 
         if polygon.style == Polygon.FILLED:
-            poly = QtGui.QPolygonF() 
+            poly = QtGui.QPolygonF()
             for p in polygon.points():
                 poly.append(QtCore.QPointF(p.x, p.y))
             painter.drawPolygon(poly)
         else:
             for line in polygon.lines():
                 self.draw_line(line, painter)
-
-        # pen = QPen()
-        # pen.setWidth(6)
-        # pen.setCapStyle(Qt.RoundCap)
-        # painter.setPen(pen)
-
-        # for p in polygon.points():
-        #     self.draw_point(Point('', p), painter)
 
     def draw_curve(self, curve, painter=None):
         if painter is None:
@@ -108,14 +104,6 @@ class Viewport(QWidget):
         poly = curve.as_polygon()
         poly.CLIPPING_ALGORITHM = curve.CLIPPING_ALGORITHM
         self.draw_polygon(poly, painter)
-
-        # pen = QPen()
-        # pen.setWidth(6)
-        # pen.setCapStyle(Qt.RoundCap)
-        # painter.setPen(pen)
-
-        # for p in poly.points():
-        #     self.draw_point(Point('', p), painter)
 
     def draw_3d(self, shape, painter=None):
         if painter is None:
@@ -143,7 +131,7 @@ class Viewport(QWidget):
 
         elif isinstance(shape, Object3D):
             self.draw_3d(shape, painter)
-        
+
         elif isinstance(shape, BicubicBezier):
             self.draw_3d(shape.as_object_3d(), painter)
 
@@ -158,24 +146,24 @@ class Viewport(QWidget):
         b = 50
 
         self.vp = View(
-            Vector(0+b, h-b),
-            Vector(w-b, h-b),
-            Vector(w-b, 0+b),
-            Vector(0+b, 0+b),
+            Vector(0 + b, h - b),
+            Vector(w - b, h - b),
+            Vector(w - b, 0 + b),
+            Vector(0 + b, 0 + b),
         )
 
         self.win = View(
             Vector(0, h),
             Vector(w, h),
             Vector(w, 0),
-            Vector(0,0), 
+            Vector(0, 0),
         )
 
-        self.scene.gliphs = [self.vp, Point('Center', self.vp.center())]
+        self.scene.gliphs = [self.vp, Point("Center", self.vp.center())]
 
     def paintEvent(self, event):
         super().paintEvent(event)
- 
+
         pen = QPen()
         pen.setWidth(2)
         pen.setCapStyle(Qt.RoundCap)

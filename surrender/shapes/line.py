@@ -1,7 +1,8 @@
 from copy import deepcopy
 
 from surrender.shapes.generic_shape import GenericShape
-from surrender.clipping import cohen_sutherland, liang_barsky, sutherland_hodgeman
+from surrender.clipping import cohen_sutherland, liang_barsky
+
 
 class Line(GenericShape):
     DO_NOT_CLIP = 0
@@ -10,8 +11,8 @@ class Line(GenericShape):
 
     CLIPPING_ALGORITHM = COHEN_SUTHERLAND
 
-    def __init__(self, name, start, end, color=(0,0,0)):
-        super().__init__(name, 'Line', color)
+    def __init__(self, name, start, end, color=(0, 0, 0)):
+        super().__init__(name, "Line", color)
         self.start = start
         self.end = end
 
@@ -25,13 +26,12 @@ class Line(GenericShape):
             p = liang_barsky(self.start, self.end, window)
         else:
             return self
-            
+
         if p is None:
             return None
 
-        l = deepcopy(self)
-        l.start = p[0]
-        l.end = p[1]
+        line = deepcopy(self)
+        line.start = p[0]
+        line.end = p[1]
 
-        return l
-        
+        return line

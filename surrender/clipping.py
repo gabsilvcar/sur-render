@@ -1,10 +1,10 @@
 from surrender.vector import Vector
 from surrender.utils import adjacents
 
-LEFT   = int('0001', 2)
-RIGHT  = int('0010', 2)
-BOTTOM = int('0100', 2)
-UP     = int('1000', 2)
+LEFT = int("0001", 2)
+RIGHT = int("0010", 2)
+BOTTOM = int("0100", 2)
+UP = int("1000", 2)
 
 
 def point_code(point, window):
@@ -22,18 +22,19 @@ def point_code(point, window):
 
     return code
 
+
 def cohen_sutherland(p0, p1, window):
     rc_start = point_code(p0, window)
-    rc_end   = point_code(p1, window)
+    rc_end = point_code(p1, window)
 
-    inside_window = (rc_start == rc_end == 0)
-    outside_window = (rc_start & rc_end != 0)
+    inside_window = rc_start == rc_end == 0
+    outside_window = rc_start & rc_end != 0
 
     if inside_window:
         return (p0, p1)
 
     if outside_window:
-        return None     
+        return None
 
     dx = p1.x - p0.x
     dy = p1.y - p0.y
@@ -42,13 +43,13 @@ def cohen_sutherland(p0, p1, window):
         m = dy / dx
     else:
         m = 0
-        
+
     x = window.min().x
-    y = m * (x - p0.x) + p0.y 
+    y = m * (x - p0.x) + p0.y
     left = Vector(x, y)
 
     x = window.max().x
-    y = m * (x - p0.x) + p0.y 
+    y = m * (x - p0.x) + p0.y
     right = Vector(x, y)
 
     if m == 0:
@@ -72,13 +73,13 @@ def cohen_sutherland(p0, p1, window):
         other = point_code(p1, window)
 
         if (other & LEFT) and point_code(left, window) == 0:
-             return [p0, left]
+            return [p0, left]
 
         if (other & RIGHT) and point_code(right, window) == 0:
-             return [p0, right]
+            return [p0, right]
 
         if (other & UP) and point_code(up, window) == 0:
-             return [p0, up]
+            return [p0, up]
 
         if (other & BOTTOM) and point_code(down, window) == 0:
             return [p0, down]
@@ -86,13 +87,13 @@ def cohen_sutherland(p0, p1, window):
         other = point_code(p0, window)
 
         if (other & LEFT) and point_code(left, window) == 0:
-             return [p1, left]
+            return [p1, left]
 
         if (other & RIGHT) and point_code(right, window) == 0:
-             return [p1, right]
+            return [p1, right]
 
         if (other & UP) and point_code(up, window) == 0:
-             return [p1, up]
+            return [p1, up]
 
         if (other & BOTTOM) and point_code(down, window) == 0:
             return [p1, down]
@@ -108,6 +109,7 @@ def cohen_sutherland(p0, p1, window):
     else:
         return None
 
+
 def liang_barsky(p0, p1, window):
     delta = p1 - p0
 
@@ -116,15 +118,15 @@ def liang_barsky(p0, p1, window):
         delta.x,
         -delta.y,
         delta.y,
-        ]
+    ]
 
     q = [
         p0.x - window.min().x,
         window.max().x - p0.x,
         p0.y - window.min().y,
         window.max().y - p0.y,
-        ]
-    
+    ]
+
     for i in range(4):
         if p[i] == 0 and q[i] < 0:
             return None
@@ -134,10 +136,10 @@ def liang_barsky(p0, p1, window):
     u = [
         max(0, *[r[k] for k in range(4) if p[k] < 0]),
         min(1, *[r[k] for k in range(4) if p[k] > 0]),
-        ]
+    ]
 
     if u[0] > u[1]:
-        return None 
+        return None
 
     points = []
 
@@ -146,16 +148,17 @@ def liang_barsky(p0, p1, window):
     else:
         x = p0.x + delta.x * u[0]
         y = p0.y + delta.y * u[0]
-        points.append(Vector(x,y))
+        points.append(Vector(x, y))
 
     if u[1] == 1:
         points.append(p1)
     else:
         x = p0.x + delta.x * u[1]
         y = p0.y + delta.y * u[1]
-        points.append(Vector(x,y))
-    
+        points.append(Vector(x, y))
+
     return points
+
 
 def cut_min_x(points, minx, closed):
     points_with_intersection = []
@@ -166,21 +169,21 @@ def cut_min_x(points, minx, closed):
             delta = p1 - p0
             if delta.x != 0:
                 m = delta.y / delta.x
-                x = minx 
+                x = minx
                 y = m * (x - p0.x) + p0.y
-                points_with_intersection.append(Vector(x,y))
+                points_with_intersection.append(Vector(x, y))
 
         elif p1.x < minx < p0.x:
             delta = p0 - p1
             if delta.x != 0:
                 m = delta.y / delta.x
-                x = minx 
+                x = minx
                 y = m * (x - p1.x) + p1.y
-                points_with_intersection.append(Vector(x,y))
+                points_with_intersection.append(Vector(x, y))
 
     if not closed and points:
         points_with_intersection.append(points[-1])
-    
+
     clipped = []
 
     for point in points_with_intersection:
@@ -188,6 +191,7 @@ def cut_min_x(points, minx, closed):
             clipped.append(point)
 
     return clipped
+
 
 def cut_max_x(points, maxx, closed):
     points_with_intersection = []
@@ -199,17 +203,17 @@ def cut_max_x(points, maxx, closed):
             delta = p1 - p0
             if delta.x != 0:
                 m = delta.y / delta.x
-                x = maxx 
+                x = maxx
                 y = m * (x - p0.x) + p0.y
-                points_with_intersection.append(Vector(x,y))
+                points_with_intersection.append(Vector(x, y))
 
         elif p1.x > maxx > p0.x:
             delta = p0 - p1
             if delta.x != 0:
                 m = delta.y / delta.x
-                x = maxx 
+                x = maxx
                 y = m * (x - p1.x) + p1.y
-            points_with_intersection.append(Vector(x,y))
+            points_with_intersection.append(Vector(x, y))
 
     if not closed and points:
         points_with_intersection.append(points[-1])
@@ -222,6 +226,7 @@ def cut_max_x(points, maxx, closed):
 
     return clipped
 
+
 def cut_min_y(points, miny, closed):
     points_with_intersection = []
 
@@ -232,23 +237,23 @@ def cut_min_y(points, miny, closed):
             delta = p1 - p0
             if delta.x == 0:
                 y = miny
-                x = p0.x 
+                x = p0.x
             else:
                 m = delta.y / delta.x
                 y = miny
                 x = p0.x + (y - p0.y) / m
-            points_with_intersection.append(Vector(x,y))
+            points_with_intersection.append(Vector(x, y))
 
         elif p1.y < miny < p0.y:
             delta = p0 - p1
             if delta.x == 0:
                 y = miny
                 x = p1.x
-            else: 
+            else:
                 m = delta.y / delta.x
                 y = miny
                 x = p1.x + (y - p1.y) / m
-            points_with_intersection.append(Vector(x,y))
+            points_with_intersection.append(Vector(x, y))
 
     if not closed and points:
         points_with_intersection.append(points[-1])
@@ -261,6 +266,7 @@ def cut_min_y(points, miny, closed):
 
     return clipped
 
+
 def cut_max_y(points, maxy, closed):
     points_with_intersection = []
 
@@ -271,23 +277,23 @@ def cut_max_y(points, maxy, closed):
             delta = p1 - p0
             if delta.x == 0:
                 y = maxy
-                x = p0.x 
+                x = p0.x
             else:
                 m = delta.y / delta.x
                 y = maxy
                 x = p0.x + (y - p0.y) / m
-            points_with_intersection.append(Vector(x,y))
+            points_with_intersection.append(Vector(x, y))
 
         elif p1.y > maxy > p0.y:
             delta = p0 - p1
             if delta.x == 0:
                 y = maxy
                 x = p1.x
-            else: 
+            else:
                 m = delta.y / delta.x
                 y = maxy
                 x = p1.x + (y - p1.y) / m
-            points_with_intersection.append(Vector(x,y))
+            points_with_intersection.append(Vector(x, y))
 
     if not closed and points:
         points_with_intersection.append(points[-1])
@@ -300,7 +306,8 @@ def cut_max_y(points, maxy, closed):
 
     return clipped
 
-# POLYGON ALGORITHMS 
+
+# POLYGON ALGORITHMS
 def sutherland_hodgeman(points, window, closed=True):
     clipped = points
     clipped = cut_min_x(clipped, window.min().x, closed)

@@ -3,18 +3,18 @@ from surrender.shapes.object_3d import Object3D
 
 
 class Cube(Object3D):
-    def __init__(self, name, pos, size, color=(0,0,0)):
+    def __init__(self, name, pos, size, color=(0, 0, 0)):
         self.pos = pos
         self.size = size
 
-        v0 = Vector(0,0,0) * size + pos
-        v1 = Vector(0,0,1) * size + pos
-        v2 = Vector(0,1,0) * size + pos
-        v3 = Vector(0,1,1) * size + pos
-        v4 = Vector(1,0,0) * size + pos
-        v5 = Vector(1,0,1) * size + pos
-        v6 = Vector(1,1,0) * size + pos
-        v7 = Vector(1,1,1) * size + pos
+        v0 = Vector(0, 0, 0) * size + pos
+        v1 = Vector(0, 0, 1) * size + pos
+        v2 = Vector(0, 1, 0) * size + pos
+        v3 = Vector(0, 1, 1) * size + pos
+        v4 = Vector(1, 0, 0) * size + pos
+        v5 = Vector(1, 0, 1) * size + pos
+        v6 = Vector(1, 1, 0) * size + pos
+        v7 = Vector(1, 1, 1) * size + pos
 
         segments = [
             (v0, v1),
@@ -32,7 +32,7 @@ class Cube(Object3D):
         ]
 
         super().__init__(name, segments, color)
-        self.type = 'Cube'
+        self.type = "Cube"
 
     def copy(self):
         return self.__class__(self.name, self.pos, self.size, self.color)
