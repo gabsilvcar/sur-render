@@ -7,6 +7,10 @@ from surrender.math_transforms import (
     rotation_matrix_z,
 )
 
+# new_vector_functions
+def vector(x=0, y=0, z=0):
+    return np.array((x,y,z))
+
 
 HANDLED_FUNCTIONS = {}
 

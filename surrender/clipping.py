@@ -1,10 +1,34 @@
 from surrender.vector import Vector
 from surrender.utils import adjacents
+from numba import njit
 
 LEFT = int("0001", 2)
 RIGHT = int("0010", 2)
 BOTTOM = int("0100", 2)
 UP = int("1000", 2)
+
+@njit
+def point_code_(point, window_min, window_max):
+    X = 0
+    Y = 1
+    Z = 2
+
+    code = 0
+
+    if point[Y] > window_max[Y]:
+        code |= UP
+    elif point[Y] < window_min[Y]:
+        code |= BOTTOM
+
+    if point[X] > window_max[X]:
+        code |= RIGHT
+    elif point[X] < window_min[X]:
+        code |= LEFT
+
+    return code
+    
+
+
 
 
 def point_code(point, window):
