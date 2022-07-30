@@ -1,6 +1,6 @@
 from surrender.shapes.generic_shape import GenericShape
 from surrender.shapes import Line
-from surrender.clipping import cohen_sutherland, cohen_sutherland_
+from surrender.clipping import cohen_sutherland
 
 
 class Object3D(GenericShape):
@@ -27,19 +27,8 @@ class Object3D(GenericShape):
         wmin = window.min()
         wmax = window.max()
         for a, b in self.segments:
-            if cohen_sutherland_(a, b, wmin, wmax):
-                new_segments.append((a,b))
-        c = self.copy()
-        c.set_segments(new_segments)
-        return c
-
-
-
-        new_segments = []
-        for a, b in self.segments:
-            line = cohen_sutherland(a, b, window)
-            if line is not None:
-                new_segments.append(line)
+            if cohen_sutherland(a, b, wmin, wmax):
+                new_segments.append((a, b))
         c = self.copy()
         c.set_segments(new_segments)
         return c

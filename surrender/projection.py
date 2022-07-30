@@ -6,7 +6,6 @@ from surrender.math_transforms import (
     rotation_matrix_z,
     translation_matrix,
 )
-from time import time
 
 
 def _alignment_matrix(uv, nv):

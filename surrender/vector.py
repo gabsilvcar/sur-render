@@ -8,9 +8,10 @@ from surrender.math_transforms import (
 )
 from numba import njit
 
+
 @njit
 def vector(x=0, y=0, z=0):
-    return np.array((x,y,z))
+    return np.array((x, y, z))
 
 
 HANDLED_FUNCTIONS = {}
@@ -144,6 +145,12 @@ class Vector(np.lib.mixins.NDArrayOperatorsMixin):
     def append(array, values, axis=None):
         a = np.asarray(array)
         return np.append(a, values, axis=axis)
+
+    @implements(np.allclose)
+    def allclose(a, b, *args, **kwargs):
+        a = np.asarray(a)
+        b = np.asarray(b)
+        return np.allclose(a, b, *args, **kwargs)
 
     def copy(self):
         return Vector(self.x, self.y, self.z)

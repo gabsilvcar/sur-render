@@ -2,7 +2,6 @@ from surrender.scene import Scene
 from surrender.io.obj_io import OBJIO
 from surrender.view import View
 from surrender.vector import Vector
-from surrender.clipping import point_code, point_code_, cohen_sutherland, cohen_sutherland_
 import numpy as np
 from numba import njit
 
