@@ -45,11 +45,11 @@ class AddObject(QWidget):
     def create_tabs(self):
         self.tabs = QTabWidget()
 
-        widget = BicubicBsplineWidget(self.viewport)
-        self.tabs.addTab(widget, "Bicubic Bspline")
+        # widget = BicubicBsplineWidget(self.viewport)
+        # self.tabs.addTab(widget, "Bicubic Bspline")
 
-        widget = BicubicBezierWidget(self.viewport)
-        self.tabs.addTab(widget, "Bicubic Bezier")
+        # widget = BicubicBezierWidget(self.viewport)
+        # self.tabs.addTab(widget, "Bicubic Bezier")
 
         widget = PointWidget(self.viewport)
         self.tabs.addTab(widget, "Point")
@@ -237,8 +237,8 @@ class PolygonWidget(GenericShapeWidget):
 
     def apply_callback(self):
         try:
-            expression = r"\((.*?)\)", self.points_line.text()
-            between_brackets = re.findall(expression)
+            expression = r"\((.*?)\)"
+            between_brackets = re.findall(expression, self.points_line.text())
 
             name = self.name_line.text()
             digits = [get_digits(i) for i in between_brackets]
@@ -336,8 +336,8 @@ class BezierWidget(GenericShapeWidget):
 
     def apply_callback(self):
         try:
-            expression = r"\((.*?)\)", self.points_line.text()
-            between_brackets = re.findall(expression)
+            expression = r"\((.*?)\)"
+            between_brackets = re.findall(expression, self.points_line.text())
 
             name = self.name_line.text()
             digits = [get_digits(i) for i in between_brackets]
@@ -377,8 +377,8 @@ class BSplineWidget(GenericShapeWidget):
 
     def apply_callback(self):
         try:
-            expression = r"\((.*?)\)", self.points_line.text()
-            between_brackets = re.findall(expression)
+            expression = r"\((.*?)\)"
+            between_brackets = re.findall(expression, self.points_line.text())
 
             name = self.name_line.text()
             digits = [get_digits(i) for i in between_brackets]
