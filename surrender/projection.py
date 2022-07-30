@@ -7,7 +7,6 @@ from surrender.math_transforms import (
     translation_matrix,
 )
 
-
 def _alignment_matrix(uv, nv):
     rx = nv.x_angle()
     nv.rotate_x(rx)
@@ -97,7 +96,6 @@ def faster_perspective_projection(shapes, window):
 
     translation = translation_matrix(-cop)
     rotation = _alignment_matrix(uv, nv)
-    perspective_matrix = translation @ rotation
 
     vectors = []
     for shape in shapes:
@@ -113,9 +111,12 @@ def faster_perspective_projection(shapes, window):
     for pos, vec in zip(positions, vectors):
         pos[:] = vec.x, vec.y, vec.z, 1
 
-    result = positions @ perspective_matrix
+    result = positions @ translation @ rotation
+    zd = result[:, 2] / d
+    xs = result[:, 0] / zd
+    ys = result[:, 1] / zd
 
-    for pos, vec in zip(result, vectors):
-        vec.x = d * pos[0] / pos[2]
-        vec.y = d * pos[1] / pos[2]
-        vec.z = 0
+    for i in range(len(vectors)):
+        vectors[i].x = xs[i]
+        vectors[i].y = ys[i]
+        vectors[i].z = 0
