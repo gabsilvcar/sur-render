@@ -6,6 +6,7 @@ from surrender.math_transforms import (
     rotation_matrix_z,
     translation_matrix,
 )
+from time import time
 
 
 def _alignment_matrix(uv, nv):
@@ -116,7 +117,6 @@ def faster_perspective_projection(shapes, window):
     result = positions @ perspective_matrix
 
     for pos, vec in zip(result, vectors):
-        x, y, z = pos[:3]
-        vec.x = x * d / z
-        vec.y = y * d / z
+        vec.x = d * pos[0] / pos[2]
+        vec.y = d * pos[1] / pos[2]
         vec.z = 0

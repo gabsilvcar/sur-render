@@ -6,8 +6,9 @@ from surrender.math_transforms import (
     rotation_matrix_y,
     rotation_matrix_z,
 )
+from numba import njit
 
-# new_vector_functions
+@njit
 def vector(x=0, y=0, z=0):
     return np.array((x,y,z))
 
@@ -145,7 +146,7 @@ class Vector(np.lib.mixins.NDArrayOperatorsMixin):
         return np.append(a, values, axis=axis)
 
     def copy(self):
-        return self.__class__(self.x, self.y, self.z)
+        return Vector(self.x, self.y, self.z)
 
     def __hash__(self):
         return id(self)

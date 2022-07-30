@@ -2,7 +2,7 @@ from surrender.scene import Scene
 from surrender.io.obj_io import OBJIO
 from surrender.view import View
 from surrender.vector import Vector
-from surrender.clipping import point_code, point_code_
+from surrender.clipping import point_code, point_code_, cohen_sutherland, cohen_sutherland_
 import numpy as np
 from numba import njit
 
@@ -38,47 +38,41 @@ def create_views():
     return origin, target
 
 
-arrays = [np.random.randint(-300, 300, (3,)) for _ in range(100_000)]
-vectors = [Vector(*i) for i in arrays]
+# arrays = [np.random.randint(-300, 300, (3,)) for _ in range(70_000)]
+# vectors = [Vector(*i) for i in arrays]
 
-win, _ = create_views()
-win_min = np.asarray(win.min())
-win_max = np.asarray(win.max())
+# win, _ = create_views()
+# win_min = np.asarray(win.min())
+# win_max = np.asarray(win.max())
 
-def test_equal():
-    for vector, array in zip(vectors, arrays):
-        c0 = point_code(vector, win)
-        c1 = point_code_(array, win_min, win_max)
-        assert c0 == c1
+# def old_cs():
+#     for a, b in zip(vectors, reversed(vectors)):
+#         cohen_sutherland(a, b, win)
 
-def test_old():
-    for vector in vectors:
-        point_code(vector, win)
+# def new_cs():
+#     for a, b in zip(vectors, reversed(vectors)):
+#         cohen_sutherland_(a, b, win.min(), win.max())
 
-def test_new():
-    for array in arrays:
-        point_code_(array, win_min, win_max)
+# import timeit
 
-# test_equal()
-import timeit
+# t0 = timeit.Timer(old_cs).timeit(5)
+# print('old', t0)
 
-t0 = timeit.Timer(test_old).timeit(100)
-print('old', t0)
+# t1 = timeit.Timer(new_cs).timeit(5)
+# print('new', t1)
 
-t1 = timeit.Timer(test_new).timeit(100)
-print('new', t1)
 
-# scene = create_scene()
-# origin, target = create_views()
-# scene.projected_shapes(origin, target)
+scene = create_scene()
+origin, target = create_views()
+scene.projected_shapes(origin, target)
 
-# test = lambda: scene.projected_shapes(origin, target)
+test = lambda: scene.projected_shapes(origin, target)
 
-# profiler = Profile()
-# profiler.runcall(test)
+profiler = Profile()
+profiler.runcall(test)
 
-# stats = Stats(profiler)
-# stats.strip_dirs()
-# stats.sort_stats('cumulative')
-# stats.print_stats()
+stats = Stats(profiler)
+stats.strip_dirs()
+stats.sort_stats('cumulative')
+stats.print_stats()
 # stats.print_callers()

@@ -1,4 +1,4 @@
-from surrender.vector import Vector
+from surrender.vector import Vector, vector
 from surrender.utils import adjacents
 from numba import njit
 
@@ -7,29 +7,112 @@ RIGHT = int("0010", 2)
 BOTTOM = int("0100", 2)
 UP = int("1000", 2)
 
-@njit
-def point_code_(point, window_min, window_max):
-    X = 0
-    Y = 1
-    Z = 2
+# cringe indexes
+X = 0
+Y = 1
+Z = 2
 
+# @njit
+def point_code_(point, window_min, window_max):
     code = 0
 
-    if point[Y] > window_max[Y]:
+    if point.y > window_max.y:
         code |= UP
-    elif point[Y] < window_min[Y]:
+    elif point.y < window_min.y:
         code |= BOTTOM
 
-    if point[X] > window_max[X]:
+    if point.x > window_max.x:
         code |= RIGHT
-    elif point[X] < window_min[X]:
+    elif point.x < window_min.x:
         code |= LEFT
 
     return code
-    
 
+# @njit
+# def cohen_sutherland_(a, b, window_min, window_max):
+#     while True:
+#         # print(a, b)
+#         code_a = point_code_(a, window_min, window_max)    
+#         code_b = point_code_(b, window_min, window_max)    
 
+#         inside_window = code_a == code_b == 0
+#         outside_window = code_a & code_b != 0
 
+#         if inside_window:
+#             return True
+        
+#         if outside_window:
+#             return False
+
+#         if code_a == 0:
+#             a, b = b, a 
+#             code_a, code_b = code_b, code_a
+        
+#         dx = b[X] - a[X]
+#         dy = b[Y] - a[Y]
+
+#         if dx != 0:
+#             m = dy / dx
+
+#         if code_a & LEFT:
+#             a[Y] += m * (window_min[X] - a[X])
+#             a[X] = window_min[X]
+
+#         elif code_a & RIGHT:
+#             a[Y] += m * (window_max[X] - a[X])
+#             a[X] = window_max[X]
+
+#         elif code_a & BOTTOM:
+#             if b[X] != a[X]:
+#                 a[X] += (window_min[Y] - a[Y]) / m                
+#             a[Y] = window_min[Y]
+
+#         elif code_a & UP:
+#             if b[X] != a[X]:
+#                 a[X] += (window_max[Y] - a[Y]) / m
+#             a[Y] = window_max[Y]
+
+def cohen_sutherland_(a, b, window_min, window_max):
+    while True:
+        code_a = point_code_(a, window_min, window_max)    
+        code_b = point_code_(b, window_min, window_max)    
+
+        inside_window = code_a == code_b == 0
+        outside_window = code_a & code_b != 0
+
+        if inside_window:
+            return True
+        
+        if outside_window:
+            return False
+
+        if code_a == 0:
+            a, b = b, a 
+            code_a, code_b = code_b, code_a
+        
+        dx = b.x - a.x
+        dy = b.y - a.y
+
+        if dx != 0:
+            m = dy / dx
+
+        if code_a & LEFT:
+            a.y += m * (window_min.x - a.x)
+            a.x = window_min.x
+
+        elif code_a & RIGHT:
+            a.y += m * (window_max.x - a.x)
+            a.x = window_max.x
+
+        elif code_a & BOTTOM:
+            if b.x != a.x:
+                a.x += (window_min.y - a.y) / m                
+            a.y = window_min.y
+
+        elif code_a & UP:
+            if b.x != a.x:
+                a.x += (window_max.y - a.y) / m
+            a.y = window_max.y
 
 def point_code(point, window):
     code = 0

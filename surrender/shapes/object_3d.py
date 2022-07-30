@@ -1,6 +1,6 @@
 from surrender.shapes.generic_shape import GenericShape
 from surrender.shapes import Line
-from surrender.clipping import cohen_sutherland
+from surrender.clipping import cohen_sutherland, cohen_sutherland_
 
 
 class Object3D(GenericShape):
@@ -23,6 +23,18 @@ class Object3D(GenericShape):
             self.visual_points.append(b)
 
     def clipped(self, window):
+        new_segments = []
+        wmin = window.min()
+        wmax = window.max()
+        for a, b in self.segments:
+            if cohen_sutherland_(a, b, wmin, wmax):
+                new_segments.append((a,b))
+        c = self.copy()
+        c.set_segments(new_segments)
+        return c
+
+
+
         new_segments = []
         for a, b in self.segments:
             line = cohen_sutherland(a, b, window)
