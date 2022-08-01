@@ -22,7 +22,6 @@ def point_code(point, window_min, window_max):
 
     return code
 
-
 def cohen_sutherland(a, b, window_min, window_max):
     while True:
         code_a = point_code(a, window_min, window_max)
@@ -264,10 +263,10 @@ def cut_max_y(points, maxy, closed):
 
 
 # POLYGON ALGORITHMS
-def sutherland_hodgeman(points, window, closed=True):
+def sutherland_hodgeman(points, window_min, window_max, closed=True):
     clipped = points
-    clipped = cut_min_x(clipped, window.min().x, closed)
-    clipped = cut_max_x(clipped, window.max().x, closed)
-    clipped = cut_min_y(clipped, window.min().y, closed)
-    clipped = cut_max_y(clipped, window.max().y, closed)
+    clipped = cut_min_x(clipped, window_min.x, closed)
+    clipped = cut_max_x(clipped, window_max.x, closed)
+    clipped = cut_min_y(clipped, window_min.y, closed)
+    clipped = cut_max_y(clipped, window_max.y, closed)
     return clipped

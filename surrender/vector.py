@@ -30,6 +30,14 @@ class Vector(np.lib.mixins.NDArrayOperatorsMixin):
         self.x = x
         self.y = y
         self.z = z
+    
+    def set_pos(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def get_pos(self):
+        return (self.x, self.y, self.z)
 
     def length(self):
         return np.linalg.norm(np.asarray(self))

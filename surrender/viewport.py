@@ -31,7 +31,7 @@ class Viewport(QWidget):
     def open(self, path):
         new_shapes = OBJIO.read(path)
         for shape in new_shapes:
-            self.scene.shapes.append(shape)
+            self.scene.add_shape(shape)
         self.shapeModified.emit()
 
     def save(self, path):
@@ -43,14 +43,12 @@ class Viewport(QWidget):
         return self.scene.shapes[index]
 
     def add_shape(self, shape):
-        if shape is not None:
-            self.scene.shapes.append(shape)
+        self.scene.add_shape(shape)
         self.shapeModified.emit()
         self.repaint()
 
     def remove_shape(self, shape):
-        if shape in self.scene.shapes:
-            self.scene.shapes.remove(shape)
+        self.scene.remove_shape(shape)
         self.shapeModified.emit()
         self.repaint()
 
@@ -74,14 +72,17 @@ class Viewport(QWidget):
         if painter is None:
             painter = QPainter(self)
 
-        painter.drawPoint(int(point.pos.x), int(point.pos.y))
+        (pos,) = point.projection_points()
+        painter.drawPoint(int(pos.x), int(pos.y))
 
     def draw_line(self, line, painter=None):
         if painter is None:
             painter = QPainter(self)
 
+        start, end = line.projection_points()
+
         painter.drawLine(
-            int(line.start.x), int(line.start.y), int(line.end.x), int(line.end.y)
+            int(start.x), int(start.y), int(end.x), int(end.y)
         )
 
     def draw_polygon(self, polygon, painter=None):
@@ -90,12 +91,14 @@ class Viewport(QWidget):
 
         if polygon.style == Polygon.FILLED:
             poly = QtGui.QPolygonF()
-            for p in polygon.points():
+            for p in polygon.visual_points():
                 poly.append(QtCore.QPointF(p.x, p.y))
             painter.drawPolygon(poly)
         else:
-            for line in polygon.lines():
-                self.draw_line(line, painter)
+            for start, end in polygon.clipped_segments():
+                painter.drawLine(int(start.x), int(start.y), int(end.x), int(end.y))
+
+                # self.draw_line(line, painter)
 
     def draw_curve(self, curve, painter=None):
         if painter is None:
@@ -109,9 +112,8 @@ class Viewport(QWidget):
         if painter is None:
             painter = QPainter(self)
 
-        lines = shape.as_lines()
-        for line in lines:
-            self.draw_line(line, painter)
+        for start, end in shape.clipped_segments():
+            painter.drawLine(int(start.x), int(start.y), int(end.x), int(end.y))
 
     def draw_shape(self, shape, painter=None):
         if painter is None:
@@ -126,14 +128,14 @@ class Viewport(QWidget):
         elif isinstance(shape, Polygon):
             self.draw_polygon(shape, painter)
 
-        elif isinstance(shape, Bezier | BSpline):
-            self.draw_curve(shape, painter)
+        # elif isinstance(shape, Bezier | BSpline):
+        #     self.draw_curve(shape, painter)
 
         elif isinstance(shape, Object3D):
             self.draw_3d(shape, painter)
 
-        elif isinstance(shape, BicubicBezier):
-            self.draw_3d(shape.as_object_3d(), painter)
+        # elif isinstance(shape, BicubicBezier):
+        #     self.draw_3d(shape.as_object_3d(), painter)
 
         else:
             raise ValueError(f"The object {shape} is not supported.")
@@ -165,14 +167,14 @@ class Viewport(QWidget):
         super().paintEvent(event)
 
         pen = QPen()
-        pen.setWidth(2)
+        pen.setWidth(4)
         pen.setCapStyle(Qt.RoundCap)
 
         brush = QBrush()
         brush.setStyle(1)
 
         painter = QPainter(self)
-
+        
         for shape in self.scene.projected_shapes(self.win, self.vp):
             pen.setColor(QColor(*shape.color))
             brush.setColor(QColor(*shape.color))

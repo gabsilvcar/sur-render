@@ -45,12 +45,6 @@ class AddObject(QWidget):
     def create_tabs(self):
         self.tabs = QTabWidget()
 
-        # widget = BicubicBsplineWidget(self.viewport)
-        # self.tabs.addTab(widget, "Bicubic Bspline")
-
-        # widget = BicubicBezierWidget(self.viewport)
-        # self.tabs.addTab(widget, "Bicubic Bezier")
-
         widget = PointWidget(self.viewport)
         self.tabs.addTab(widget, "Point")
 
@@ -60,11 +54,17 @@ class AddObject(QWidget):
         widget = PolygonWidget(self.viewport)
         self.tabs.addTab(widget, "Polygon")
 
-        widget = BezierWidget(self.viewport)
-        self.tabs.addTab(widget, "Bezier")
+        # widget = BezierWidget(self.viewport)
+        # self.tabs.addTab(widget, "Bezier")
 
-        widget = BSplineWidget(self.viewport)
-        self.tabs.addTab(widget, "B-Spline")
+        # widget = BSplineWidget(self.viewport)
+        # self.tabs.addTab(widget, "B-Spline")
+
+        # widget = BicubicBsplineWidget(self.viewport)
+        # self.tabs.addTab(widget, "Bicubic Bspline")
+
+        # widget = BicubicBezierWidget(self.viewport)
+        # self.tabs.addTab(widget, "Bicubic Bezier")
 
         widget = RectangleWidget(self.viewport)
         self.tabs.addTab(widget, "Rectangle")

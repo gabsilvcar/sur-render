@@ -12,7 +12,7 @@ from pstats import Stats
 def create_scene():
     scene = Scene()
     for shape in OBJIO.read('resources/bowler.obj'):
-        scene.shapes.append(shape)
+        scene.add_shape(shape)
     return scene
 
 def create_views():
@@ -63,7 +63,7 @@ def create_views():
 
 scene = create_scene()
 origin, target = create_views()
-scene.projected_shapes(origin, target)
+# scene.projected_shapes(origin, target)
 
 test = lambda: scene.projected_shapes(origin, target)
 
