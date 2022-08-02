@@ -15,6 +15,7 @@ from surrender.shapes import (
     BicubicBezier,
     Bezier,
 )
+from time import time
 
 
 class Viewport(QWidget):
@@ -81,9 +82,7 @@ class Viewport(QWidget):
 
         start, end = line.projection_points()
 
-        painter.drawLine(
-            int(start.x), int(start.y), int(end.x), int(end.y)
-        )
+        painter.drawLine(int(start.x), int(start.y), int(end.x), int(end.y))
 
     def draw_polygon(self, polygon, painter=None):
         if painter is None:
@@ -174,7 +173,8 @@ class Viewport(QWidget):
         brush.setStyle(1)
 
         painter = QPainter(self)
-        
+
+        s = time()
         for shape in self.scene.projected_shapes(self.win, self.vp):
             pen.setColor(QColor(*shape.color))
             brush.setColor(QColor(*shape.color))
@@ -188,3 +188,5 @@ class Viewport(QWidget):
             painter.setPen(pen)
             painter.setBrush(brush)
             self.draw_shape(shape, painter)
+        e = time()
+        print("FPS", 1 / (e - s))

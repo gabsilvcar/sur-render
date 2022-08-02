@@ -1,6 +1,6 @@
 import numpy as np
 from surrender.vector import Vector
-from surrender.clipping import (
+from surrender.clipping.cohen_sutherland import (
     LEFT,
     RIGHT,
     BOTTOM,

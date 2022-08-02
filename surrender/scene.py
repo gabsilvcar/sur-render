@@ -23,7 +23,7 @@ class Scene:
             self.shapes.pop(i)
             self._shape_vectors_cache = self._get_shapes_vectors(self.shapes)
 
-    def projected_shapes(self, origin, target):    
+    def projected_shapes(self, origin, target):
         shapes = self.shapes
 
         for shape in shapes:
@@ -49,7 +49,7 @@ class Scene:
         for shape in shapes:
             for point in shape.projection_points():
                 vectors.append(point)
-        print('Num vertices: ', len(vectors))
+        print("Num vertices: ", len(vectors))
         return vectors
 
     def get_gliphs(self, target):

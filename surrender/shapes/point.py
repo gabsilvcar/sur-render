@@ -15,7 +15,7 @@ class Point(GenericShape):
 
     def structural_points(self):
         return [self._pos]
-    
+
     def projection_points(self):
         return [self._projected]
 

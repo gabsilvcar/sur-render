@@ -22,6 +22,7 @@ def point_code(point, window_min, window_max):
 
     return code
 
+
 def cohen_sutherland(a, b, window_min, window_max):
     while True:
         code_a = point_code(a, window_min, window_max)

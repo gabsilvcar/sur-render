@@ -25,21 +25,23 @@ class Polygon(GenericShape):
 
     def structural_points(self):
         return self._points
-    
+
     def projection_points(self):
         return self._projected_points
-    
+
     def clipped_points(self):
         return self._clipped_points
-    
+
     def projection_segments(self):
         yield from adjacents(self.projection_points(), circular=True)
-    
+
     def clipped_segments(self):
         yield from adjacents(self.clipped_points(), circular=True)
 
     def clip(self, window_min, window_max):
-        self._clipped_points = sutherland_hodgeman(self.projection_points(), window_min, window_max, True)
+        self._clipped_points = sutherland_hodgeman(
+            self.projection_points(), window_min, window_max, True
+        )
         need_plot = len(self._clipped_points) != 0
         return True
 

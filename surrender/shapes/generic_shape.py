@@ -9,16 +9,16 @@ class GenericShape(ABC):
         self.name = name
         self.type = objtype
         self.color = color
-    
+
     def structural_points(self):
         return []
-        
+
     def projection_points(self):
         return []
-    
+
     def clipped_points(self):
         return []
-    
+
     def clip(self, window_min, window_max):
         return True
 
