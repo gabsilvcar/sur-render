@@ -4,6 +4,7 @@ from surrender.view import View
 from surrender.vector import Vector
 import numpy as np
 from numba import njit
+import timeit
 
 from cProfile import Profile
 from pstats import Stats
@@ -36,42 +37,49 @@ def create_views():
 
     return origin, target
 
+def profile():
+    scene = create_scene()
+    origin, target = create_views()
+    # scene.projected_shapes(origin, target)
 
-# arrays = [np.random.randint(-300, 300, (3,)) for _ in range(70_000)]
-# vectors = [Vector(*i) for i in arrays]
+    test = lambda: scene.projected_shapes(origin, target)
 
-# win, _ = create_views()
-# win_min = np.asarray(win.min())
-# win_max = np.asarray(win.max())
+    profiler = Profile()
+    profiler.runcall(test)
 
-# def old_cs():
-#     for a, b in zip(vectors, reversed(vectors)):
-#         cohen_sutherland(a, b, win)
+    stats = Stats(profiler)
+    stats.strip_dirs()
+    stats.sort_stats('cumulative')
+    stats.print_stats()
+    # stats.print_callers()
 
-# def new_cs():
-#     for a, b in zip(vectors, reversed(vectors)):
-#         cohen_sutherland_(a, b, win.min(), win.max())
+def tests():
+    n = 100_000
 
-# import timeit
+    def helper(a, b, c):
+        return a * a + b * b + c * c
 
-# t0 = timeit.Timer(old_cs).timeit(5)
-# print('old', t0)
+    def indirect():
+        s = 0
+        for i in range(n):
+            a = i
+            b = 2 * i
+            c = 3 * i
+            s += helper(a, b, c)
 
-# t1 = timeit.Timer(new_cs).timeit(5)
-# print('new', t1)
+    def direct():
+        s = 0
+        for i in range(n):
+            a = i
+            b = 2 * i
+            c = 3 * i
+            s += a * a + b * b + c * c
+
+    t1 = timeit.Timer(direct).timeit(10)
+    print('direct', t1)
+    
+    t0 = timeit.Timer(indirect).timeit(10)
+    print('indirect', t0)
 
 
-scene = create_scene()
-origin, target = create_views()
-# scene.projected_shapes(origin, target)
-
-test = lambda: scene.projected_shapes(origin, target)
-
-profiler = Profile()
-profiler.runcall(test)
-
-stats = Stats(profiler)
-stats.strip_dirs()
-stats.sort_stats('cumulative')
-stats.print_stats()
-# stats.print_callers()
+tests()
