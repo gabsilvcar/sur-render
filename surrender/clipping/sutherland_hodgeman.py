@@ -1,3 +1,7 @@
+from surrender.utils import adjacents
+from surrender.vector import Vector
+
+
 def cut_min_x(points, minx, closed):
     points_with_intersection = []
 
