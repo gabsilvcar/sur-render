@@ -1,13 +1,13 @@
-from dataclasses import dataclass
 import re
-from surrender.io.obj import (
-    PointDescriptor,
-    LineDescriptor,
-    PolygonDescriptor,
-    OBJ3DDescriptor,
-)
+from dataclasses import dataclass
 
-from surrender.shapes import Point, Line, Polygon
+from surrender.io.obj import (
+    LineDescriptor,
+    OBJ3DDescriptor,
+    PointDescriptor,
+    PolygonDescriptor,
+)
+from surrender.shapes import Line, Point, Polygon
 from surrender.vector import Vector
 
 line_regex = re.compile(r"[fgplov]((\s*)|(\s[\d|\s|\w|.]*))")
@@ -95,9 +95,7 @@ class OBJParser:
             if splitter == -1:
                 token = Token(type=line.strip(), args="")
             else:
-                token = Token(
-                    type=line[:splitter].strip(), args=line[splitter:].strip()
-                )
+                token = Token(type=line[:splitter].strip(), args=line[splitter:].strip())
             tokens.append(token)
         return tokens
 

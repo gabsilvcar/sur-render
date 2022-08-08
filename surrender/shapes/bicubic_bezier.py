@@ -1,5 +1,5 @@
-from surrender.shapes import Object3D
 from surrender.parametric_curves import bicubic_bezier
+from surrender.shapes import Object3D
 from surrender.vector import Vector
 
 

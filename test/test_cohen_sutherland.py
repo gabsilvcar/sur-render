@@ -1,13 +1,8 @@
 import numpy as np
+
+from surrender.clipping.cohen_sutherland import (BOTTOM, LEFT, RIGHT, UP,
+                                                 cohen_sutherland, point_code)
 from surrender.vector import Vector
-from surrender.clipping.cohen_sutherland import (
-    LEFT,
-    RIGHT,
-    BOTTOM,
-    UP,
-    point_code,
-    cohen_sutherland,
-)
 
 
 class TestCohenSutherland:

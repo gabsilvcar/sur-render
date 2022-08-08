@@ -1,6 +1,7 @@
 import numpy as np
-from surrender.vector import Vector
+
 from surrender.clipping import liang_barsky
+from surrender.vector import Vector
 
 
 class TestLiangBarsky:

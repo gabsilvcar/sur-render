@@ -1,5 +1,6 @@
 import numpy as np
 from PyQt5.QtCore import Qt
+
 from surrender.tools.tool import Tool
 from surrender.vector import Vector
 

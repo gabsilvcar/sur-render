@@ -1,22 +1,24 @@
 import sys
+
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QAction,
-    QToolBar,
     QApplication,
-    QMenu,
-    QMainWindow,
     QFileDialog,
+    QMainWindow,
+    QMenu,
+    QToolBar,
 )
+
+from surrender.constants import APPLICATION_NAME, WINDOW_HEIGHT, WINDOW_WIDTH
 from surrender.menus.add_object import AddObject
-from surrender.menus.object_list import ObjectList
 from surrender.menus.modify_object import ModifyObject
 from surrender.menus.modify_view import ModifyView
+from surrender.menus.object_list import ObjectList
 from surrender.menus.tools_menu import ToolsMenu
-from surrender.constants import WINDOW_HEIGHT, WINDOW_WIDTH, APPLICATION_NAME
-from surrender.viewport import Viewport
 from surrender.tools import HandTool
+from surrender.viewport import Viewport
 
 
 class MainWindow(QMainWindow):

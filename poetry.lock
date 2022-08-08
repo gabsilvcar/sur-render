@@ -99,6 +99,20 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "isort"
+version = "5.10.1"
+description = "A Python utility / library to sort Python imports."
+category = "dev"
+optional = false
+python-versions = ">=3.6.1,<4.0"
+
+[package.extras]
+pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
+requirements_deprecated_finder = ["pipreqs", "pip-api"]
+colors = ["colorama (>=0.4.3,<0.5.0)"]
+plugins = ["setuptools"]
+
+[[package]]
 name = "llvmlite"
 version = "0.39.0"
 description = "lightweight wrapper around basic LLVM functionality"
@@ -183,8 +197,8 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
-dev = ["pre-commit", "tox"]
-testing = ["pytest", "pytest-benchmark"]
+testing = ["pytest-benchmark", "pytest"]
+dev = ["tox", "pre-commit"]
 
 [[package]]
 name = "py"
@@ -301,7 +315,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "3.8"
-content-hash = "463b4484e205b0019fdd36ce312f765fbe608348d121453bcf1fe57cfacf17ba"
+content-hash = "d7b9e821dead1fb65e07e6fb3d2f7bc153c23a6f568ebea314660d320965bfeb"
 
 [metadata.files]
 atomicwrites = []
@@ -312,6 +326,7 @@ colorama = []
 flake8 = []
 importlib-metadata = []
 iniconfig = []
+isort = []
 llvmlite = []
 mccabe = []
 mypy-extensions = []

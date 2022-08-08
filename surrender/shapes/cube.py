@@ -1,5 +1,5 @@
-from surrender.vector import Vector
 from surrender.shapes.object_3d import Object3D
+from surrender.vector import Vector
 
 
 class Cube(Object3D):

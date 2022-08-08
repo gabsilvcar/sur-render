@@ -1,7 +1,6 @@
-from PyQt5.QtWidgets import QVBoxLayout, QPushButton, QTreeView, QWidget
-
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QBrush, QColor
 from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QBrush, QColor, QStandardItem, QStandardItemModel
+from PyQt5.QtWidgets import QPushButton, QTreeView, QVBoxLayout, QWidget
 
 
 class CustomTable(QTreeView):

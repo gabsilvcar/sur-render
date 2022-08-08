@@ -1,5 +1,7 @@
-import numpy as np
 from copy import deepcopy
+
+import numpy as np
+
 from surrender.math_transforms import (
     rotation_matrix_x,
     rotation_matrix_y,

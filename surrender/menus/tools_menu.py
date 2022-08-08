@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QWidget
 
-from surrender.tools import HandTool, ZoomTool, SelectionTool, CameraPanTool
+from surrender.tools import CameraPanTool, HandTool, SelectionTool, ZoomTool
 
 
 class ToolsMenu(QWidget):

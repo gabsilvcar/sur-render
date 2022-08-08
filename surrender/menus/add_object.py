@@ -1,30 +1,31 @@
 import re
 from random import randint
+
 from PyQt5.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QTabWidget,
-    QLineEdit,
-    QPushButton,
+    QButtonGroup,
+    QCheckBox,
     QColorDialog,
     QFormLayout,
-    QCheckBox,
+    QLineEdit,
+    QPushButton,
     QRadioButton,
-    QButtonGroup,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
 )
 
-from surrender.vector import Vector
 from surrender.shapes import (
-    Point,
-    Line,
-    Polygon,
-    Rectangle,
     Bezier,
-    BSpline,
-    Cube,
     BicubicBezier,
     BicubicBspline,
+    BSpline,
+    Cube,
+    Line,
+    Point,
+    Polygon,
+    Rectangle,
 )
+from surrender.vector import Vector
 
 
 def get_digits(x):

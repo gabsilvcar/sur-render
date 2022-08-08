@@ -1,14 +1,15 @@
 import numpy as np
-from surrender.vector import Vector
 from PyQt5.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QTabWidget,
+    QComboBox,
+    QFormLayout,
     QLineEdit,
     QPushButton,
-    QFormLayout,
-    QComboBox,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
 )
+
+from surrender.vector import Vector
 
 
 class ModifyObject(QWidget):

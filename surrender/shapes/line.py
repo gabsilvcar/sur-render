@@ -1,7 +1,7 @@
 from copy import deepcopy
 
-from surrender.shapes.generic_shape import GenericShape
 from surrender.clipping import cohen_sutherland, liang_barsky
+from surrender.shapes.generic_shape import GenericShape
 
 
 class Line(GenericShape):

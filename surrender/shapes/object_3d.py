@@ -1,6 +1,6 @@
-from surrender.shapes.generic_shape import GenericShape
-from surrender.shapes import Line
 from surrender.clipping import cohen_sutherland, liang_barsky
+from surrender.shapes import Line
+from surrender.shapes.generic_shape import GenericShape
 from surrender.vector import Vector
 
 

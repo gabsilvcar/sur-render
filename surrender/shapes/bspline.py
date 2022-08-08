@@ -1,11 +1,11 @@
 from copy import deepcopy
 
-from surrender.shapes import Polygon, Line
-from surrender.shapes.generic_curve import GenericCurve
-from surrender.parametric_curves import fd_bspline
-from surrender.vector import Vector
-from surrender.utils import adjacents
 from surrender.clipping import sutherland_hodgeman
+from surrender.parametric_curves import fd_bspline
+from surrender.shapes import Line, Polygon
+from surrender.shapes.generic_curve import GenericCurve
+from surrender.utils import adjacents
+from surrender.vector import Vector
 
 
 class BSpline(GenericCurve):

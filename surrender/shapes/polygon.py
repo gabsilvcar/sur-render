@@ -1,8 +1,8 @@
 from copy import deepcopy
 
-from surrender.shapes.generic_shape import GenericShape
-from surrender.shapes import Line
 from surrender.clipping import sutherland_hodgeman
+from surrender.shapes import Line
+from surrender.shapes.generic_shape import GenericShape
 from surrender.utils import adjacents
 
 

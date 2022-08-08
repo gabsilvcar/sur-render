@@ -1,4 +1,3 @@
-
 def cut_min_x(points, minx, closed):
     points_with_intersection = []
 

@@ -1,4 +1,4 @@
-from surrender.shapes import Point, Line, Polygon
+from surrender.shapes import Line, Point, Polygon
 
 
 class OBJDescriptor:

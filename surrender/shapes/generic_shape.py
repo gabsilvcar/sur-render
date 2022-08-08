@@ -1,7 +1,8 @@
-from copy import deepcopy
 from abc import ABC
-from surrender.vector import Vector
+from copy import deepcopy
+
 from surrender.projection import viewport_transform
+from surrender.vector import Vector
 
 
 class GenericShape(ABC):

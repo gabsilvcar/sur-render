@@ -1,21 +1,23 @@
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtGui import QPainter, QBrush, QPen, QColor
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtWidgets import QWidget
-from surrender.view import View
-from surrender.scene import Scene
-from surrender.vector import Vector
-from surrender.io.obj_io import OBJIO
-from surrender.shapes import (
-    Point,
-    Line,
-    Polygon,
-    Object3D,
-    BSpline,
-    BicubicBezier,
-    Bezier,
-)
 from time import time
+
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QBrush, QColor, QPainter, QPen
+from PyQt5.QtWidgets import QWidget
+
+from surrender.io.obj_io import OBJIO
+from surrender.scene import Scene
+from surrender.shapes import (
+    Bezier,
+    BicubicBezier,
+    BSpline,
+    Line,
+    Object3D,
+    Point,
+    Polygon,
+)
+from surrender.vector import Vector
+from surrender.view import View
 
 
 class Viewport(QWidget):

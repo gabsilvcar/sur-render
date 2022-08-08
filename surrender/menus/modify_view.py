@@ -1,26 +1,23 @@
 import numpy as np
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QTabWidget,
-    QPushButton,
+    QAction,
+    QButtonGroup,
+    QFormLayout,
     QGridLayout,
     QLabel,
-    QAction,
-    QSpinBox,
-    QFormLayout,
+    QPushButton,
     QRadioButton,
-    QButtonGroup,
+    QSpinBox,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
 )
 
-from surrender.shapes import Point, Line, Polygon
-
-
 from surrender.constants import PIX_PER_MOVEMENT, ZOOM_FACTOR
-from surrender.vector import Vector
+from surrender.shapes import Line, Point, Polygon
 from surrender.shapes.generic_curve import GenericCurve
+from surrender.vector import Vector
 
 
 class ModifyView(QWidget):

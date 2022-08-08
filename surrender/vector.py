@@ -1,12 +1,13 @@
 import numpy as np
+from numba import njit
+
 from surrender.math_transforms import (
-    translation_matrix,
-    scale_matrix,
     rotation_matrix_x,
     rotation_matrix_y,
     rotation_matrix_z,
+    scale_matrix,
+    translation_matrix,
 )
-from numba import njit
 
 
 @njit

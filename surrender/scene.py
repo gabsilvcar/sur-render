@@ -1,7 +1,4 @@
-from surrender.projection import (
-    perspective_projection,
-    viewport_transform,
-)
+from surrender.projection import perspective_projection, viewport_transform
 
 
 class Scene:

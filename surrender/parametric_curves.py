@@ -4,9 +4,7 @@ import numpy as np
 def delta_matrix(d):
     d2 = d * d
     d3 = d * d * d
-    matrix = np.array(
-        [[0, 0, 0, 1], [d3, d2, d, 0], [6 * d3, 2 * d2, 0, 0], [6 * d3, 0, 0, 0]]
-    )
+    matrix = np.array([[0, 0, 0, 1], [d3, d2, d, 0], [6 * d3, 2 * d2, 0, 0], [6 * d3, 0, 0, 0]])
     return matrix
 
 
